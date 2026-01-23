@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateRegions() {
-        Object.keys(db).sort().forEach(region => {
+        Object.keys(db).forEach(region => {
             const option = document.createElement('option');
             option.value = region;
             option.textContent = region;
