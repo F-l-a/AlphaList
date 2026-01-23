@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetch('data.json?v=' + Date.now())
+    fetch('/AlphaList/data.json')
         .then(response => response.json())
         .then(data => {
             db = data;
