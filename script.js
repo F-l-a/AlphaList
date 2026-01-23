@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(reg => console.log('Service Worker Registered', reg))
+            .catch(err => console.error('Service Worker Registration Failed:', err));
+    }
+
     let db = {};
     let allPokemons = [];
     const regionSelect = document.getElementById('region-select');
@@ -85,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateLocations(region) {
         const datalistOptions = document.getElementById('location-datalist-options');
-        datalistOptions.innerHTML = '<option value="all">All Locations</option>';
+        datalistOptions.innerHTML = '';
         if (region !== 'all') {
             const locations = Object.keys(db[region]).sort((a, b) => a.localeCompare(b));
             locations.forEach(loc => {
@@ -127,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let filteredPokemons = allPokemons.filter(p => {
             const nameMatch = p.data.Name.toLowerCase().includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
-            const locationMatch = selectedLocation === 'all' || selectedLocation === '' || p.location === selectedLocation;
+            const locationMatch = selectedLocation === '' || p.location.toLowerCase().includes(selectedLocation.toLowerCase());
             return nameMatch && regionMatch && locationMatch;
         });
 
