@@ -84,23 +84,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateLocations(region) {
-        locationSelect.innerHTML = '<option value="all">All Locations</option>';
-        if (region === 'all') {
-            locationSelect.disabled = true;
-        } else {
+        const datalistOptions = document.getElementById('location-datalist-options');
+        datalistOptions.innerHTML = '<option value="all">All Locations</option>';
+        if (region !== 'all') {
             const locations = Object.keys(db[region]).sort((a, b) => a.localeCompare(b));
             locations.forEach(loc => {
                 const option = document.createElement('option');
                 option.value = loc;
-                option.textContent = loc;
-                locationSelect.appendChild(option);
+                datalistOptions.appendChild(option);
             });
-            locationSelect.disabled = false;
         }
     }
 
     regionSelect.addEventListener('change', () => {
         const region = regionSelect.value;
+        locationSelect.value = ''; // Clear the location filter
         populateLocations(region);
         render();
     });
@@ -116,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    locationSelect.addEventListener('change', render);
+    locationSelect.addEventListener('input', render);
     searchInput.addEventListener('input', render);
     groupingSwitch.addEventListener('change', render);
 
@@ -129,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let filteredPokemons = allPokemons.filter(p => {
             const nameMatch = p.data.Name.toLowerCase().includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
-            const locationMatch = selectedLocation === 'all' || p.location === selectedLocation;
+            const locationMatch = selectedLocation === 'all' || selectedLocation === '' || p.location === selectedLocation;
             return nameMatch && regionMatch && locationMatch;
         });
 
