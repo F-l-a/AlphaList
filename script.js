@@ -396,8 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const despawnMs = nowMs + (75 * 60 * 1000); // 75 minutes
                 const despawnUnix = Math.floor(despawnMs / 1000);
                 // Localized relative time for the parenthetical will be handled elsewhere if needed
-                markdown += `\n# -= Despawns approximately <t:${despawnUnix}:R> =- # `;
+                markdown += `\n# -= Despawns approximately <t:${despawnUnix}:R> =- #\n-# [All the alphas](https://f-l-a.github.io/AlphaList/)`;
             } catch (e) {
+                markdown += `\n-# [All the alphas](https://f-l-a.github.io/AlphaList/)`;
                 console.error('Timestamp generation error:', e);
             }
 
