@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             db = data;
             allPokemons = flattenData(db);
             populateRegions();
+            populateLocations('all'); // Populate locations on initial load
             render();
         })
         .catch(err => console.error("Error loading data.json:", err));
@@ -92,11 +93,43 @@ document.addEventListener('DOMContentLoaded', () => {
     function populateLocations(region) {
         const datalistOptions = document.getElementById('location-datalist-options');
         datalistOptions.innerHTML = '';
+
         if (region !== 'all') {
             const locations = Object.keys(db[region]).sort((a, b) => a.localeCompare(b));
             locations.forEach(loc => {
                 const option = document.createElement('option');
                 option.value = loc;
+                datalistOptions.appendChild(option);
+            });
+        } else {
+            const regionOrder = Array.from(regionSelect.options).map(option => option.value).filter(val => val !== 'all');
+            const regionOrderMap = new Map(regionOrder.map((reg, index) => [reg, index]));
+
+            const allLocationsWithRegion = [];
+            for (const reg in db) {
+                if (db.hasOwnProperty(reg)) {
+                    for (const loc of Object.keys(db[reg]).sort((a, b) => a.localeCompare(b))) { 
+                        const regionLetter = reg.charAt(0).toUpperCase();
+                        allLocationsWithRegion.push({
+                            region: reg,
+                            location: loc,
+                            formatted: `[${regionLetter}] ${loc}`
+                        });
+                    }
+                }
+            }
+
+            allLocationsWithRegion.sort((a, b) => {
+                const regionComparison = regionOrderMap.get(a.region) - regionOrderMap.get(b.region);
+                if (regionComparison !== 0) {
+                    return regionComparison;
+                }
+                return a.location.localeCompare(b.location); 
+            });
+
+            allLocationsWithRegion.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.formatted;
                 datalistOptions.appendChild(option);
             });
         }
@@ -133,7 +166,11 @@ document.addEventListener('DOMContentLoaded', () => {
         let filteredPokemons = allPokemons.filter(p => {
             const nameMatch = p.data.Name.toLowerCase().includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
-            const locationMatch = selectedLocation === '' || p.location.toLowerCase().includes(selectedLocation.toLowerCase());
+            const locationMatch = selectedLocation === '' || 
+                (selectedRegion === 'all' && 
+                 `[${p.region.charAt(0).toUpperCase()}] ${p.location}`.toLowerCase().includes(selectedLocation.toLowerCase())) ||
+                (selectedRegion !== 'all' && 
+                 p.location.toLowerCase().includes(selectedLocation.toLowerCase()));
             return nameMatch && regionMatch && locationMatch;
         });
 
