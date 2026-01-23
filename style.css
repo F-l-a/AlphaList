@@ -1,0 +1,84 @@
+html,
+body {
+    height: 100%;
+}
+
+/* Hide page during theme detection to avoid flash-of-unstyled content */
+.theme-loading {
+    visibility: hidden !important;
+}
+
+/* When in light theme, make header/footer match body colors instead of dark */
+html[data-bs-theme="light"] .bg-dark {
+    background-color: var(--bs-body-bg) !important;
+}
+html[data-bs-theme="light"] .text-white-50,
+html[data-bs-theme="light"] .text-white {
+    color: var(--bs-body-color) !important;
+}
+
+/* Reserve scrollbar space to avoid layout shift when content becomes scrollable */
+html {
+    scrollbar-gutter: stable both-edges;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0,0,0,.125);
+}
+
+.accordion-button:not(.collapsed) {
+    color: #0c63e4;
+    background-color: #e7f1ff;
+}
+
+.card-body ul {
+    padding-left: 1.2em;
+}
+
+.card-body strong {
+    color: #0d6efd;
+}
+
+.map-preview-link {
+    color: var(--bs-primary, #0d6efd);
+    text-decoration: underline dotted;
+    cursor: pointer;
+    font-weight: 500;
+}
+.map-preview-link:hover {
+    text-decoration-style: solid;
+}
+.map-preview-link:focus {
+    outline: 2px dashed rgba(13,110,253,0.5);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+.pokemon-detail .card-title {
+    font-size: 1.1em;
+    margin-bottom: 0.5rem;
+}
+
+.pokemon-detail .card-text {
+    margin-bottom: 0.25rem;
+}
+
+.pokemon-detail .list-unstyled {
+    margin-bottom: 0.5rem;
+}
+
+.pokemon-detail .notes {
+    font-style: italic;
+    color: #dc3545; /* Bootstrap danger color */
+}
+
+.footer {
+    /* flex-shrink: none; Remove if you need the footer to stretch on larger content */
+    position: sticky;
+    top: 100vh; /* This makes it sticky to the bottom of the viewport */
+}
