@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/AlphaList/service-worker.js')
+        navigator.serviceWorker.register(`${window.BASE_URL}/service-worker.js`)
             .then(reg => console.log('Service Worker Registered', reg))
             .catch(err => console.error('Service Worker Registration Failed:', err));
     }
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetch('/AlphaList/data.json')
+    fetch(`${window.BASE_URL}/data.json`)
         .then(response => response.json())
         .then(data => {
             db = data;
@@ -396,11 +396,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const despawnMs = nowMs + (75 * 60 * 1000); // 75 minutes
                 const despawnUnix = Math.floor(despawnMs / 1000);
                 // Localized relative time for the parenthetical will be handled elsewhere if needed
-                markdown += `\n# -= Despawns approximately <t:${despawnUnix}:R> =- #\n-# [All the alphas](https://f-l-a.github.io/AlphaList/)`;
+                markdown += `\n# -= Despawns approximately <t:${despawnUnix}:R> =- #`;
             } catch (e) {
-                markdown += `\n-# [All the alphas](https://f-l-a.github.io/AlphaList/)`;
                 console.error('Timestamp generation error:', e);
             }
+
+            // Append message Footer
+            markdown += `\n-# [Alpha List - copy and send the next one!](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
                 const originalText = btn.textContent;
