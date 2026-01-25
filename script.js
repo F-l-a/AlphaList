@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         datalistOptions.innerHTML = '';
 
         if (region !== 'all') {
-            const locations = Object.keys(db[region]).sort((a, b) => a.localeCompare(b));
+            const locations = Object.keys(db[region]);
             locations.forEach(loc => {
                 const option = document.createElement('option');
                 option.value = loc;
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const allLocationsWithRegion = [];
             for (const reg in db) {
                 if (db.hasOwnProperty(reg)) {
-                    for (const loc of Object.keys(db[reg]).sort((a, b) => a.localeCompare(b))) { 
+                    for (const loc of Object.keys(db[reg])) { 
                         const regionLetter = reg.charAt(0).toUpperCase();
                         allLocationsWithRegion.push({
                             region: reg,
@@ -118,14 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             }
-
-            allLocationsWithRegion.sort((a, b) => {
-                const regionComparison = regionOrderMap.get(a.region) - regionOrderMap.get(b.region);
-                if (regionComparison !== 0) {
-                    return regionComparison;
-                }
-                return a.location.localeCompare(b.location); 
-            });
 
             allLocationsWithRegion.forEach(item => {
                 const option = document.createElement('option');

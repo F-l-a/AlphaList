@@ -130,20 +130,6 @@
           "Moveset": "- Earth Power\n- Endeavor\n- Safeguard\n- Petal Dance ⚠",
           "Notes": "**⚠ ADS CAN KILL THEMSELVES ⚠**"
         }
-      },
-      {
-        "name": "FORRETRESS",
-        "data": {
-          "Name": "",
-          "Full Location": "",
-          "Map Link": "",
-          "HMs": "",
-          "Egg Group": "",
-          "Gender": "",
-          "Ability": "",
-          "Moveset": "",
-          "Notes": ""
-        }
       }
     ],
     "Four Island": [
@@ -370,7 +356,7 @@
         "data": {
           "Name": "Alpha Parasect",
           "Full Location": "Kanto\nCerulean Cave",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/XIckOjf.png",
           "HMs": "Surf",
           "Egg Group": "Bug/Grass",
           "Gender": "50/50",
@@ -518,7 +504,7 @@
         "data": {
           "Name": "Alpha Marowak",
           "Full Location": "Kanto\nRock Tunnel - Lavender",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/dFkUeqF.png",
           "HMs": "Flash",
           "Egg Group": "Monster",
           "Gender": "50/50",
@@ -1056,7 +1042,7 @@
         "data": {
           "Name": "Alpha Ursaring",
           "Full Location": "Johto\nDark Cave - Blackthorn",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/vrC7I9O.png",
           "HMs": "Flash/Surf",
           "Egg Group": "Field",
           "Gender": "50/50",
@@ -1117,7 +1103,7 @@
         "name": "ARIADOS",
         "data": {
           "Name": "Alpha Ariados",
-          "Full Location": "Johto\nIlex Forest",
+          "Full Location": "Johto\nIlex Forest - Goldenrod",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Bug",
@@ -1208,7 +1194,7 @@
         "data": {
           "Name": "Alpha Lapras",
           "Full Location": "Johto\nMt. Mortar",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/yrxiW0N.png",
           "HMs": "Surf",
           "Egg Group": "Monster/Water A",
           "Gender": "50/50",
@@ -1222,7 +1208,7 @@
         "data": {
           "Name": "Alpha Rhyperior",
           "Full Location": "Johto\nMt. Mortar",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/yrxiW0N.png",
           "HMs": "Strength",
           "Egg Group": "Field/Monster",
           "Gender": "50/50",
@@ -1237,11 +1223,11 @@
         "name": "LEDIAN",
         "data": {
           "Name": "Alpha Ledian",
-          "Full Location": "Johto\nNational Park\n`Gender:50/50`",
+          "Full Location": "Johto\nNational Park",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Bug",
-          "Gender": "",
+          "Gender": "50/50",
           "Ability": "Iron Fist",
           "Moveset": "- Bug Buzz - Pass Subs\n- Dynamic Punch\n- Light Screen\n- Reflect",
           "Notes": ""
@@ -1312,7 +1298,7 @@
         "data": {
           "Name": "Alpha Ditto",
           "Full Location": "Johto\nTohjo Falls",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/kfkceca.png",
           "HMs": "Surf/Waterfall",
           "Egg Group": "Ditto",
           "Gender": "N/A",
@@ -1327,9 +1313,9 @@
         "name": "CORSOLA",
         "data": {
           "Name": "Alpha Corsola",
-          "Full Location": "Johto\nUnion Cave\nSurf (Azalea)",
+          "Full Location": "Johto\nUnion Cave - Azalea",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Surf",
           "Egg Group": "Water A/Water C",
           "Gender": "75% Female",
           "Ability": "Regenerator",
@@ -1357,9 +1343,9 @@
         "name": "KINGDRA",
         "data": {
           "Name": "Alpha Kingdra",
-          "Full Location": "Johto\nWhirl Islands - Cianwood\nFlash/Surf/Whirlpool",
-          "Map Link": "",
-          "HMs": "",
+          "Full Location": "Johto\nWhirl Islands - Cianwood",
+          "Map Link": "https://i.imgur.com/TUxakJE.png",
+          "HMs": "Flash/Surf/Whirlpool",
           "Egg Group": "Dragon/Water A",
           "Gender": "50/50",
           "Ability": "Damp",
@@ -1403,9 +1389,9 @@
         "name": "ELECTIVIRE",
         "data": {
           "Name": "Alpha Electivire",
-          "Full Location": "Johto\nRoute 27\nNo HMs - Victory Road\nSurf/Waterfall - New Bark",
+          "Full Location": "Johto\nRoute 27 - Victory Road",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "No HMs",
           "Egg Group": "Humanoid",
           "Gender": "75% Male",
           "Ability": "Vital Spirit",
@@ -1525,7 +1511,7 @@
         "name": "DITTO",
         "data": {
           "Name": "Alpha Ditto",
-          "Full Location": "Johto\nRoute 34 - From Goldenrod City",
+          "Full Location": "Johto\nRoute 34 - Goldenrod",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Ditto",
@@ -1539,7 +1525,7 @@
         "name": "-GRANBULL-",
         "data": {
           "Name": "Alpha Granbull",
-          "Full Location": "Johto\nRoute 34 - From Goldenrod City",
+          "Full Location": "Johto\nRoute 34 - Goldenrod",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Fairy/Field",
@@ -1923,8 +1909,8 @@
           "Egg Group": "Field",
           "Gender": "100% Female",
           "Ability": "Sap Sipper (Prevents Spore)",
-          "Moveset": "- Iron Head\n- Thunder Wave\n- Milk Drink",
-          "Notes": "ada- Body Slam"
+          "Moveset": "- Body Slam\n- Iron Head\n- Thunder Wave\n- Milk Drink",
+          "Notes": ""
         }
       }
     ]
@@ -1932,12 +1918,12 @@
   "Hoenn": {
     "Abandoned Ship": [
       {
-        "name": "CRAWDUNT",
+        "name": "CRAWDAUNT",
         "data": {
           "Name": "Alpha Crawdaunt",
-          "Full Location": "Hoenn\nAbandoned Ship\nSurf/Dive",
+          "Full Location": "Hoenn\nAbandoned Ship",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Surf/Dive",
           "Egg Group": "Water A/Water C",
           "Gender": "50/50",
           "Ability": "Adaptability",
@@ -2012,13 +1998,13 @@
         "data": {
           "Name": "Alpha Lairon",
           "Full Location": "Hoenn\nGranite Cave\nMach Bike required",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/TptOIBx.png",
           "HMs": "Flash",
           "Egg Group": "Monster",
           "Gender": "50/50",
           "Ability": "Heavy Metal",
           "Moveset": "- Iron Tail\n- Stone Edge\n- Earthquake\n- Metal Burst",
-          "Notes": ""
+          "Notes": "**Swap bikes at the bike shop in Mauville (house to the right of the PC)**"
         }
       },
       {
@@ -2026,7 +2012,7 @@
         "data": {
           "Name": "Alpha Sableye",
           "Full Location": "Hoenn\nGranite Cave",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/TptOIBx.png",
           "HMs": "Flash",
           "Egg Group": "Humanoid",
           "Gender": "50/50",
@@ -2072,7 +2058,7 @@
         "data": {
           "Name": "Alpha Crobat",
           "Full Location": "Hoenn\nMeteor Falls",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/CzJVTvi.png",
           "HMs": "Surf/Waterfall",
           "Egg Group": "Flying",
           "Gender": "50/50",
@@ -2086,7 +2072,7 @@
         "data": {
           "Name": "Alpha Salamence",
           "Full Location": "Hoenn\nMeteor Falls",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/CzJVTvi.png",
           "HMs": "Surf/Waterfall",
           "Egg Group": "Dragon",
           "Gender": "50/50",
@@ -2160,13 +2146,13 @@
         "data": {
           "Name": "Alpha Ditto",
           "Full Location": "Hoenn\nNew Mauville",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/3QfyJCQ.jpeg",
           "HMs": "Surf",
           "Egg Group": "Ditto",
           "Gender": "N/A",
           "Ability": "Impostor",
           "Moveset": "- Transform",
-          "Notes": ""
+          "Notes": "**If you can't enter the cave, speak to the Gym Leader in the middle of the town**"
         }
       },
       {
@@ -2174,13 +2160,13 @@
         "data": {
           "Name": "Alpha Magneton",
           "Full Location": "Hoenn\nNew Mauville",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/3QfyJCQ.jpeg",
           "HMs": "Surf",
           "Egg Group": "Genderless",
           "Gender": "N/A",
           "Ability": "Analytic",
           "Moveset": "- Discharge\n- Flash Cannon\n- Signal Beam\n- Magic Coat",
-          "Notes": ""
+          "Notes": "**If you can't enter the cave, speak to the Gym Leader in the middle of the town**"
         }
       }
     ],
@@ -2258,7 +2244,7 @@
           "Gender": "50/50",
           "Ability": "Moxie",
           "Moveset": "- Dragon Claw\n- Brick Break\n- Roost\n- Iron Defense",
-          "Notes": ""
+          "Notes": "**Swap bikes at the bike shop in Mauville (house to the right of the PC)**"
         }
       }
     ],
@@ -2267,7 +2253,7 @@
         "name": "AGGRON",
         "data": {
           "Name": "Alpha Aggron",
-          "Full Location": "Hoenn\nVictory Road -  South Entrance",
+          "Full Location": "Hoenn\nVictory Road - South Entrance",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Monster",
@@ -2281,9 +2267,9 @@
         "name": "SABLEYE",
         "data": {
           "Name": "Alpha Sableye",
-          "Full Location": "Hoenn\nVictory Road\nFlash/Rock Smash/Strength/Surf",
-          "Map Link": "",
-          "HMs": "",
+          "Full Location": "Hoenn\nVictory Road - South Entrance",
+          "Map Link": "https://i.imgur.com/T7GytfS.png",
+          "HMs": "Flash/Rock Smash/Strength/Surf",
           "Egg Group": "Humanoid",
           "Gender": "50/50",
           "Ability": "Prankster",
@@ -2769,9 +2755,9 @@
         "name": "CORSOLA",
         "data": {
           "Name": "Alpha Corsola",
-          "Full Location": "Hoenn\nRoute 126 - Sootopolis\nDive/Surf",
+          "Full Location": "Hoenn\nRoute 126 - Sootopolis",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Dive/Surf",
           "Egg Group": "Water A/Water C",
           "Gender": "75% Female",
           "Ability": "Regenerator",
@@ -2785,9 +2771,9 @@
         "name": "SHARPEDO",
         "data": {
           "Name": "Alpha Sharpedo",
-          "Full Location": "Hoenn\nRoute 127\nDive/Surf",
-          "Map Link": "",
-          "HMs": "",
+          "Full Location": "Hoenn\nRoute 127",
+          "Map Link": "https://i.imgur.com/wFQjSBD.png",
+          "HMs": "Dive/Surf",
           "Egg Group": "Water B",
           "Gender": "50/50",
           "Ability": "Speed Boost",
@@ -2994,7 +2980,7 @@
         "data": {
           "Name": "Alpha Clefable",
           "Full Location": "Sinnoh\nMt. Coronet - Celestic",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/rit696A.png",
           "HMs": "Strength",
           "Egg Group": "Fairy",
           "Gender": "75% Female",
@@ -3022,7 +3008,7 @@
         "data": {
           "Name": "Alpha Milotic",
           "Full Location": "Sinnoh\nMt. Coronet - Celestic",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/lmS729J.png",
           "HMs": "Defog/Strength/Surf",
           "Egg Group": "Dragon/Water A",
           "Gender": "50/50",
@@ -3053,9 +3039,9 @@
         "name": "FLOATZEL",
         "data": {
           "Name": "Alpha Floatzel",
-          "Full Location": "Sinnoh\nOreburgh Gate\nRock Smash/Surf\nBike needed",
+          "Full Location": "Sinnoh\nOreburgh Gate\nBike needed",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Rock Smash/Surf",
           "Egg Group": "Field/Water A",
           "Gender": "50/50",
           "Ability": "Water Veil",
@@ -3069,9 +3055,9 @@
         "name": "GARCHOMP",
         "data": {
           "Name": "Alpha Garchomp",
-          "Full Location": "Sinnoh\nRavaged Path\nRock Smash/Surf",
+          "Full Location": "Sinnoh\nRavaged Path",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Rock Smash/Surf",
           "Egg Group": "Dragon/Monster",
           "Gender": "50/50",
           "Ability": "Rough Skin",
@@ -3108,7 +3094,7 @@
           "Gender": "100% Male",
           "Ability": "Justified",
           "Moveset": "- Drain Punch\n- Psycho Cut\n- Dual Chop\n- Bulk Up",
-          "Notes": ""
+          "Notes": "**Talk to the professor if you have the seen Sinnoh dex but can't enter**"
         }
       },
       {
@@ -3122,7 +3108,7 @@
           "Gender": "100% Female",
           "Ability": "Dry Skin",
           "Moveset": "- Ice Beam\n- Psyshock\n- Grass Knot\n- Lovely Kiss",
-          "Notes": "**⚠ ADS HAVE PERISH SONG ⚠**"
+          "Notes": "**⚠ ADS HAVE PERISH SONG ⚠**\n**Talk to the professor if you have the seen Sinnoh dex but can't enter**"
         }
       }
     ],
@@ -3145,9 +3131,9 @@
         "name": "MAGMORTAR",
         "data": {
           "Name": "Alpha Magmortar",
-          "Full Location": "Sinnoh\nStark Moutain\nStrength/Rock Climb/Surf/Rock Smash",
+          "Full Location": "Sinnoh\nStark Moutain",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Strength/Rock Climb/Surf/Rock Smash",
           "Egg Group": "Humanoid",
           "Gender": "75% Male",
           "Ability": "Vital Spirit",
@@ -3210,13 +3196,13 @@
         "data": {
           "Name": "Alpha Lapras",
           "Full Location": "Sinnoh\nVictory Road\nSeen Sinnoh dex required",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/sk7yztv.png",
           "HMs": "Rock Climb/Surf/Waterfall",
           "Egg Group": "Monster/Water A",
           "Gender": "50/50",
           "Ability": "Hydration",
           "Moveset": "- Waterfall\n- Ice Shard\n- Body Slam\n- Dragon Dance",
-          "Notes": "**Talk to professor after with sinnoh seen dex to remove guy**\n**First time vist in that area needs an escort quest to be finished before freeroaming**\n**⚠ ADS HAVE PERISH SONG ⚠**"
+          "Notes": "**Talk to the professor if you have the seen Sinnoh dex but can't enter**\n**First time vist in that area needs an escort quest to be finished before freeroaming**\n**⚠ ADS HAVE PERISH SONG ⚠**"
         }
       }
     ],
@@ -3533,8 +3519,8 @@
           "Egg Group": "Field/Water A",
           "Gender": "50/50",
           "Ability": "Unaware",
-          "Moveset": "- Earthquake\n- Aqua Tail\n- Ice Punch\n- Curse",
-          "Notes": "⚠"
+          "Moveset": "- Earthquake\n- Aqua Tail\n- Ice Punch\n- Curse ⚠",
+          "Notes": ""
         }
       }
     ],
@@ -3543,9 +3529,9 @@
         "name": "GARCHOMP",
         "data": {
           "Name": "Alpha Garchomp",
-          "Full Location": "Sinnoh\nRoute 216\nRock Climb - Snowpoint\nRock Climb/Strength - Celestic",
+          "Full Location": "Sinnoh\nRoute 216",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Rock Climb - Snowpoint\nRock Climb/Strength - Celestic",
           "Egg Group": "Dragon/Monster",
           "Gender": "50/50",
           "Ability": "Rough Skin",
@@ -3557,9 +3543,9 @@
         "name": "LUCARIO",
         "data": {
           "Name": "Alpha Lucario",
-          "Full Location": "Sinnoh\nRoute 216\nRock Climb - Snowpoint\nRock Climb/Strength - Celestic",
+          "Full Location": "Sinnoh\nRoute 216",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Rock Climb - Snowpoint\nRock Climb/Strength - Celestic",
           "Egg Group": "Field/Humanoid",
           "Gender": "87.5% Male",
           "Ability": "Justified",
@@ -3651,9 +3637,9 @@
         "name": "ELECTABUZZ",
         "data": {
           "Name": "Alpha Electabuzz",
-          "Full Location": "Sinnoh\nRoute 222\nRock Smash/Surf",
+          "Full Location": "Sinnoh\nRoute 222",
           "Map Link": "",
-          "HMs": "",
+          "HMs": "Rock Smash/Surf",
           "Egg Group": "Humanoid",
           "Gender": "75% Male",
           "Ability": "Vital Spirit",
@@ -3698,13 +3684,13 @@
         "data": {
           "Name": "Alpha Mantine",
           "Full Location": "Sinnoh\nRoute 224\nSeen Sinnoh dex required",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/4fS0RoZ.png",
           "HMs": "Rock Climb/Strength/Surf/Waterfall",
           "Egg Group": "Water A",
           "Gender": "50/50",
           "Ability": "Water Veil",
           "Moveset": "- Surf\n- Hurricane\n- Signal Beam\n- Rain Dance",
-          "Notes": "**Talk to professor after with sinnoh seen dex to remove guy**\n**First time vist in that area needs an escort quest to be finished before freeroaming**\n**⚠ ADS HAVE RECOIL ⚠**"
+          "Notes": "**Talk to the professor if you have the seen Sinnoh dex but can't enter**\n**First time vist in that area needs an escort quest to be finished before freeroaming**\n**⚠ ADS HAVE RECOIL ⚠**"
         }
       }
     ],
@@ -3752,7 +3738,7 @@
           "Gender": "87.5% Male",
           "Ability": "Justified",
           "Moveset": "- Aura Sphere\n- Flash Cannon\n- Shadow Ball\n- Nasty Plot",
-          "Notes": "**⚠ ADS HAS SANDSTORM/FINAL GAMBIT ⚠**"
+          "Notes": "**⚠ ADS HAVE SANDSTORM/FINAL GAMBIT ⚠**"
         }
       }
     ],
@@ -3802,7 +3788,7 @@
           "Gender": "N/A",
           "Ability": "Heavy Metal",
           "Moveset": "- Heavy Slam\n- Solar Beam\n- Weather Ball\n- Sunny Day",
-          "Notes": ""
+          "Notes": "**You can fly there directly after the first time you get there**"
         }
       },
       {
@@ -3816,7 +3802,7 @@
           "Gender": "50/50",
           "Ability": "Moxie",
           "Moveset": "- Night Slash\n- Heat Weave\n- Superpower ⚠\n- Mud-Slap",
-          "Notes": ""
+          "Notes": "**You can fly there directly after the first time you get there**"
         }
       }
     ],
@@ -3856,7 +3842,7 @@
         "data": {
           "Name": "Alpha Cloyster",
           "Full Location": "Unova\nChallenger's Cave (Opelucid)",
-          "Map Link": "",
+          "Map Link": "https://i.imgur.com/nCRuaek.png",
           "HMs": "Flash/Surf",
           "Egg Group": "Water C",
           "Gender": "50/50",
@@ -4028,7 +4014,7 @@
           "Gender": "50/50",
           "Ability": "Pickpocket",
           "Moveset": "- Ice Punch\n- Night Slash\n- Psycho Cut\n- Swords Dance",
-          "Notes": ""
+          "Notes": "**Enter the cave, go all the way to the left and up**"
         }
       }
     ],
@@ -4037,9 +4023,9 @@
         "name": "LUCARIO",
         "data": {
           "Name": "Alpha Lucario",
-          "Full Location": "Unova\nGuidance Chamber\nFlash/Rock Smash/Strength",
-          "Map Link": "",
-          "HMs": "",
+          "Full Location": "Unova\nGuidance Chamber",
+          "Map Link": "https://i.imgur.com/dr5PeG2.png",
+          "HMs": "Flash/Rock Smash/Strength",
           "Egg Group": "Field/Humanoid",
           "Gender": "87.5% Male",
           "Ability": "Justified",
@@ -4115,9 +4101,9 @@
         "name": "COTTONEE",
         "data": {
           "Name": "Alpha Cottone",
-          "Full Location": "Unova\nPinwheel Forest\nNo HMs/Surf",
-          "Map Link": "",
-          "HMs": "",
+          "Full Location": "Unova\nPinwheel Forest",
+          "Map Link": "https://i.imgur.com/aDMaWWY.png",
+          "HMs": "No HMs/Surf",
           "Egg Group": "Fairy/Plant",
           "Gender": "50/50",
           "Ability": "Chlorophyll",
@@ -4193,7 +4179,7 @@
         "name": "KROKOROK",
         "data": {
           "Name": "Alpha Krokorok",
-          "Full Location": "Unova\nVictory Road (Slide left)",
+          "Full Location": "Unova\nVictory Road (Slide left from the top)",
           "Map Link": "",
           "HMs": "No HMs",
           "Egg Group": "Field",
