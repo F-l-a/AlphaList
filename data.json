@@ -2328,7 +2328,7 @@
       {
         "name": "LINOONE",
         "data": {
-          "Name": "Alpha Linnone",
+          "Name": "Alpha Linoone",
           "Full Location": "Hoenn\nRoute 104",
           "Map Link": "",
           "HMs": "No HMs",
@@ -3392,9 +3392,9 @@
     ],
     "Route 212": [
       {
-        "name": "LICKYLICKY",
+        "name": "LICKILICKY",
         "data": {
-          "Name": "Alpha Lickylicky",
+          "Name": "Alpha Lickilicky",
           "Full Location": "Sinnoh\nRoute 212 - Hearthome",
           "Map Link": "",
           "HMs": "No HMs",
@@ -4238,7 +4238,7 @@
       {
         "name": "MUSHARNA",
         "data": {
-          "Name": "Alpha Murshana",
+          "Name": "Alpha Musharna",
           "Full Location": "Unova\nVillage Bridge",
           "Map Link": "",
           "HMs": "No HMs",
