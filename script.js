@@ -166,13 +166,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return nameMatch && regionMatch && locationMatch;
         });
 
-        // Sort the filtered Pokemons for consistent display
-        filteredPokemons.sort((a, b) => {
-            if (a.region !== b.region) return a.region.localeCompare(b.region);
-            if (a.location !== b.location) return a.location.localeCompare(b.location);
-            return a.data.Name.localeCompare(b.data.Name);
-        });
-
         contentDiv.innerHTML = '';
 
         if (filteredPokemons.length === 0) {
@@ -198,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 acc[key].push(p);
                 return acc;
             }, {});
-            Object.keys(groupedByLocation).sort().forEach(location => {
+            Object.keys(groupedByLocation).forEach(location => {
                 const group = groupedByLocation[location];
                 const card = createGroupCard(location, group);
                 contentDiv.appendChild(card);
