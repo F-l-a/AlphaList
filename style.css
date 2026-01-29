@@ -59,6 +59,11 @@ body {
     outline-offset: 2px;
     border-radius: 2px;
 }
+
+.copy-pokemon-btn {
+    min-width: 10ch;
+}
+
 .pokemon-detail .card-title {
     font-size: 1.1em;
     margin-bottom: 0.5rem;

@@ -207,9 +207,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const safeTitle = title.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
         const uniqueId = `collapse-${safeTitle}-${uid}`;
 
-        let pokemonsHtml = '';
-        pokemons.forEach(p => {
-            pokemonsHtml += createPokemonDetail(p, groupingSwitch.checked);
+        let column1Html = '';
+        let column2Html = '';
+        pokemons.forEach((p, index) => {
+            if (index % 2 === 0) {
+                column1Html += createPokemonDetail(p, groupingSwitch.checked);
+            } else {
+                column2Html += createPokemonDetail(p, groupingSwitch.checked);
+            }
         });
 
         accordionItem.innerHTML = `
@@ -220,8 +225,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </h2>
             <div id="${uniqueId}" class="accordion-collapse collapse"><!-- data-bs-parent="#content"  per chiudere gli accordion precedenti all'apertura di quello nuovo-->
                 <div class="accordion-body">
-                    <div class="row g-3">
-                        ${pokemonsHtml}
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            ${column1Html}
+                        </div>
+                        <div class="col-md-6">
+                            ${column2Html}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createPokemonDetail(pokemon, isGroupedByName) {
+        const uid = ++uniqueIdCounter; // Generate unique ID for each pokemon detail card
         const { data, location, region } = pokemon;
         const displayTitle = isGroupedByName ? `${region} - ${location}` : data.Name;
         
@@ -262,34 +273,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const notesForDisplay = data.Notes ? `<p class="card-text notes">${data.Notes}</p>` : '';
 
         return `
-            <div class="col-md-6">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">${displayTitle}
-                            <button class="btn btn-sm btn-outline-secondary float-end copy-pokemon-btn" 
-                                data-pokemon-name="${data.Name}" 
-                                data-full-location="${data["Full Location"]}" 
-                                data-map-link="${data["Map Link"] || ''}"
-                                data-hms="${data.HMs}" 
-                                data-egg-group="${data["Egg Group"]}" 
-                                data-gender="${data.Gender}" 
-                                data-ability="${data.Ability}" 
-                                data-moveset="${data.Moveset}" 
-                                data-notes="${data.Notes || ''}">
-                                Copy
-                            </button>
-                        </h5>
-                        <p class="card-text"><strong>Name:</strong> ${data.Name}</p>
-                        ${fullLocationHtml}
-                        <p class="card-text"><strong>HMs:</strong> ${data.HMs}</p>
-                        <p class="card-text"><strong>Egg Group:</strong> <code>${data["Egg Group"]}</code></p>
-                        <p class="card-text"><strong>Gender:</strong> <code>${data.Gender}</code></p>
-                        <p class="card-text"><strong>Ability:</strong> <code>${data.Ability}</code></p>
-                        <p class="card-text"><strong>Moves:</strong></p>
-                        <ul>
-                            ${movesetForDisplay}
-                        </ul>
-                        ${notesForDisplay}
+            <div class="mb-2">
+                <div class="card">
+                    <div class="accordion accordion-flush" id="pokemonAccordion-${uid}">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header d-flex justify-content-between align-items-center bg-body-secondary" id="pokemonHeader-${uid}">
+                                <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#pokemonCollapse-${uid}" aria-expanded="false" aria-controls="pokemonCollapse-${uid}">
+                                    <span class="card-title m-1">${displayTitle}</span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary copy-pokemon-btn mx-2" 
+                                    data-pokemon-name="${data.Name}" 
+                                    data-full-location="${data["Full Location"]}" 
+                                    data-map-link="${data["Map Link"] || ''}"
+                                    data-hms="${data.HMs}" 
+                                    data-egg-group="${data["Egg Group"]}" 
+                                    data-gender="${data.Gender}" 
+                                    data-ability="${data.Ability}" 
+                                    data-moveset="${data.Moveset}" 
+                                    data-notes="${data.Notes || ''}">
+                                    Copy
+                                </button>
+                            </h2>
+                            <div id="pokemonCollapse-${uid}" class="accordion-collapse collapse" aria-labelledby="pokemonHeader-${uid}" data-bs-parent="#pokemonAccordion-${uid}">
+                                <div class="accordion-body">
+                                    <p class="card-text"><strong>Name:</strong> ${data.Name}</p>
+                                    ${fullLocationHtml}
+                                    <p class="card-text"><strong>HMs:</strong> ${data.HMs}</p>
+                                    <p class="card-text"><strong>Egg Group:</strong> <code>${data["Egg Group"]}</code></p>
+                                    <p class="card-text"><strong>Gender:</strong> <code>${data.Gender}</code></p>
+                                    <p class="card-text"><strong>Ability:</strong> <code>${data.Ability}</code></p>
+                                    <p class="card-text"><strong>Moves:</strong></p>
+                                    <ul>
+                                        ${movesetForDisplay}
+                                    </ul>
+                                    ${notesForDisplay}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
