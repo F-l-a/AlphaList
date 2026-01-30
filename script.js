@@ -237,16 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Add event listener for when the accordion body is shown
-        const accordionBody = accordionItem.querySelector(`#${uniqueId}`);
-        accordionBody.addEventListener('shown.bs.collapse', () => {
-            // Scroll to the header of the opened accordion item (smooth)
-            const headerEl = document.getElementById(`header-${uniqueId}`);
-            if (headerEl) {
-                headerEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        });
-
         return accordionItem;
     }
 
