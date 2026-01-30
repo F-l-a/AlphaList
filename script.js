@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const despawnMs = nowMs + (75 * 60 * 1000); // 75 minutes
                 const despawnUnix = Math.floor(despawnMs / 1000);
                 // Localized relative time for the parenthetical will be handled elsewhere if needed
-                markdown += `\n# -= Despawns approximately <t:${despawnUnix}:R> =- #`;
+                markdown += `\n## -= Despawns approximately <t:${despawnUnix}:R> =-`;
             } catch (e) {
                 console.error('Timestamp generation error:', e);
             }
