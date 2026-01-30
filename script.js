@@ -226,10 +226,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <div id="${uniqueId}" class="accordion-collapse collapse"><!-- data-bs-parent="#content"  per chiudere gli accordion precedenti all'apertura di quello nuovo-->
                 <div class="accordion-body">
                     <div class="row g-2">
-                        <div class="col-md-6">
+                        <div class="col-md-6 m-0">
                             ${column1Html}
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6 m-0">
                             ${column2Html}
                         </div>
                     </div>
