@@ -1340,6 +1340,20 @@
     ],
     "Whirl Islands": [
       {
+        "name": "DEWGONG",
+        "data": {
+          "Name": "Alpha Dewgong",
+          "Full Location": "Johto\nWhirl Islands - Cianwood",
+          "Map Link": "",
+          "HMs": "Flash/Surf/Whirlpool",
+          "Egg Group": "Field/Water A",
+          "Gender": "50/50",
+          "Ability": "Ice Body",
+          "Moveset": "- Blizzard\n- Acqua Jet\n- Megahorn\n- Snowscape",
+          "Notes": "**⚠ ADS HAVE RECOIL ⚠**"
+        }
+      },
+      {
         "name": "KINGDRA",
         "data": {
           "Name": "Alpha Kingdra",
