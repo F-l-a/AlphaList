@@ -15,6 +15,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
   "Unova": {
     "Route 18": [
       {
+        "name": "TROPIUS",
         "data": {
           "Name": "Alpha Tropius",
           "Full Location": "Unova\nRoute 18",
