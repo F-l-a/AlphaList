@@ -2810,20 +2810,6 @@
           "Moveset": "- Surf\n- Sludge Wave\n- Toxic\n- Safeguard",
           "Notes": ""
         }
-      },
-      {
-        "name": "TENTACRUEL",
-        "data": {
-          "Name": "",
-          "Full Location": "",
-          "Map Link": "",
-          "HMs": "",
-          "Egg Group": "",
-          "Gender": "",
-          "Ability": "",
-          "Moveset": "",
-          "Notes": ""
-        }
       }
     ],
     "Route 129": [
@@ -2841,7 +2827,23 @@
           "Notes": ""
         }
       }
-    ]
+    ],
+    "Route 133": [
+      {
+        "name": "GOLDUCK",
+        "data": {
+          "Name": "Alpha Golduck",
+          "Full Location": "Hoenn\nRoute 133",
+          "Map Link": "https://imgur.com/lwX86zV",
+          "HMs": "Surf",
+          "Egg Group": "Water A/Field",
+          "Gender": "50/50",
+          "Ability": "Swift Swim",
+          "Moveset": "- Scald\n- Ice Beam\n- Power Gem\n- Nasty Plot",
+          "Notes": ""
+        }
+      }
+    ],
   },
   "Sinnoh": {
     "Acuity Lakefront": [
