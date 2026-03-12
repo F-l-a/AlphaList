@@ -60,18 +60,18 @@
     <body class="theme-loading">
     <header class="bg-dark text-white p-2 mb-1">
         <div class="container">
-            <h1 class="h3">[PokéMMO] Pokémon Alpha List</h1>
+            <h1 class="h3" data-i18n="[PokéMMO] Pokémon Alpha List">[PokéMMO] Pokémon Alpha List</h1>
             <div class="row g-3 align-items-center">
                 <div class="col-md-4">
-                    <input type="text" id="search-pokemon" class="form-control" placeholder="Search Pokémon...">
+                    <input type="text" id="search-pokemon" class="form-control" placeholder="Search Pokémon..." data-i18n-placeholder="Search Pokémon...">
                 </div>
                 <div class="col-sm-6 col-md-3">
                     <select id="region-select" class="form-select">
-                        <option value="all">All Regions</option>
+                        <option value="all" data-i18n="All Regions">All Regions</option>
                     </select>
                 </div>
                 <div class="col-sm-6 col-md-3">
-                    <input class="form-control" list="location-datalist-options" id="location-select" placeholder="All Locations">
+                    <input class="form-control" list="location-datalist-options" id="location-select" placeholder="All Locations" data-i18n-placeholder="All Locations">
                     <datalist id="location-datalist-options">
 
                     </datalist>
@@ -79,7 +79,7 @@
                 <div class="col-md-2">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" role="switch" id="grouping-switch">
-                        <label class="form-check-label" for="grouping-switch">Group by Poke</label>
+                        <label class="form-check-label" for="grouping-switch" data-i18n="Group by Poke">Group by Poke</label>
                     </div>
                 </div>
             </div>
@@ -94,7 +94,7 @@
 
     <footer class="footer mt-auto py-2 bg-dark text-white-50">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <small class="mb-2 mb-md-0 flex-grow-1 text-md-start">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50">Original data</a> by ZzPSYCHOzZ | Updated 01/2026 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50">Contribute</a></small>
+            <small class="mb-2 mb-md-0 flex-grow-1 text-md-start">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data">Original data</a> by ZzPSYCHOzZ | Updated 01/2026 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute">Contribute</a></small>
             <div class="d-flex flex-row gap-1 align-items-center">
                 <select id="lang-select" class="form-select form-select-sm w-auto py-0 lang-select" aria-label="Select language">
                     <option value="en" selected>🇬🇧 EN</option>
@@ -115,19 +115,19 @@
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Map Preview</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" data-i18n="Map Preview">Map Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" data-i18n-aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <div id="mapModalPlaceholder" class="d-flex justify-content-center align-items-center my-3">
                         <div id="mapModalSpinner" class="spinner-border" role="status" aria-hidden="true">
-                            <span class="visually-hidden">Loading...</span>
+                            <span class="visually-hidden" data-i18n="Loading...">Loading...</span>
                         </div>
                     </div>
-                    <img id="mapModalImg" src="" alt="Map preview" class="img-fluid d-none" />
+                    <img id="mapModalImg" src="" alt="Map preview" class="img-fluid d-none" data-i18n-alt="Map preview" />
                 </div>
                 <div class="modal-footer">
-                    <a id="mapModalOpenBtn" class="btn btn-primary d-none" target="_blank" rel="noopener">Open image in new tab</a>
+                    <a id="mapModalOpenBtn" class="btn btn-primary d-none" target="_blank" rel="noopener" data-i18n="Open image in new tab">Open image in new tab</a>
                 </div>
             </div>
         </div>
