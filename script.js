@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-pokemon');
     const groupingSwitch = document.getElementById('grouping-switch');
     const contentDiv = document.getElementById('content');
+    const langSelect = document.getElementById('lang-select');
     let uniqueIdCounter = 0;
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
@@ -53,6 +54,42 @@ document.addEventListener('DOMContentLoaded', () => {
             const current = document.documentElement.getAttribute('data-bs-theme') || getSystemTheme();
             const next = current === 'dark' ? 'light' : 'dark';
             applyTheme(next, true);
+        });
+    }
+
+    function getStoredLanguage() {
+        try {
+            return localStorage.getItem('language');
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function applyLanguage(lang, save = false) {
+        if (!langSelect) return;
+        const isAvailable = Array.from(langSelect.options).some(option => option.value === lang);
+        if (!isAvailable) return;
+
+        langSelect.value = lang;
+        document.documentElement.lang = lang;
+
+        if (save) {
+            try {
+                localStorage.setItem('language', lang);
+            } catch (e) {}
+        }
+    }
+
+    const storedLanguage = getStoredLanguage();
+    if (storedLanguage) {
+        applyLanguage(storedLanguage, false);
+    } else if (langSelect) {
+        document.documentElement.lang = langSelect.value;
+    }
+
+    if (langSelect) {
+        langSelect.addEventListener('change', () => {
+            applyLanguage(langSelect.value, true);
         });
     }
 

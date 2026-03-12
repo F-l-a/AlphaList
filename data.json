@@ -1625,8 +1625,8 @@
         "name": "DITTO", 
         "data": {
           "Region": "Johto", 
-          "Specific Location": "Route 34 Goldenrod", 
-          "Location Notes": "", 
+          "Specific Location": "Route 34", 
+          "Location Notes": "From Goldenrod", 
           "Map Link": "", 
           "HMs": [], 
           "Egg Group": ["Ditto"], 
@@ -1637,11 +1637,11 @@
         }
       }, 
       {
-        "name": "-GRANBULL-", 
+        "name": "GRANBULL", 
         "data": {
           "Region": "Johto", 
-          "Specific Location": "Route 34 Goldenrod", 
-          "Location Notes": "", 
+          "Specific Location": "Route 34", 
+          "Location Notes": "From Goldenrod", 
           "Map Link": "", 
           "HMs": [], 
           "Egg Group": ["Fairy", "Field"], 

@@ -1,0 +1,33 @@
+{
+  "add_translation": {
+    "translations": {
+      "[PokéMMO] Pokémon Alpha List": "[PokéMMO] Lista Pokémon Alfa",
+      "Search Pokémon...": "Cerca Pokémon...",
+      "All Regions": "Tutte le Regioni",
+      "All Locations": "Tutte le Posizioni",
+      "Group by Poke": "Raggruppa per Poke",
+      "Alpha": "Alfa",
+      "Copy": "Copia",
+      "Copied!": "Copiato!",
+      "Name": "Nome",
+      "Location": "Posizione",
+      "HMs": "MN",
+      "Male Ratio": "Percentuale Maschio",
+      "Ability": "Abilità",
+      "Moves": "Mosse",
+      "**\u26a0 ADS HAVE RECOIL \u26a0**": "**\u26a0 ADS HANNO CONTRACCOLPO \u26a0**"
+    },
+    "reason": "Traduzioni globali aggiuntive per termini non presenti nei dizionari standard - pensata per tradurre UI"
+  },
+  "override_translation": {
+    "translations": [
+      {
+        "name": "ARCANINE",
+        "location": "One Island",
+        "field": "Notes",
+        "value": "Questa è una nota speciale per Arcanine a One Island."
+      }
+    ],
+    "reason": "Sostituzione di campi specifici saltando la logica di traduzione standard per un caso particolare - pensata per tradurre frasi"
+  }
+}

@@ -45,6 +45,15 @@
                 var theme = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
                 document.documentElement.setAttribute('data-bs-theme', theme);
             } catch (e) {}
+
+            // Apply stored language immediately
+            try {
+                var storedLang = null;
+                try { storedLang = localStorage.getItem('language'); } catch (e) { storedLang = null; }
+                if (storedLang) {
+                    document.documentElement.setAttribute('lang', storedLang);
+                }
+            } catch (e) {}
         })();
     </script>
 </head>
@@ -86,9 +95,17 @@
     <footer class="footer mt-auto py-2 bg-dark text-white-50">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
             <small class="mb-2 mb-md-0 flex-grow-1 text-md-start">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50">Original data</a> by ZzPSYCHOzZ | Updated 01/2026 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50">Contribute</a></small>
-            <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
-                <i class="bi bi-sun fs-5"></i>
-            </button>
+            <div class="d-flex flex-row gap-1 align-items-center">
+                <select id="lang-select" class="form-select form-select-sm w-auto py-0 lang-select" aria-label="Select language">
+                    <option value="en" selected>🇬🇧 EN</option>
+                    <option value="it">🇮🇹 IT</option>
+                    <option value="es">🇪🇸 ES</option>
+                    <option value="fr">🇫🇷 FR</option>
+                </select>
+                <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
+                    <i class="bi bi-sun fs-5"></i>
+                </button>  
+            </div>
         </div>
     </footer>
 
