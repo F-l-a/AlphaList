@@ -72,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (const region in data) {
             for (const location in data[region]) {
                 data[region][location].forEach(pokemon => {
-                    if (pokemon.data && pokemon.data.Name) {
+                    // The name is now at the top level of the pokemon object
+                    if (pokemon.name && pokemon.data) {
                         flat.push({ ...pokemon, region, location });
                     }
                 });
@@ -156,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const groupByPokemon = groupingSwitch.checked;
 
         let filteredPokemons = allPokemons.filter(p => {
-            const nameMatch = p.data.Name.toLowerCase().includes(searchTerm);
+            const nameMatch = p.name.toLowerCase().includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
             const locationMatch = selectedLocation === '' || 
                 (selectedRegion === 'all' && 
@@ -175,13 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (groupByPokemon) {
             const groupedByName = filteredPokemons.reduce((acc, p) => {
-                if (!acc[p.data.Name]) acc[p.data.Name] = [];
-                acc[p.data.Name].push(p);
+                if (!acc[p.name]) acc[p.name] = [];
+                acc[p.name].push(p);
                 return acc;
             }, {});
             Object.keys(groupedByName).sort().forEach(name => {
                 const group = groupedByName[name];
-                const card = createGroupCard(name, group);
+                const formattedName = `Alpha ${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}`;
+                const card = createGroupCard(formattedName, group);
                 contentDiv.appendChild(card);
             });
         } else {
@@ -242,25 +244,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function createPokemonDetail(pokemon, isGroupedByName) {
         const uid = ++uniqueIdCounter; // Generate unique ID for each pokemon detail card
-        const { data, location, region } = pokemon;
-        const displayTitle = isGroupedByName ? `${region} - ${location}` : data.Name;
+        const { data, location, region, name } = pokemon;
         
-        // Build Full Location display. If a Map Link exists and Full Location has at least two lines,
-        // show the second line as a clickable button that opens the modal (do not display the raw URL).
-        const fullLocationLines = data["Full Location"] ? data["Full Location"].split('\n') : [];
-        let fullLocationHtml = '';
-        if (data["Map Link"] && fullLocationLines.length >= 2) {
-            // first line plain, second line is a button that triggers the modal preview
-            // Render inline (no <br>) - use separator for subsequent parts
-            const rest = fullLocationLines.slice(2).filter(l => l.trim() !== '').map(l => ` - ${l}`).join('');
-            // Use a span with role=button and tabindex for accessibility to avoid button styling
-            fullLocationHtml = `<p class="card-text"><strong>Location:</strong> ${fullLocationLines[0]} - <span class="map-preview-link" role="button" tabindex="0" data-map-link="${data["Map Link"]}">${fullLocationLines[1]}</span>${rest}</p>`;
-        } else {
-            fullLocationHtml = `<p class="card-text"><strong>Location:</strong> ${data["Full Location"] ? data["Full Location"].replace(/\n/g, ' - ') : ''}</p>`;
-        }
+        // Format the Pokémon name
+        const formattedName = `Alpha ${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}`;
 
-        const movesetForDisplay = data.Moveset.split('\n').filter(line => line.trim() !== '').map(m => `<li>${m.replace(/^-/, '').trim()}</li>`).join('');
+        const displayTitle = isGroupedByName ? `${region} - ${location}` : formattedName;
+        
+        // Build Location display string
+        let locationParts = [data["Region"]];
+        let specificLocationHtml = data["Specific Location"];
+        if (data["Map Link"]) {
+            specificLocationHtml = `<span class="map-preview-link" role="button" tabindex="0" data-map-link="${data["Map Link"]}">${data["Specific Location"]}</span>`;
+        }
+        locationParts.push(specificLocationHtml);
+        if (data["Location Notes"]) {
+            locationParts.push(data["Location Notes"]);
+        }
+        const locationHtml = `<p class="card-text"><strong>Location:</strong> ${locationParts.join(' - ')}</p>`;
+
+        const movesetForDisplay = Array.isArray(data.Moveset) 
+            ? data.Moveset.map(m => `<li>${m}</li>`).join('')
+            : `<li>${data.Moveset}</li>`;
         const notesForDisplay = data.Notes ? `<p class="card-text notes">${data.Notes}</p>` : '';
+        const hmsForDisplay = Array.isArray(data.HMs) ? data.HMs.join(', ') : data.HMs;
+        const eggGroupForDisplay = Array.isArray(data["Egg Group"]) ? data["Egg Group"].join(', ') : data["Egg Group"]; 
 
         return `
             <div class="mb-2">
@@ -272,25 +280,27 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <span class="card-title m-1">${displayTitle}</span>
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary copy-pokemon-btn mx-2" 
-                                    data-pokemon-name="${data.Name}" 
-                                    data-full-location="${data["Full Location"]}" 
+                                    data-pokemon-name="${formattedName}" 
+                                    data-region="${data.Region || ''}"
+                                    data-specific-location="${data["Specific Location"] || ''}"
+                                    data-location-notes="${data["Location Notes"] || ''}"
                                     data-map-link="${data["Map Link"] || ''}"
-                                    data-hms="${data.HMs}" 
-                                    data-egg-group="${data["Egg Group"]}" 
-                                    data-gender="${data.Gender}" 
+                                    data-hms="${hmsForDisplay}" 
+                                    data-egg-group="${eggGroupForDisplay}" 
+                                    data-male-ratio="${data["Male Ratio"]}" 
                                     data-ability="${data.Ability}" 
-                                    data-moveset="${data.Moveset}" 
+                                    data-moveset="${data.Moveset.join('\n')}" 
                                     data-notes="${data.Notes || ''}">
                                     Copy
                                 </button>
                             </h2>
                             <div id="pokemonCollapse-${uid}" class="accordion-collapse collapse" aria-labelledby="pokemonHeader-${uid}" data-bs-parent="#pokemonAccordion-${uid}">
                                 <div class="accordion-body">
-                                    <p class="card-text"><strong>Name:</strong> ${data.Name}</p>
-                                    ${fullLocationHtml}
-                                    <p class="card-text"><strong>HMs:</strong> ${data.HMs}</p>
-                                    <p class="card-text"><strong>Egg Group:</strong> <code>${data["Egg Group"]}</code></p>
-                                    <p class="card-text"><strong>Gender:</strong> <code>${data.Gender}</code></p>
+                                    <p class="card-text"><strong>Name:</strong> ${formattedName}</p>
+                                    ${locationHtml}
+                                    <p class="card-text"><strong>HMs:</strong> ${hmsForDisplay}</p>
+                                    <p class="card-text"><strong>Egg Group:</strong> <code>${eggGroupForDisplay}</code></p>
+                                    <p class="card-text"><strong>Male Ratio:</strong> <code>${data["Male Ratio"]}%</code></p>
                                     <p class="card-text"><strong>Ability:</strong> <code>${data.Ability}</code></p>
                                     <p class="card-text"><strong>Moves:</strong></p>
                                     <ul>
@@ -355,24 +365,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const copyBtnEl = e.target.closest && e.target.closest('.copy-pokemon-btn');
         if (copyBtnEl) {
             const btn = copyBtnEl;
-            const { pokemonName, fullLocation, hms, eggGroup, gender, ability, moveset, notes } = btn.dataset;
+            const { 
+                pokemonName, region, specificLocation, locationNotes, mapLink, 
+                hms, eggGroup, maleRatio, ability, moveset, notes 
+            } = btn.dataset;
 
             let markdown = `**${pokemonName}**\n`;
-            const fullLocLines = fullLocation ? fullLocation.split('\n') : [];
-            const mapLink = btn.dataset.mapLink || '';
-            if (mapLink && fullLocLines.length >= 2) {
-                markdown += `_${fullLocLines[0]}_\n`;
-                markdown += `_[${fullLocLines[1]}](${mapLink}) _\n`;
-                for (let i = 2; i < fullLocLines.length; i++) {
-                    if (fullLocLines[i].trim() !== '') markdown += `_${fullLocLines[i]}_\n`;
-                }
+            
+            // Build location string for markdown
+            let locationString = `_${region}_`;
+            if (mapLink) {
+                locationString += `\n_[${specificLocation}](${mapLink})_`;
             } else {
-                markdown += `_${fullLocation.split('\n').join('_\n_')}_\n`;
+                locationString += ` - _${specificLocation}_`;
             }
+            if (locationNotes) {
+                locationString += ` - _${locationNotes}_`;
+            }
+            markdown += `${locationString}\n`;
+
             if (hms) markdown += `_${hms}_\n`;
             
             markdown += `\n\`Egg group: ${eggGroup}\`\n`;
-            markdown += `\`Gender: ${gender}\`\n`;
+            markdown += `\`Male Ratio: ${maleRatio}%\`\n`;
             markdown += `\`Ability: ${ability}\`\n\n`;
             
             markdown += `**MOVESET**\n`;

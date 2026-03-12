@@ -12,19 +12,20 @@ Example minimal structure - see [data.json](data.json) itself for other examples
 
 ```json
 {
-  "Unova": {
-    "Route 18": [
+  "Kanto": {
+    "One Island": [
       {
-        "name": "TROPIUS",
+        "name": "ARCANINE",
         "data": {
-          "Name": "Alpha Tropius",
-          "Full Location": "Unova\nRoute 18",
-          "Map Link": "https://i.imgur.com/tlRBjy6.png",
-          "HMs": "Strength/Surf",
-          "Egg Group": "Monster/Plant",
-          "Gender": "50/50",
-          "Ability": "Harvest - Has Sitrus Berry",
-          "Moveset": "- Leaf Blade\n- Body Slam\n- Earthquake\n- Swords Dance",
+          "Region": "Kanto",
+          "Specific Location": "Mt. Ember",
+          "Location Notes": "Optional notes about the location",
+          "Map Link": "https://i.imgur.com/....png",
+          "HMs": ["Strength", "Surf"],
+          "Egg Group": ["Field"],
+          "Male Ratio": "75",
+          "Ability": "Justified",
+          "Moveset": ["Fire Blast", "Bulldoze", "Dragon Pulse", "Safeguard"],
           "Notes": "Some notes about this spawn."
         }
       }
@@ -34,17 +35,20 @@ Example minimal structure - see [data.json](data.json) itself for other examples
 ```
 
 ## Field guide
-- `Name` (string) — canonical display name.
-- `Full Location` (string) — multi-line string where lines are separated by `\n`. First line is general area, second line can be a sub-area label. Examples: `"Unova\nP2 Lab"`.
-- `Map Link` (string, optional) — direct image URL (e.g. `https://i.imgur.com/abcd.png`). If present, the UI uses it to preview the map. Needs to use the `i.imgur.com` domain.
-- `Moveset` (string) — lines separated by `\n`; each move start with `- ` (with a space after the dash); the app will render as a bulleted list and copy them to Markdown for discord.
-- `Notes` (string, optional) — free text, may contain Markdown.
-- `HMs` (string, optional) — textual list slash(`/`)-separated.
-- `Egg Group` (string, optional) — textual list slash(`/`)-separated.
-- `Gender` (string) — Eg: `"50/50"` or `"75% Male"`.
-- `Ability` (string)
+- `name` (string) — The Pokémon's name, in uppercase (e.g., "ARCANINE").
+- `data` (object) — Contains all the detailed information about the spawn.
+  - `Region` (string) — The main region (e.g., "Kanto", "Johto").
+  - `Specific Location` (string) — The specific map or area (e.g., "Mt. Ember", "Route 18").
+  - `Location Notes` (string, optional) — Any additional details about finding the location.
+  - `Map Link` (string, optional) — Direct image URL (e.g. `https://i.imgur.com/....png`). If present, the UI uses it to preview the map. Needs to use the `i.imgur.com` domain. (note the `i.` and the file expension: they are required)
+  - `HMs` (array of strings, optional) — A list of HMs required (e.g., `["Surf", "Strength"]`).
+  - `Egg Group` (array of strings, optional) — A list of egg groups (e.g., `["Field"]`).
+  - `Male Ratio` (string) — A number representing the percentage of males (e.g., `"75"`, `"50"`, `"0"`, `"N/A"`).
+  - `Ability` (string) — The Pokémon's ability.
+  - `Moveset` (array of strings) — A list of moves for the Pokémon.
+  - `Notes` (string, optional) — Free text, may contain Markdown for special formatting.
 
-Keep types consistent: strings for textual fields; use `\n` to separate logical lines inside a field, do not insert literal line breaks directly into the JSON editor, which can break JSON parsing.
+Keep types consistent. Use arrays of strings for lists like `HMs`, `Egg Group`, and `Moveset`.
 
 ## How To Contribute
 See [CONTRIBUTING.md](CONTRIBUTING.md)
