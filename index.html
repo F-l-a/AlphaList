@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" translate="no" class="notranslate">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+    <meta name="google" content="notranslate">
     <title>AlphaList</title>
     <link rel="manifest" id="manifest-link" href="assets/site.webmanifest">
     <meta name="theme-color" content="#212529">
@@ -26,14 +28,52 @@
             }
 
             window.BASE_URL = getBaseUrl(); // Make BASE_URL global
+            window.preloadedUiTranslations = null;
+            window.preloadedLanguage = '';
 
-            window.addEventListener('DOMContentLoaded', function(){
+            function applyPreloadedUiTranslations(translations) {
+                if (!translations) return;
+
+                document.querySelectorAll('[data-i18n]').forEach(function(el) {
+                    var key = el.dataset.i18n;
+                    el.textContent = translations[key] || key;
+                });
+
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+                    var key = el.dataset.i18nPlaceholder;
+                    el.placeholder = translations[key] || key;
+                });
+
+                document.querySelectorAll('[data-i18n-aria-label]').forEach(function(el) {
+                    var key = el.dataset.i18nAriaLabel;
+                    el.setAttribute('aria-label', translations[key] || key);
+                });
+
+                document.querySelectorAll('[data-i18n-alt]').forEach(function(el) {
+                    var key = el.dataset.i18nAlt;
+                    el.setAttribute('alt', translations[key] || key);
+                });
+            }
+
+            window.addEventListener('DOMContentLoaded', async function(){
                 // Update link hrefs with BASE_URL after DOM is ready
                 document.getElementById('manifest-link').href = `${window.BASE_URL}/assets/site.webmanifest`;
                 document.getElementById('favicon-link').href = `${window.BASE_URL}/assets/favicon.ico`;
                 document.getElementById('apple-touch-icon-link').href = `${window.BASE_URL}/assets/apple-touch-icon.png`;
                 document.getElementById('favicon-32x32-link').href = `${window.BASE_URL}/assets/favicon-32x32.png`;
                 document.getElementById('favicon-16x16-link').href = `${window.BASE_URL}/assets/favicon-16x16.png`;
+
+                try {
+                    var select = document.getElementById('lang-select');
+                    if (select && document.documentElement.lang) {
+                        select.value = document.documentElement.lang;
+                    }
+                } catch (e) {}
+
+                try {
+                    var translations = await window.initialUiTranslationsPromise;
+                    applyPreloadedUiTranslations(translations);
+                } catch (e) {}
 
                 try { document.body.classList.remove('theme-loading'); } catch(e) {}
             });
@@ -54,10 +94,40 @@
                     document.documentElement.setAttribute('lang', storedLang);
                 }
             } catch (e) {}
+
+            window.initialUiTranslationsPromise = (async function() {
+                try {
+                    var preloadLang = document.documentElement.lang || 'en';
+                    window.preloadedLanguage = preloadLang;
+
+                    if (!preloadLang || preloadLang === 'en' || preloadLang.indexOf('en-') === 0) {
+                        return null;
+                    }
+
+                    var extraUrl = `${window.BASE_URL}/translations/Extra/extra-${preloadLang.toLowerCase()}.json`;
+                    var response = await fetch(extraUrl);
+                    if (!response.ok) {
+                        return null;
+                    }
+
+                    var extraJson = await response.json();
+                    var uiTranslations = extraJson && extraJson.add_translation && extraJson.add_translation.translations;
+                    if (uiTranslations && typeof uiTranslations === 'object' && !Array.isArray(uiTranslations)) {
+                        window.preloadedUiTranslations = uiTranslations;
+                        return uiTranslations;
+                    }
+                } catch (e) {}
+
+                return null;
+            })();
         })();
     </script>
 </head>
-    <body class="theme-loading">
+    <body class="theme-loading notranslate" translate="no">
+    <div id="initial-loader" class="initial-loader" aria-live="polite" aria-label="Loading">
+        <div class="spinner-border initial-loader-spinner" role="status" aria-hidden="true"></div>
+        <span class="initial-loader-text">Loading</span>
+    </div>
     <header class="bg-dark text-white p-2 mb-1">
         <div class="container">
             <h1 class="h3" data-i18n="[PokéMMO] Pokémon Alpha List">[PokéMMO] Pokémon Alpha List</h1>

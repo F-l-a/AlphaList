@@ -1,8 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
+    function isLocalDevelopmentHost(hostname) {
+        if (!hostname) return false;
+
+        if (['localhost', '127.0.0.1', '[::1]'].includes(hostname)) {
+            return true;
+        }
+
+        // Private IPv4 ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+        const privateIpv4Pattern = /^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/;
+        if (privateIpv4Pattern.test(hostname)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    const isLocalHost = isLocalDevelopmentHost(window.location.hostname);
+
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register(`${window.BASE_URL}/service-worker.js`)
-            .then(reg => console.log('Service Worker Registered', reg))
-            .catch(err => console.error('Service Worker Registration Failed:', err));
+        if (isLocalHost) {
+            navigator.serviceWorker.getRegistrations()
+                .then(registrations => Promise.all(registrations.map(reg => reg.unregister())))
+                .then(() => {
+                    if ('caches' in window) {
+                        return caches.keys().then(cacheNames => Promise.all(cacheNames.map(cacheName => caches.delete(cacheName))));
+                    }
+                })
+                .then(() => console.log('Service Worker disabled and caches cleared for localhost'))
+                .catch(err => console.error('Local Service Worker cleanup failed:', err));
+        } else {
+            navigator.serviceWorker.register(`${window.BASE_URL}/service-worker.js`)
+                .then(reg => console.log('Service Worker Registered', reg))
+                .catch(err => console.error('Service Worker Registration Failed:', err));
+        }
     }
 
     let db = {};
@@ -95,17 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // e lo salva come Map<string, string> per una ricerca O(1) durante il render.
         const extraUrl = `${window.BASE_URL}/translations/Extra/extra-${normalizedLang}.json`;
         let uiTranslationsMap = null;
-        try {
-            const extraResponse = await fetch(extraUrl);
-            if (extraResponse.ok) {
-                const extraJson = await extraResponse.json();
-                const uiDict = extraJson?.add_translation?.translations;
-                if (uiDict && typeof uiDict === 'object' && !Array.isArray(uiDict)) {
-                    uiTranslationsMap = new Map(Object.entries(uiDict));
+        if (window.preloadedUiTranslations && window.preloadedLanguage === normalizedLang) {
+            uiTranslationsMap = new Map(Object.entries(window.preloadedUiTranslations));
+        } else {
+            try {
+                const extraResponse = await fetch(extraUrl);
+                if (extraResponse.ok) {
+                    const extraJson = await extraResponse.json();
+                    const uiDict = extraJson?.add_translation?.translations;
+                    if (uiDict && typeof uiDict === 'object' && !Array.isArray(uiDict)) {
+                        uiTranslationsMap = new Map(Object.entries(uiDict));
+                    }
                 }
+            } catch (e) {
+                // File extra assente o non parsabile: si procede senza traduzioni UI.
             }
-        } catch (e) {
-            // File extra assente o non parsabile: si procede senza traduzioni UI.
         }
 
         // Controlla che questo caricamento sia ancora il più recente:
@@ -136,15 +170,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Traduce una stringa UI cercandola nella Map `translationSets['ui']`.
-     * Se la chiave non è presente (lang inglese o traduzione mancante), restituisce
-     * la stringa originale invariata (fallback inglese automatico).
+     * Traduce una chiave tramite una mappa specifica.
      *
-     * @param {string} key Stringa in inglese da tradurre.
+     * Esempi:
+     * - t('Copy') => usa la mappa UI di default
+     * - t('Bulbasaur', 'pokemon-species') => usa la mappa specie Pokémon
+     *
+     * Se la mappa o la chiave non esistono, ritorna `key` invariata.
+     *
+     * @param {string} key Chiave inglese da tradurre.
+     * @param {string} [mapName='ui'] Nome mappa traduzioni (es. `ui`, `move`, `ability`).
      * @returns {string} Traduzione trovata, oppure `key` se non disponibile.
      */
-    function t(key) {
-        return translationSets['ui']?.get(key) ?? key;
+    function t(key, mapName = 'ui') {
+        if (key === null || key === undefined) return '';
+        const normalizedKey = String(key);
+        return translationSets[mapName]?.get(normalizedKey) ?? normalizedKey;
     }
 
     /**
@@ -292,14 +333,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Carica i Set di traduzioni per la lingua iniziale (stored, o fallback a langSelect.value)
-    // Determina la lingua da usare: prima dalla proprità HTML lang (che è stata impostata da applyLanguage),
-    // altrimenti dall'elemento select langSelect. Se entrambi assenti, stringa vuota (non carica nulla).
-    // Viene eseguito in background; i Set saranno disponibili in window.translationSets una volta pronti.
+    // Lingua iniziale usata al bootstrap dell'app.
     const initialLanguageForTranslations = document.documentElement.lang || fallbackLanguage;
-    loadTranslationSetsForLanguage(initialLanguageForTranslations)
-        .then(() => applyUiTranslations())
-        .catch(err => console.error('Translation sets loading failed:', err));
 
     // Event listener sul cambio lingua: applica la nuova lingua UI e ricarica i Set di traduzioni,
     // poi re-renderizza l'interfaccia con i nuovi filtri/dati eventualmente localizzati.
@@ -309,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await loadTranslationSetsForLanguage(langSelect.value);
                 applyUiTranslations();
+                refreshFilterControls();
                 render();
             } catch (err) {
                 console.error('Translation sets loading failed:', err);
@@ -318,18 +354,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
 
-    // Carico il database da data.json, lo appiattisco in allPokemons, popolo región/location selectors,
-    // e renderizza la lista iniziale filtrata.
-    fetch(`${window.BASE_URL}/data.json`)
-        .then(response => response.json())
-        .then(data => {
+    // Bootstrap iniziale: carica in parallelo traduzioni e dataset, poi renderizza.
+    // In questo modo al refresh l'app parte già nella lingua salvata anche per i dati dinamici.
+    async function initializeApp() {
+        try {
+            const [_, data] = await Promise.all([
+                loadTranslationSetsForLanguage(initialLanguageForTranslations),
+                fetch(`${window.BASE_URL}/data.json`).then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status} while loading data.json`);
+                    }
+                    return response.json();
+                })
+            ]);
+
             db = data;
             allPokemons = flattenData(db);
-            populateRegions();
-            populateLocations('all'); // Populate locations on initial load
+
+            applyUiTranslations();
+            refreshFilterControls();
             render();
-        })
-        .catch(err => console.error("Error loading data.json:", err));
+        } catch (err) {
+            console.error('Initial app loading failed:', err);
+        }
+    }
+
+    initializeApp();
 
     /**
      * Converte la struttura annidata del database (regione -> location -> array)
@@ -357,12 +407,35 @@ document.addEventListener('DOMContentLoaded', () => {
      * Popola il selettore regioni con le chiavi presenti nel DB.
      */
     function populateRegions() {
+        const allOption = regionSelect.querySelector('option[value="all"]');
+        regionSelect.innerHTML = '';
+        if (allOption) {
+            regionSelect.appendChild(allOption);
+        }
+
         Object.keys(db).forEach(region => {
             const option = document.createElement('option');
             option.value = region;
-            option.textContent = region;
+            option.textContent = t(region, 'region');
             regionSelect.appendChild(option);
         });
+    }
+
+    /**
+     * Ricarica i controlli filtro (region/location) mantenendo, quando possibile,
+     * il valore attualmente selezionato/inserito.
+     */
+    function refreshFilterControls() {
+        const previousRegion = regionSelect.value || 'all';
+        const previousLocation = locationSelect.value || '';
+
+        populateRegions();
+
+        const hasPreviousRegion = Array.from(regionSelect.options).some(option => option.value === previousRegion);
+        regionSelect.value = hasPreviousRegion ? previousRegion : 'all';
+
+        populateLocations(regionSelect.value);
+        locationSelect.value = previousLocation;
     }
 
     /**
@@ -381,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const locations = Object.keys(db[region]);
             locations.forEach(loc => {
                 const option = document.createElement('option');
-                option.value = loc;
+                option.value = t(loc, 'location');
                 datalistOptions.appendChild(option);
             });
         } else {
@@ -392,11 +465,13 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const reg in db) {
                 if (db.hasOwnProperty(reg)) {
                     for (const loc of Object.keys(db[reg])) { 
-                        const regionLetter = reg.charAt(0).toUpperCase();
+                        const translatedRegion = t(reg, 'region');
+                        const translatedLocation = t(loc, 'location');
+                        const regionLetter = translatedRegion.charAt(0).toUpperCase();
                         allLocationsWithRegion.push({
                             region: reg,
                             location: loc,
-                            formatted: `[${regionLetter}] ${loc}`
+                            formatted: `[${regionLetter}] ${translatedLocation}`
                         });
                     }
                 }
@@ -443,16 +518,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedRegion = regionSelect.value;
         const selectedLocation = locationSelect.value;
+        const selectedLocationLower = selectedLocation.toLowerCase();
         const groupByPokemon = groupingSwitch.checked;
 
         let filteredPokemons = allPokemons.filter(p => {
-            const nameMatch = p.name.toLowerCase().includes(searchTerm);
+            const translatedName = t(p.name, 'pokemon-species').toLowerCase();
+            const nameMatch = p.name.toLowerCase().includes(searchTerm) || translatedName.includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
+            const translatedLocation = t(p.location, 'location').toLowerCase();
+            const translatedRegion = t(p.region, 'region');
+            const formattedRawLocation = `[${p.region.charAt(0).toUpperCase()}] ${p.location}`.toLowerCase();
+            const formattedTranslatedLocation = `[${translatedRegion.charAt(0).toUpperCase()}] ${translatedLocation}`.toLowerCase();
             const locationMatch = selectedLocation === '' || 
                 (selectedRegion === 'all' && 
-                 `[${p.region.charAt(0).toUpperCase()}] ${p.location}`.toLowerCase().includes(selectedLocation.toLowerCase())) ||
+                 (formattedRawLocation.includes(selectedLocationLower) || formattedTranslatedLocation.includes(selectedLocationLower))) ||
                 (selectedRegion !== 'all' && 
-                 p.location.toLowerCase().includes(selectedLocation.toLowerCase()));
+                 (p.location.toLowerCase().includes(selectedLocationLower) || translatedLocation.includes(selectedLocationLower)));
             return nameMatch && regionMatch && locationMatch;
         });
 
@@ -471,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, {});
             Object.keys(groupedByName).sort().forEach(name => {
                 const group = groupedByName[name];
-                const formattedName = `${t('Alpha')} ${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}`;
+                const formattedName = `${t('Alpha')} ${t(name, 'pokemon-species')}`;
                 const card = createGroupCard(formattedName, group);
                 contentDiv.appendChild(card);
             });
@@ -484,7 +565,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }, {});
             Object.keys(groupedByLocation).forEach(location => {
                 const group = groupedByLocation[location];
-                const card = createGroupCard(location, group);
+                const firstPokemon = group[0];
+                const translatedLocationTitle = `${t(firstPokemon.region, 'region')} - ${t(firstPokemon.location, 'location')}`;
+                const card = createGroupCard(translatedLocationTitle, group);
                 contentDiv.appendChild(card);
             });
         }
@@ -550,16 +633,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const uid = ++uniqueIdCounter; // Generate unique ID for each pokemon detail card
         const { data, location, region, name } = pokemon;
         
-        // Format the Pokémon name
-        const formattedName = `${t('Alpha')} ${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()}`;
+        const translatedSpeciesName = t(name, 'pokemon-species');
+        const translatedRegion = t(region, 'region');
+        const translatedLocation = t(location, 'location');
+        const translatedDataRegion = t(data["Region"], 'region');
+        const translatedSpecificLocation = t(data["Specific Location"], 'location');
+        const translatedAbility = t(data.Ability, 'ability');
+        const translatedMoves = Array.isArray(data.Moveset)
+            ? data.Moveset.map(move => t(move, 'move'))
+            : [t(data.Moveset, 'move')];
+        const translatedHms = Array.isArray(data.HMs)
+            ? data.HMs.map(hm => t(hm, 'move'))
+            : (data.HMs ? [t(data.HMs, 'move')] : []);
+        const translatedEggGroups = Array.isArray(data["Egg Group"])
+            ? data["Egg Group"].map(group => t(group, 'egg-group'))
+            : [t(data["Egg Group"], 'egg-group')];
 
-        const displayTitle = isGroupedByName ? `${region} - ${location}` : formattedName;
+        const formattedName = `${t('Alpha')} ${translatedSpeciesName}`;
+
+        const displayTitle = isGroupedByName ? `${translatedRegion} - ${translatedLocation}` : formattedName;
         
         // Build Location display string
-        let locationParts = [data["Region"]];
-        let specificLocationHtml = data["Specific Location"];
+        let locationParts = [translatedDataRegion];
+        let specificLocationHtml = translatedSpecificLocation;
         if (data["Map Link"]) {
-            specificLocationHtml = `<span class="map-preview-link" role="button" tabindex="0" data-map-link="${data["Map Link"]}">${data["Specific Location"]}</span>`;
+            specificLocationHtml = `<span class="map-preview-link" role="button" tabindex="0" data-map-link="${data["Map Link"]}">${translatedSpecificLocation}</span>`;
         }
         locationParts.push(specificLocationHtml);
         if (data["Location Notes"]) {
@@ -567,12 +665,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const locationHtml = `<p class="card-text"><strong>${t('Location')}:</strong> ${locationParts.join(' - ')}</p>`;
 
-        const movesetForDisplay = Array.isArray(data.Moveset) 
-            ? data.Moveset.map(m => `<li>${m}</li>`).join('')
-            : `<li>${data.Moveset}</li>`;
+        const movesetForDisplay = translatedMoves.map(m => `<li>${m}</li>`).join('');
         const notesForDisplay = data.Notes ? `<p class="card-text notes">${data.Notes}</p>` : '';
-        const hmsForDisplay = Array.isArray(data.HMs) ? data.HMs.join(', ') : data.HMs;
-        const eggGroupForDisplay = Array.isArray(data["Egg Group"]) ? data["Egg Group"].join(', ') : data["Egg Group"]; 
+        const hmsForDisplay = translatedHms.join(', ');
+        const eggGroupForDisplay = translatedEggGroups.join(', ');
+        const translatedMovesetForCopy = translatedMoves.join('\n');
 
         return `
             <div class="mb-2">
@@ -585,15 +682,15 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary copy-pokemon-btn mx-2" 
                                     data-pokemon-name="${formattedName}" 
-                                    data-region="${data.Region || ''}"
-                                    data-specific-location="${data["Specific Location"] || ''}"
+                                    data-region="${translatedDataRegion || ''}"
+                                    data-specific-location="${translatedSpecificLocation || ''}"
                                     data-location-notes="${data["Location Notes"] || ''}"
                                     data-map-link="${data["Map Link"] || ''}"
                                     data-hms="${hmsForDisplay}" 
                                     data-egg-group="${eggGroupForDisplay}" 
                                     data-male-ratio="${data["Male Ratio"]}" 
-                                    data-ability="${data.Ability}" 
-                                    data-moveset="${data.Moveset.join('\n')}" 
+                                    data-ability="${translatedAbility}" 
+                                    data-moveset="${translatedMovesetForCopy}" 
                                     data-notes="${data.Notes || ''}">
                                     ${t('Copy')}
                                 </button>
@@ -605,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <p class="card-text"><strong>${t('HMs')}:</strong> ${hmsForDisplay}</p>
                                     <p class="card-text"><strong>${t('Egg Group')}:</strong> <code>${eggGroupForDisplay}</code></p>
                                     <p class="card-text"><strong>${t('Male Ratio')}:</strong> <code>${data["Male Ratio"]}%</code></p>
-                                    <p class="card-text"><strong>${t('Ability')}:</strong> <code>${data.Ability}</code></p>
+                                    <p class="card-text"><strong>${t('Ability')}:</strong> <code>${translatedAbility}</code></p>
                                     <p class="card-text"><strong>${t('Moveset')}:</strong></p>
                                     <ul>
                                         ${movesetForDisplay}
