@@ -1365,7 +1365,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Append message Footer
-            markdown += `\n-# [Alpha List - copy and send the next one!](https://f-l-a.github.io/AlphaList/)`;
+            markdown += `\n-# [${t('Alpha List by FlaProGmr - copy and send the next one!')}](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
                 showToastAlert();
