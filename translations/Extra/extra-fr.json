@@ -73,7 +73,7 @@
         "(2nd Stair)": "(2ème escalier)",
         "Resort Area": "Aire de Détente",
         "Slide left from the top": "Glissez vers la gauche depuis le haut",
-        "Pass Substitute": "Traverse Clonage"
+        "Pass Substitute": "Ignore Clonage"
       }
     },
     "reason": "Traductions globales supplémentaires divisées par contexte : ui pour l'interface, notes pour les notes Pokémon"

@@ -1180,7 +1180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const uid = ++uniqueIdCounter; // Generate unique ID for each pokemon detail card
         const { data, location, region, name } = pokemon;
         const translatedLocationNotes = data["Location Notes"]
-            ? t(data["Location Notes"])
+              ? t(data["Location Notes"], 'notes')
             : '';
         const baseNotesLines = Array.isArray(data.Notes) ? data.Notes : [];
         const translatedNotesLines = baseNotesLines
@@ -1229,9 +1229,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const notesForDisplay = translatedNotesLines.length > 0
             ? `<p class="card-text notes">${translatedNotesLines.join('<br>')}</p>`
             : '';
-        const hmsForDisplay = translatedHms.join(', ');
+        const hmsForDisplay = translatedHms.length > 0 ? translatedHms.join(', ') : '-';
         const eggGroupForDisplay = translatedEggGroups.join(', ');
         const translatedMovesetForCopy = movesWithProperties.join('\n');
+
+        const maleRatioRaw = data["Male Ratio"];
+        const maleRatioDisplay = (typeof maleRatioRaw === 'string' && maleRatioRaw !== '' && !isNaN(Number(maleRatioRaw)))
+            ? `${maleRatioRaw}%`
+            : maleRatioRaw;
 
         return `
             <div class="mb-2">
@@ -1253,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     data-map-link="${data["Map Link"] || ''}"
                                     data-hms="${hmsForDisplay}" 
                                     data-egg-group="${eggGroupForDisplay}" 
-                                    data-male-ratio="${data["Male Ratio"]}" 
+                                    data-male-ratio="${maleRatioDisplay}"
                                     data-ability="${translatedAbility}" 
                                     data-moveset="${translatedMovesetForCopy}" 
                                     data-notes="${translatedNotes || ''}">
@@ -1266,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     ${locationHtml}
                                     <p class="card-text"><strong>${t('HMs')}:</strong> ${hmsForDisplay}</p>
                                     <p class="card-text"><strong>${t('Egg Group')}:</strong> <code>${eggGroupForDisplay}</code></p>
-                                    <p class="card-text"><strong>${t('Male Ratio')}:</strong> <code>${data["Male Ratio"]}%</code></p>
+                                    <p class="card-text"><strong>${t('Male Ratio')}:</strong> <code>${maleRatioDisplay}</code></p>
                                     <p class="card-text"><strong>${t('Ability')}:</strong> <code>${translatedAbility}</code></p>
                                     <p class="card-text"><strong>${t('Moveset')}:</strong></p>
                                     <ul>
@@ -1356,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Build location string for markdown
             let locationString = `_${region}_`;
             if (mapLink) {
-                locationString += `\n_[${specificLocation}](${mapLink})_`;
+                locationString += ` - _[${specificLocation}](${mapLink})_`;
             } else {
                 locationString += ` - _${specificLocation}_`;
             }
@@ -1365,10 +1370,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             markdown += `${locationString}\n`;
 
-            if (hms) markdown += `_${hms}_\n`;
+            if (hms) markdown += `${t('HMs')}: _${hms}_\n`;
             
             markdown += `\n\`${t('Egg Group')}: ${eggGroup}\`\n`;
-            markdown += `\`${t('Male Ratio')}: ${maleRatio}%\`\n`;
+            markdown += `\`${t('Male Ratio')}: ${maleRatio}\`\n`;
             markdown += `\`${t('Ability')}: ${ability}\`\n\n`;
             
             markdown += `**${t('Moveset')}**\n`;
