@@ -20,7 +20,6 @@
         "Ability": "Faehigkeit",
         "Moveset": "Attackenset",
         "Despawns approximately": "Verschwindet ungefaehr in",
-        "Original data": "Originaldaten",
         "Contribute": "Mitwirken",
         "Map Preview": "Kartenvorschau",
         "Close": "Schliessen",
@@ -29,7 +28,16 @@
         "You can change preferences at the bottom of the page!": "Du kannst die Einstellungen unten auf der Seite aendern!",
         "Save preferences": "Einstellungen speichern",
         "Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!": "Hallo! Bitte erwäge eine kleine Spende, um meine Arbeit zu unterstuetzen. In-Game-Name (IGN): FlaProGmr. Danke!",
-        "Alpha List by FlaProGmr - copy and send the next one!": "Alpha-Liste von FlaProGmr - kopiere und sende die naechste!"
+        "copy and send the next one!": "kopiere und sende die naechste!",
+        "Contributors": "Mitwirkende",
+        "for help with FR translations": "fuer die Hilfe bei FR-Uebersetzungen",
+        "for help with ES translations": "fuer die Hilfe bei ES-Uebersetzungen",
+        "for the original dataset": "fuer das Original-Dataset",
+        "Donations leaderboard": "Spendenrangliste",
+        "no donations yet :(": "noch keine Spenden :(",
+        "Open GitHub": "GitHub oeffnen",
+        "Alpha List by FlaProGmr": "Alpha-Liste von FlaProGmr",
+        "Original data by ZzPSYCHOzZ": "Originaldaten von ZzPSYCHOzZ"
       },
       "notes": {
         "**⚠ ADS HAVE RECOIL ⚠**": "**⚠ ADS HABEN RUECKSTOSS ⚠**",

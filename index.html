@@ -170,6 +170,24 @@
             <button id="firstVisitSaveBtn" type="button" class="btn btn-sm btn-primary first-visit-save-btn">Save preferences</button>
         </div>
     </div>
+    <div id="contributorsToast" class="contributors-toast" role="status" aria-live="polite" aria-label="Contributors list">
+        <div class="contributors-toast-content">
+            <div class="contributors-toast-header">
+                <strong data-i18n="Contributors">Contributors</strong>
+                <button id="contributorsToastCloseBtn" type="button" class="btn-close btn-close-white" aria-label="Close" data-i18n-aria-label="Close"></button>
+            </div>
+            <ul class="contributors-toast-list mb-2">
+                <li><strong>BlueQuilava</strong> - <span data-i18n="for help with ES translations">for help with ES translations</span></li>
+                <li><strong>ShadoWine</strong> - <span data-i18n="for help with FR translations">for help with FR translations</span></li>
+                <li><strong>ZzPSYCHOzZ</strong> - <span data-i18n="for the original dataset">for the original dataset</span></li>
+            </ul>
+            <div class="contributors-toast-donations mb-1">
+                <strong data-i18n="Donations leaderboard">Donations leaderboard</strong>
+                <div data-i18n="no donations yet :(">no donations yet :(</div>
+            </div>
+            <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white contributors-toast-github-link" data-i18n="Open GitHub">Open GitHub</a>
+        </div>
+    </div>
     <header class="bg-dark text-white p-2 mb-1">
         <div class="container">
             <h1 class="h3" data-i18n="[PokéMMO] Pokémon Alpha List">[PokéMMO] Pokémon Alpha List</h1>
@@ -207,7 +225,7 @@
     <footer class="footer mt-auto py-2 bg-dark text-white-50">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div class="d-flex flex-column flex-grow-1 text-md-start">
-                <small class="mb-1">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data">Original data</a> by ZzPSYCHOzZ | v2.0 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute">Contribute</a></small>
+                <small class="mb-1"><span data-i18n="Alpha List by FlaProGmr">Alpha List by FlaProGmr</span> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data by ZzPSYCHOzZ">Original data by ZzPSYCHOzZ</a> | v2.0 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute" data-action="open-contributors-toast">Contribute</a></small>
                 <small class="footer-donation-message donation-message" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
             </div>
             <div class="d-flex flex-row gap-1 align-items-center">

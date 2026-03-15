@@ -20,7 +20,6 @@
         "Ability": "Talent",
         "Moveset": "Moveset",
         "Despawns approximately": "Despawns approximatif",
-        "Original data": "Données d'origine",
         "Contribute": "Contribuer",
         "Map Preview": "Aperçu de la carte",
         "Close": "Fermer",
@@ -29,7 +28,16 @@
         "You can change preferences at the bottom of the page!": "Vous pouvez modifier les préférences en bas de la page !",
         "Save preferences": "Enregistrer les préférences",
         "Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!": "Salut ! Envisagez un petit don pour soutenir mon travail. Nom en jeu (IGN) : FlaProGmr. Merci !",
-        "Alpha List by FlaProGmr - copy and send the next one!": "Liste Alpha par FlaProGmr - copie et envoie le suivant !"
+        "copy and send the next one!": "copie et envoie le suivant !",
+        "Contributors": "Contributeurs",
+        "for help with FR translations": "pour l'aide avec les traductions FR",
+        "for help with ES translations": "pour l'aide avec les traductions ES",
+        "for the original dataset": "pour le dataset original",
+        "Donations leaderboard": "Classement des dons",
+        "no donations yet :(": "pas encore de dons :(",
+        "Open GitHub": "Ouvrir GitHub",
+        "Alpha List by FlaProGmr": "Liste Alpha par FlaProGmr",
+        "Original data by ZzPSYCHOzZ": "Données originales par ZzPSYCHOzZ"
       },
       "notes": {
         "**⚠ ADS HAVE RECOIL ⚠**": "**⚠ LES ADS ONT DU RECUL ⚠**",

@@ -158,6 +158,69 @@ body {
     overflow-wrap: anywhere;
 }
 
+.contributors-toast {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% + 12px));
+    z-index: 1995;
+    width: min(520px, calc(100vw - 1.5rem));
+    box-sizing: border-box;
+    border-radius: 0.75rem;
+    color: #fff;
+    border: 1px solid transparent;
+    background:
+        linear-gradient(rgba(22, 28, 36, 0.94), rgba(22, 28, 36, 0.94)) padding-box,
+        linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: donation-gradient-shift 8s ease-in-out infinite;
+    box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.contributors-toast.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+}
+
+.contributors-toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    padding: 0.8rem 0.95rem;
+}
+
+.contributors-toast-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.contributors-toast-list {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.contributors-toast-list li {
+    margin-bottom: 0.25rem;
+}
+
+.contributors-toast-donations {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.contributors-toast-github-link {
+    align-self: flex-start;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
 .initial-loader-spinner {
     width: 1rem;
     height: 1rem;
@@ -323,6 +386,11 @@ body {
     .footer-donation-message {
         animation: none;
     }
+
+    .contributors-toast {
+        transition: none;
+        animation: none;
+    }
 }
 
 @media (max-width: 576px) {
@@ -333,6 +401,10 @@ body {
 
     .first-visit-toast.is-visible {
         transform: translate(-50%, -50%);
+    }
+
+    .contributors-toast {
+        width: min(92vw, 520px);
     }
 }
 

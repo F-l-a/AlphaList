@@ -62,6 +62,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const toastAlertCountdownRing = toastAlert ? toastAlert.querySelector('.copy-countdown-ring') : null;
     const toastAlertCountdown = document.getElementById('toastAlertCountdown');
     const firstVisitToast = document.getElementById('firstVisitToast');
+    const contributorsToast = document.getElementById('contributorsToast');
+    const contributorsToastCloseBtn = document.getElementById('contributorsToastCloseBtn');
+    const contributorsToastTriggers = Array.from(document.querySelectorAll('[data-action="open-contributors-toast"]'));
     const firstVisitSaveBtn = document.getElementById('firstVisitSaveBtn');
     const firstVisitBottomHint = document.getElementById('firstVisitBottomHint');
     const firstVisitThemeButtons = Array.from(document.querySelectorAll('[data-theme-choice]'));
@@ -238,6 +241,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 5000);
     }
 
+    function hideContributorsToast() {
+        if (!contributorsToast) return;
+
+        contributorsToast.classList.remove('is-visible');
+    }
+
+    function showContributorsToast() {
+        if (!contributorsToast) return;
+
+        contributorsToast.classList.add('is-visible');
+    }
+
     function hideFirstVisitToast() {
         if (!firstVisitToast) return;
 
@@ -324,6 +339,19 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 hideFirstVisitToast();
             }
+        });
+    }
+
+    contributorsToastTriggers.forEach(trigger => {
+        trigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            showContributorsToast();
+        });
+    });
+
+    if (contributorsToastCloseBtn) {
+        contributorsToastCloseBtn.addEventListener('click', () => {
+            hideContributorsToast();
         });
     }
 
@@ -1365,7 +1393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Append message Footer
-            markdown += `\n-# [${t('Alpha List by FlaProGmr - copy and send the next one!')}](https://f-l-a.github.io/AlphaList/)`;
+            markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and send the next one!')}](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
                 showToastAlert();
