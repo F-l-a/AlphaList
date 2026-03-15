@@ -111,7 +111,8 @@
                     }
 
                     var extraJson = await response.json();
-                    var uiTranslations = extraJson && extraJson.add_translation && extraJson.add_translation.translations;
+                    var translations = extraJson && extraJson.add_translation && extraJson.add_translation.translations;
+                    var uiTranslations = translations && translations.ui;
                     if (uiTranslations && typeof uiTranslations === 'object' && !Array.isArray(uiTranslations)) {
                         window.preloadedUiTranslations = uiTranslations;
                         return uiTranslations;
@@ -127,6 +128,47 @@
     <div id="initial-loader" class="initial-loader" aria-live="polite" aria-label="Loading">
         <div class="spinner-border initial-loader-spinner" role="status" aria-hidden="true"></div>
         <span class="initial-loader-text">Loading</span>
+    </div>
+    <div id="toastAlert" class="initial-loader" aria-live="polite" aria-label="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!" data-i18n-aria-label="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">
+        <span class="copy-countdown-ring" aria-hidden="true">
+            <svg class="copy-countdown-ring-svg" viewBox="0 0 20 20" focusable="false">
+                <circle class="copy-countdown-ring-track" cx="10" cy="10" r="8"></circle>
+                <circle class="copy-countdown-ring-progress" cx="10" cy="10" r="8"></circle>
+            </svg>
+            <span id="toastAlertCountdown" class="copy-countdown-number">5</span>
+        </span>
+        <span class="initial-loader-text donation-message" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</span>
+    </div>
+    <div id="firstVisitToast" class="first-visit-toast" role="status" aria-live="polite" aria-label="Set language and theme at the bottom of the page. | Imposta lingua e tema in fondo alla pagina. | Configura el idioma y el tema al final de la página. | Définissez la langue et le thème en bas de la page. | Sprache und Theme unten auf der Seite einstellen.">
+        <div class="first-visit-toast-content">
+            <p class="first-visit-toast-title">Quick setup - First Visit</p>
+
+            <div class="first-visit-pref-section" aria-label="Theme preferences">
+                <span class="first-visit-pref-label">Theme</span>
+                <div class="first-visit-button-row" role="group" aria-label="Theme selection">
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn d-flex align-items-center justify-content-center" data-theme-choice="light" aria-label="Light theme" title="Light theme">
+                        <i class="bi bi-sun fs-6" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn d-flex align-items-center justify-content-center" data-theme-choice="dark" aria-label="Dark theme" title="Dark theme">
+                        <i class="bi bi-moon fs-6" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="first-visit-pref-section" aria-label="Language preferences">
+                <span class="first-visit-pref-label">Language</span>
+                <div class="first-visit-button-row" role="group" aria-label="Language selection">
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn" data-lang-choice="en">EN</button>
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn" data-lang-choice="it">IT</button>
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn" data-lang-choice="es">ES</button>
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn" data-lang-choice="fr">FR</button>
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn" data-lang-choice="de">DE</button>
+                </div>
+            </div>
+
+            <small id="firstVisitBottomHint" class="first-visit-save-hint">You can change preferences at the bottom of the page!</small>
+            <button id="firstVisitSaveBtn" type="button" class="btn btn-sm btn-primary first-visit-save-btn">Save preferences</button>
+        </div>
     </div>
     <header class="bg-dark text-white p-2 mb-1">
         <div class="container">
@@ -164,13 +206,17 @@
 
     <footer class="footer mt-auto py-2 bg-dark text-white-50">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <small class="mb-2 mb-md-0 flex-grow-1 text-md-start">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data">Original data</a> by ZzPSYCHOzZ | Updated 01/2026 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute">Contribute</a></small>
+            <div class="d-flex flex-column flex-grow-1 text-md-start">
+                <small class="mb-1">Alpha List by FlaProGmr - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data">Original data</a> by ZzPSYCHOzZ | v2.0 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute">Contribute</a></small>
+                <small class="footer-donation-message donation-message" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
+            </div>
             <div class="d-flex flex-row gap-1 align-items-center">
                 <select id="lang-select" class="form-select form-select-sm w-auto py-0 lang-select" aria-label="Select language">
                     <option value="en" selected>🇬🇧 EN</option>
                     <option value="it">🇮🇹 IT</option>
                     <option value="es">🇪🇸 ES</option>
                     <option value="fr">🇫🇷 FR</option>
+                    <option value="de">🇩🇪 DE</option>
                 </select>
                 <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
                     <i class="bi bi-sun fs-5"></i>
@@ -194,7 +240,7 @@
                             <span class="visually-hidden" data-i18n="Loading...">Loading...</span>
                         </div>
                     </div>
-                    <img id="mapModalImg" src="" alt="Map preview" class="img-fluid d-none" data-i18n-alt="Map preview" />
+                    <img id="mapModalImg" src="" alt="Map Preview" class="img-fluid d-none" data-i18n-alt="Map Preview" />
                 </div>
                 <div class="modal-footer">
                     <a id="mapModalOpenBtn" class="btn btn-primary d-none" target="_blank" rel="noopener" data-i18n="Open image in new tab">Open image in new tab</a>

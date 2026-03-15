@@ -32,6 +32,132 @@ body {
     display: inline-flex;
 }
 
+.theme-loading #toastAlert {
+    display: none !important;
+}
+
+.initial-loader.is-visible {
+    display: inline-flex;
+}
+
+#toastAlert {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: min(1200px, calc(100vw - 2em));
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    background:
+        linear-gradient(rgba(33, 37, 41, 0.92), rgba(33, 37, 41, 0.92)) padding-box,
+        linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: donation-gradient-shift 8s ease-in-out infinite;
+}
+
+#toastAlert .initial-loader-text {
+    text-align: center;
+}
+
+.first-visit-toast {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, calc(-50% + 12px));
+    z-index: 1990;
+    width: max-content;
+    max-width: min(760px, calc(100vw - 1.5rem));
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 0.95rem;
+    border-radius: 0.75rem;
+    color: #fff;
+    border: 1px solid transparent;
+    background:
+        linear-gradient(rgba(22, 28, 36, 0.94), rgba(22, 28, 36, 0.94)) padding-box,
+        linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: donation-gradient-shift 8s ease-in-out infinite;
+    box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.first-visit-toast.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%);
+}
+
+.first-visit-toast-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.first-visit-toast-title {
+    margin: 0;
+    font-size: 0.94rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.first-visit-pref-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.first-visit-pref-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.88;
+}
+
+.first-visit-button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.first-visit-choice-btn {
+    min-width: 2.7rem;
+    padding-inline: 0.55rem;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.first-visit-choice-btn.active {
+    color: #0b1220;
+    background: #fff;
+    border-color: #fff;
+}
+
+.first-visit-save-btn {
+    margin-top: 0.15rem;
+    align-self: center;
+    font-weight: 700;
+}
+
+.first-visit-save-hint {
+    margin-top: 0.2rem;
+    align-self: center;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 600;
+    opacity: 0.92;
+    max-width: 100%;
+    text-wrap: pretty;
+    overflow-wrap: anywhere;
+}
+
 .initial-loader-spinner {
     width: 1rem;
     height: 1rem;
@@ -41,6 +167,86 @@ body {
 .initial-loader-text {
     font-size: 0.95rem;
     font-weight: 600;
+}
+
+.donation-name-highlight {
+    display: inline-block;
+    line-height: 1.05;
+    padding-right: 0.04em;
+    font-weight: inherit;
+    color: #9ad0ff;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .donation-name-highlight {
+        background-image: linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+        animation: donation-gradient-shift 8s ease-in-out infinite;
+    }
+}
+
+.copy-countdown-ring {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+.copy-countdown-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.copy-countdown-ring-track,
+.copy-countdown-ring-progress {
+    fill: none;
+    stroke-width: 2;
+}
+
+.copy-countdown-ring-track {
+    stroke: rgba(255, 255, 255, 0.28);
+}
+
+.copy-countdown-ring-progress {
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-dasharray: 50.3;
+    stroke-dashoffset: 0;
+}
+
+.copy-countdown-ring.is-running .copy-countdown-ring-progress {
+    animation: copy-countdown-drain 5s linear forwards;
+}
+
+@keyframes copy-countdown-drain {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 50.3;
+    }
+}
+
+.copy-countdown-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    z-index: 1;
 }
 
 /* When in light theme, make header/footer match body colors instead of dark */
@@ -73,6 +279,61 @@ body {
 
 .lang-select::-ms-expand {
     display: none;
+}
+
+.footer-donation-message {
+    text-wrap: pretty;
+    overflow-wrap: break-word;
+    color: #9ad0ff;
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    .footer-donation-message {
+        background-image: linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: donation-gradient-shift 8s ease-in-out infinite;
+    }
+}
+
+@keyframes donation-gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #toastAlert {
+        animation: none;
+    }
+
+    .first-visit-toast {
+        transition: none;
+        animation: none;
+    }
+
+    .footer-donation-message {
+        animation: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .first-visit-toast {
+        width: min(92vw, 760px);
+        max-width: min(92vw, 760px);
+    }
+
+    .first-visit-toast.is-visible {
+        transform: translate(-50%, -50%);
+    }
 }
 
 .accordion-button:focus {

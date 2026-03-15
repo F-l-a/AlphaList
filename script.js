@@ -53,10 +53,316 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const translationBaseFolder = 'Poke-translator';
     const translationSets = {};
+    const movePropertiesByMove = new Map();
     let translationLoadToken = 0;
     let uniqueIdCounter = 0;
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
+    const toastAlert = document.getElementById('toastAlert');
+    const toastAlertCountdownRing = toastAlert ? toastAlert.querySelector('.copy-countdown-ring') : null;
+    const toastAlertCountdown = document.getElementById('toastAlertCountdown');
+    const firstVisitToast = document.getElementById('firstVisitToast');
+    const firstVisitSaveBtn = document.getElementById('firstVisitSaveBtn');
+    const firstVisitBottomHint = document.getElementById('firstVisitBottomHint');
+    const firstVisitThemeButtons = Array.from(document.querySelectorAll('[data-theme-choice]'));
+    const firstVisitLanguageButtons = Array.from(document.querySelectorAll('[data-lang-choice]'));
+    let toastAlertTimeoutId = null;
+    let toastAlertCountdownIntervalId = null;
+
+    const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v1';
+    const FIRST_VISIT_SAVE_LABEL_KEY = 'Save preferences';
+    const FIRST_VISIT_HINT_KEY = 'You can change preferences at the bottom of the page!';
+    const DONATION_IGN = 'FlaProGmr';
+    let firstVisitSelectedTheme = null;
+    let firstVisitSelectedLanguage = null;
+    const firstVisitSaveLabelByLang = {
+        en: FIRST_VISIT_SAVE_LABEL_KEY
+    };
+    const firstVisitHintByLang = {
+        en: FIRST_VISIT_HINT_KEY
+    };
+    let firstVisitTextUpdateToken = 0;
+
+    function normalizeUiLang(lang) {
+        return String(lang || 'en').toLowerCase().split('-')[0] || 'en';
+    }
+
+    function applyFirstVisitQuickSetupTexts(label, hint) {
+        if (firstVisitSaveBtn) firstVisitSaveBtn.textContent = label;
+        if (firstVisitBottomHint) firstVisitBottomHint.textContent = hint;
+    }
+
+    async function updateFirstVisitQuickSetupTexts(lang) {
+        if (!firstVisitSaveBtn && !firstVisitBottomHint) return;
+
+        const normalizedLang = normalizeUiLang(lang);
+        const updateToken = ++firstVisitTextUpdateToken;
+
+        // If both are cached, update both at once.
+        const cachedLabel = firstVisitSaveLabelByLang[normalizedLang];
+        const cachedHint = firstVisitHintByLang[normalizedLang];
+        if (cachedLabel && cachedHint) {
+            applyFirstVisitQuickSetupTexts(cachedLabel, cachedHint);
+            return;
+        }
+
+        try {
+            const extraUrl = `${window.BASE_URL}/translations/Extra/extra-${normalizedLang}.json`;
+            const response = await fetch(extraUrl);
+            if (!response.ok) return;
+
+            const extraJson = await response.json();
+            const ui = extraJson?.add_translation?.translations?.ui;
+            const label = ui?.[FIRST_VISIT_SAVE_LABEL_KEY];
+            const hint = ui?.[FIRST_VISIT_HINT_KEY];
+
+            const resolvedLabel = (typeof label === 'string' && label.trim() !== '')
+                ? label
+                : FIRST_VISIT_SAVE_LABEL_KEY;
+            const resolvedHint = (typeof hint === 'string' && hint.trim() !== '')
+                ? hint
+                : FIRST_VISIT_HINT_KEY;
+
+            firstVisitSaveLabelByLang[normalizedLang] = resolvedLabel;
+            firstVisitHintByLang[normalizedLang] = resolvedHint;
+
+            // Apply only if this is the latest request and language is still the same.
+            if (updateToken !== firstVisitTextUpdateToken) return;
+            if (normalizeUiLang(firstVisitSelectedLanguage) === normalizedLang) {
+                applyFirstVisitQuickSetupTexts(resolvedLabel, resolvedHint);
+            }
+        } catch (e) {
+            // Keep current text to avoid flicker.
+        }
+    }
+
+    function setActiveChoice(buttons, value, dataAttr) {
+        buttons.forEach(button => {
+            if (button.dataset[dataAttr] === value) {
+                button.classList.add('active');
+                button.setAttribute('aria-pressed', 'true');
+            } else {
+                button.classList.remove('active');
+                button.setAttribute('aria-pressed', 'false');
+            }
+        });
+    }
+
+    function applyDonationNameHighlight() {
+        const donationElements = document.querySelectorAll('.donation-message');
+        donationElements.forEach(el => {
+            const fullText = el.textContent || '';
+            const ignIndex = fullText.indexOf(DONATION_IGN);
+            if (ignIndex === -1) {
+                return;
+            }
+
+            const before = fullText.slice(0, ignIndex);
+            const after = fullText.slice(ignIndex + DONATION_IGN.length);
+
+            el.textContent = '';
+            el.appendChild(document.createTextNode(before));
+
+            const highlighted = document.createElement('span');
+            highlighted.className = 'donation-name-highlight';
+            highlighted.textContent = DONATION_IGN;
+            el.appendChild(highlighted);
+
+            el.appendChild(document.createTextNode(after));
+        });
+    }
+
+    function initializeFirstVisitPreferenceSelections() {
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+        const currentLanguage = langSelect ? (langSelect.value || document.documentElement.lang || 'en') : (document.documentElement.lang || 'en');
+
+        firstVisitSelectedTheme = currentTheme;
+        firstVisitSelectedLanguage = currentLanguage;
+
+        setActiveChoice(firstVisitThemeButtons, firstVisitSelectedTheme, 'themeChoice');
+        setActiveChoice(firstVisitLanguageButtons, firstVisitSelectedLanguage, 'langChoice');
+        updateFirstVisitQuickSetupTexts(firstVisitSelectedLanguage);
+    }
+
+    function showToastAlert() {
+        if (!toastAlert) return;
+
+        if (toastAlertCountdownIntervalId) {
+            clearInterval(toastAlertCountdownIntervalId);
+            toastAlertCountdownIntervalId = null;
+        }
+
+        let secondsLeft = 5;
+        if (toastAlertCountdown) {
+            toastAlertCountdown.textContent = String(secondsLeft);
+        }
+        if (toastAlertCountdownRing) {
+            toastAlertCountdownRing.classList.remove('is-running');
+            void toastAlertCountdownRing.offsetWidth;
+            toastAlertCountdownRing.classList.add('is-running');
+        }
+
+        toastAlert.classList.add('is-visible');
+        if (toastAlertTimeoutId) {
+            clearTimeout(toastAlertTimeoutId);
+        }
+
+        toastAlertCountdownIntervalId = setInterval(() => {
+            secondsLeft -= 1;
+            if (secondsLeft > 0) {
+                if (toastAlertCountdown) {
+                    toastAlertCountdown.textContent = String(secondsLeft);
+                }
+                return;
+            }
+
+            if (toastAlertCountdownIntervalId) {
+                clearInterval(toastAlertCountdownIntervalId);
+                toastAlertCountdownIntervalId = null;
+            }
+        }, 1000);
+
+        toastAlertTimeoutId = setTimeout(() => {
+            if (toastAlertCountdownIntervalId) {
+                clearInterval(toastAlertCountdownIntervalId);
+                toastAlertCountdownIntervalId = null;
+            }
+            toastAlert.classList.remove('is-visible');
+            if (toastAlertCountdownRing) {
+                toastAlertCountdownRing.classList.remove('is-running');
+            }
+            if (toastAlertCountdown) {
+                toastAlertCountdown.textContent = '5';
+            }
+            toastAlertTimeoutId = null;
+        }, 5000);
+    }
+
+    function hideFirstVisitToast() {
+        if (!firstVisitToast) return;
+
+        firstVisitToast.classList.remove('is-visible');
+        firstVisitToast.style.width = '';
+    }
+
+    function lockFirstVisitToastWidth() {
+        if (!firstVisitToast) return;
+
+        // Measure current rendered width (content-based) and freeze it.
+        firstVisitToast.style.width = '';
+        const measuredWidth = firstVisitToast.offsetWidth;
+        if (measuredWidth > 0) {
+            firstVisitToast.style.width = `${measuredWidth}px`;
+        }
+    }
+
+    function showFirstVisitToast() {
+        if (!firstVisitToast) return;
+
+        firstVisitToast.style.width = '';
+        initializeFirstVisitPreferenceSelections();
+        firstVisitToast.classList.add('is-visible');
+        requestAnimationFrame(() => {
+            lockFirstVisitToastWidth();
+        });
+    }
+
+    function maybeShowFirstVisitToast() {
+        let hasSeenNotice = false;
+        try {
+            hasSeenNotice = localStorage.getItem(FIRST_VISIT_NOTICE_KEY) === '1';
+        } catch (e) {
+            hasSeenNotice = false;
+        }
+
+        if (hasSeenNotice) return;
+
+        showFirstVisitToast();
+    }
+
+    firstVisitThemeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const choice = button.dataset.themeChoice;
+            if (!choice) return;
+            firstVisitSelectedTheme = choice;
+            setActiveChoice(firstVisitThemeButtons, choice, 'themeChoice');
+            // Live preview: apply theme immediately, persistence remains on Save.
+            applyTheme(choice, false);
+        });
+    });
+
+    firstVisitLanguageButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const choice = button.dataset.langChoice;
+            if (!choice) return;
+            firstVisitSelectedLanguage = choice;
+            setActiveChoice(firstVisitLanguageButtons, choice, 'langChoice');
+            updateFirstVisitQuickSetupTexts(choice);
+        });
+    });
+
+    if (firstVisitSaveBtn) {
+        firstVisitSaveBtn.addEventListener('click', async () => {
+            try {
+                if (firstVisitSelectedTheme) {
+                    applyTheme(firstVisitSelectedTheme, true);
+                }
+
+                if (firstVisitSelectedLanguage) {
+                    applyLanguage(firstVisitSelectedLanguage, true);
+                    await loadTranslationSetsForLanguage(firstVisitSelectedLanguage);
+                    applyUiTranslations();
+                    refreshFilterControls();
+                    render();
+                }
+
+                try {
+                    localStorage.setItem(FIRST_VISIT_NOTICE_KEY, '1');
+                } catch (e) {}
+            } catch (e) {
+                console.error('Failed to save first-visit preferences:', e);
+            } finally {
+                hideFirstVisitToast();
+            }
+        });
+    }
+
+    function setMoveProperties(movePropertiesData) {
+        movePropertiesByMove.clear();
+        if (!movePropertiesData || typeof movePropertiesData !== 'object' || Array.isArray(movePropertiesData)) {
+            return;
+        }
+
+        Object.entries(movePropertiesData).forEach(([propertyLabel, moves]) => {
+            if (!Array.isArray(moves)) return;
+
+            moves.forEach(moveName => {
+                if (typeof moveName !== 'string' || moveName.trim() === '') return;
+
+                if (!movePropertiesByMove.has(moveName)) {
+                    movePropertiesByMove.set(moveName, []);
+                }
+
+                const labels = movePropertiesByMove.get(moveName);
+                if (!labels.includes(propertyLabel)) {
+                    labels.push(propertyLabel);
+                }
+            });
+        });
+    }
+
+    function formatMoveWithProperties(rawMoveName, translatedMoveName) {
+        const moveLabel = translatedMoveName || rawMoveName || '';
+        if (!rawMoveName) return moveLabel;
+
+        const propertyLabels = movePropertiesByMove.get(rawMoveName);
+        if (!propertyLabels || propertyLabels.length === 0) {
+            return moveLabel;
+        }
+
+        const translatedPropertyLabels = propertyLabels.map(label => t(label, 'notes'));
+        return `${moveLabel} - ${translatedPropertyLabels.join(', ')}`;
+    }
 
 
     /**
@@ -68,14 +374,22 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {Promise<object|null>} JSON del file oppure `null`.
      */
     async function fetchTranslationJson(fileName, lang) {
-        const fileUrl = `${window.BASE_URL}/translations/${translationBaseFolder}/translations/${lang}/${fileName}-${lang}.json`;
-        try {
-            const response = await fetch(fileUrl);
-            if (!response.ok) return null;
-            return await response.json();
-        } catch (e) {
-            return null;
+        const translationUrls = [
+            `${window.BASE_URL}/translations/${translationBaseFolder}/translations/${lang}/${fileName}-${lang}.json`,
+            `https://cdn.jsdelivr.net/gh/F-l-a/Poke-translator@main/translations/${lang}/${fileName}-${lang}.json`
+        ];
+
+        for (const fileUrl of translationUrls) {
+            try {
+                const response = await fetch(fileUrl);
+                if (!response.ok) continue;
+                return await response.json();
+            } catch (e) {
+                // Try the next fallback URL.
+            }
         }
+
+        return null;
     }
 
     /**
@@ -120,21 +434,31 @@ document.addEventListener('DOMContentLoaded', () => {
             })
         );
 
-        // Carica il file extra-{lang}.json per le traduzioni dell'interfaccia UI.
-        // Estrae solo add_translation.translations (oggetto chiave->valore inglese->lingua)
-        // e lo salva come Map<string, string> per una ricerca O(1) durante il render.
+        // Carica il file extra-{lang}.json per le traduzioni contestuali.
+        // add_translation.translations deve contenere oggetti separati per contesto,
+        // ad esempio: { ui: {...}, notes: {...} }.
         const extraUrl = `${window.BASE_URL}/translations/Extra/extra-${normalizedLang}.json`;
         let uiTranslationsMap = null;
+        let notesTranslationsMap = null;
         if (window.preloadedUiTranslations && window.preloadedLanguage === normalizedLang) {
             uiTranslationsMap = new Map(Object.entries(window.preloadedUiTranslations));
-        } else {
+        }
+
+        // Se una parte (UI o notes) non è preloadata, prova a recuperarla dal file extra.
+        if (!uiTranslationsMap || !notesTranslationsMap) {
             try {
                 const extraResponse = await fetch(extraUrl);
                 if (extraResponse.ok) {
                     const extraJson = await extraResponse.json();
-                    const uiDict = extraJson?.add_translation?.translations;
-                    if (uiDict && typeof uiDict === 'object' && !Array.isArray(uiDict)) {
+                    const contexts = extraJson?.add_translation?.translations;
+                    const uiDict = contexts?.ui;
+                    const notesDict = contexts?.notes;
+
+                    if (!uiTranslationsMap && uiDict && typeof uiDict === 'object' && !Array.isArray(uiDict)) {
                         uiTranslationsMap = new Map(Object.entries(uiDict));
+                    }
+                    if (!notesTranslationsMap && notesDict && typeof notesDict === 'object' && !Array.isArray(notesDict)) {
+                        notesTranslationsMap = new Map(Object.entries(notesDict));
                     }
                 }
             } catch (e) {
@@ -157,10 +481,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Aggiunge le traduzioni UI come Map separata sotto la chiave 'ui'.
-        // Accessibile come: translationSets['ui'].get('Copy') => 'Copia'
+        // Aggiunge le traduzioni contestuali da extra-it sotto le rispettive chiavi.
         if (uiTranslationsMap && uiTranslationsMap.size > 0) {
             translationSets['ui'] = uiTranslationsMap;
+        }
+        if (notesTranslationsMap && notesTranslationsMap.size > 0) {
+            translationSets['notes'] = notesTranslationsMap;
         }
 
         // Espone i Set globalmente e registra la lingua attiva, poi ritorna.
@@ -184,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function t(key, mapName = 'ui') {
         if (key === null || key === undefined) return '';
+
         const normalizedKey = String(key);
         return translationSets[mapName]?.get(normalizedKey) ?? normalizedKey;
     }
@@ -344,6 +671,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await loadTranslationSetsForLanguage(langSelect.value);
                 applyUiTranslations();
+                applyDonationNameHighlight();
                 refreshFilterControls();
                 render();
             } catch (err) {
@@ -354,26 +682,149 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
 
+    /**
+     * Legge i parametri URL (`pokemon`, `region`, `location`) e pre-compila i filtri.
+     *
+     * Casi gestiti:
+     * - `location` valida presente: vista per location e apertura accordion location.
+     * - `location` valida + `pokemon`: apertura anche accordion pokemon interno.
+     * - `pokemon` presente e `location` assente (con o senza `region`): forza group-by-pokemon e apre solo l'accordion pokemon.
+     * - `region` senza `location`: nessuna apertura automatica.
+     *
+     * Nota: l'auto-apertura con `location` avviene solo se la location combacia
+     * esattamente con una delle opzioni del datalist.
+     *
+     * @returns {{hasParams: boolean, expandMode: 'none'|'location'|'location-pokemon'|'pokemon'}}
+     */
+    function applyUrlParams() {
+        function isExactValidLocationInput(value) {
+            const normalized = (value || '').trim().toLowerCase();
+            if (!normalized) return false;
+
+            const datalistOptions = document.getElementById('location-datalist-options');
+            if (!datalistOptions) return false;
+
+            return Array.from(datalistOptions.options).some(option => {
+                const optionValue = (option.value || '').trim().toLowerCase();
+                return optionValue === normalized;
+            });
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const pokemon = params.get('pokemon');
+        const region = params.get('region');
+        const location = params.get('location');
+
+        if (!pokemon && !region && !location) {
+            return { hasParams: false, expandMode: 'none' };
+        }
+
+        let expandMode = 'none';
+
+        if (region) {
+            if (location) {
+                // Keep region='all' so the datalist preserves the [K][J] prefix format.
+                // Format the location with the same prefix used in populateLocations('all').
+                const regionLetter = t(region, 'region').charAt(0).toUpperCase();
+                const formattedLocation = `[${regionLetter}] ${t(location, 'location')}`;
+                locationSelect.value = formattedLocation;
+
+                // With location in URL we want location grouping and accordion auto-open.
+                groupingSwitch.checked = false;
+                const hasExactLocation = isExactValidLocationInput(formattedLocation);
+                expandMode = hasExactLocation ? (pokemon ? 'location-pokemon' : 'location') : 'none';
+            } else {
+                // Only region in URL: switch to specific-region view
+                const hasRegionOption = Array.from(regionSelect.options).some(o => o.value === region);
+                if (hasRegionOption) {
+                    regionSelect.value = region;
+                    populateLocations(region);
+                }
+
+                // region without location: no auto-open
+                expandMode = 'none';
+            }
+        } else if (location) {
+            locationSelect.value = location;
+
+            // location without region still follows location-view semantics
+            groupingSwitch.checked = false;
+            const hasExactLocation = isExactValidLocationInput(location);
+            expandMode = hasExactLocation ? (pokemon ? 'location-pokemon' : 'location') : 'none';
+        }
+
+        if (pokemon) searchInput.value = pokemon;
+
+        // pokemon without location (with or without region): use group-by-pokemon + open only pokemon accordion
+        if (pokemon && !location) {
+            groupingSwitch.checked = true;
+            expandMode = 'pokemon';
+        }
+
+        return { hasParams: true, expandMode };
+    }
+
+    /**
+     * Espande il primo risultato in base alla modalità:
+     * - `location`: apre solo accordion esterno
+     * - `location-pokemon`: apre esterno + primo interno
+     * - `pokemon`: apre solo accordion esterno
+     */
+    function expandFirstResult(mode = 'pokemon') {
+        if (mode === 'none') return;
+
+        const outerItem = contentDiv.querySelector(':scope > .accordion-item');
+        if (!outerItem) return;
+
+        const outerCollapse = outerItem.querySelector(':scope > .accordion-collapse');
+        if (outerCollapse) {
+            outerCollapse.classList.add('show');
+            const outerBtn = outerItem.querySelector(':scope > .accordion-header .accordion-button');
+            if (outerBtn) outerBtn.classList.remove('collapsed');
+        }
+
+        if (mode === 'location-pokemon') {
+            const innerCollapse = outerItem.querySelector('.accordion-body .accordion-collapse');
+            if (innerCollapse) {
+                innerCollapse.classList.add('show');
+                const innerBtn = innerCollapse.closest('.accordion-item')?.querySelector('.accordion-button');
+                if (innerBtn) innerBtn.classList.remove('collapsed');
+            }
+        }
+
+        outerItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     // Bootstrap iniziale: carica in parallelo traduzioni e dataset, poi renderizza.
     // In questo modo al refresh l'app parte già nella lingua salvata anche per i dati dinamici.
     async function initializeApp() {
         try {
-            const [_, data] = await Promise.all([
+            const [_, data, movePropertiesData] = await Promise.all([
                 loadTranslationSetsForLanguage(initialLanguageForTranslations),
                 fetch(`${window.BASE_URL}/data.json`).then(response => {
                     if (!response.ok) {
                         throw new Error(`HTTP ${response.status} while loading data.json`);
                     }
                     return response.json();
-                })
+                }),
+                fetch(`${window.BASE_URL}/move-properties.json`)
+                    .then(response => response.ok ? response.json() : null)
+                    .catch(() => null)
             ]);
 
             db = data;
             allPokemons = flattenData(db);
+            setMoveProperties(movePropertiesData);
 
             applyUiTranslations();
+            applyDonationNameHighlight();
             refreshFilterControls();
+            const deepLinkState = applyUrlParams();
             render();
+            if (deepLinkState.hasParams && deepLinkState.expandMode !== 'none') {
+                expandFirstResult(deepLinkState.expandMode);
+            }
+            maybeShowFirstVisitToast();
         } catch (err) {
             console.error('Initial app loading failed:', err);
         }
@@ -632,6 +1083,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPokemonDetail(pokemon, isGroupedByName) {
         const uid = ++uniqueIdCounter; // Generate unique ID for each pokemon detail card
         const { data, location, region, name } = pokemon;
+        const translatedLocationNotes = data["Location Notes"]
+            ? t(data["Location Notes"])
+            : '';
+        const baseNotesLines = Array.isArray(data.Notes) ? data.Notes : [];
+        const translatedNotesLines = baseNotesLines
+            .map(line => t(line, 'notes'))
+            .filter(line => String(line).trim() !== '');
+        const translatedNotes = translatedNotesLines.join('\n');
         
         const translatedSpeciesName = t(name, 'pokemon-species');
         const translatedRegion = t(region, 'region');
@@ -639,9 +1098,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const translatedDataRegion = t(data["Region"], 'region');
         const translatedSpecificLocation = t(data["Specific Location"], 'location');
         const translatedAbility = t(data.Ability, 'ability');
-        const translatedMoves = Array.isArray(data.Moveset)
-            ? data.Moveset.map(move => t(move, 'move'))
-            : [t(data.Moveset, 'move')];
+        const rawMoves = Array.isArray(data.Moveset)
+            ? data.Moveset
+            : (data.Moveset ? [data.Moveset] : []);
+        const translatedMoves = rawMoves.map(move => t(move, 'move'));
+        const movesWithProperties = rawMoves.map((move, index) => {
+            const translatedMove = translatedMoves[index] || t(move, 'move');
+            return formatMoveWithProperties(move, translatedMove);
+        });
         const translatedHms = Array.isArray(data.HMs)
             ? data.HMs.map(hm => t(hm, 'move'))
             : (data.HMs ? [t(data.HMs, 'move')] : []);
@@ -660,16 +1124,18 @@ document.addEventListener('DOMContentLoaded', () => {
             specificLocationHtml = `<span class="map-preview-link" role="button" tabindex="0" data-map-link="${data["Map Link"]}">${translatedSpecificLocation}</span>`;
         }
         locationParts.push(specificLocationHtml);
-        if (data["Location Notes"]) {
-            locationParts.push(data["Location Notes"]);
+        if (translatedLocationNotes) {
+            locationParts.push(translatedLocationNotes);
         }
         const locationHtml = `<p class="card-text"><strong>${t('Location')}:</strong> ${locationParts.join(' - ')}</p>`;
 
-        const movesetForDisplay = translatedMoves.map(m => `<li>${m}</li>`).join('');
-        const notesForDisplay = data.Notes ? `<p class="card-text notes">${data.Notes}</p>` : '';
+        const movesetForDisplay = movesWithProperties.map(m => `<li>${m}</li>`).join('');
+        const notesForDisplay = translatedNotesLines.length > 0
+            ? `<p class="card-text notes">${translatedNotesLines.join('<br>')}</p>`
+            : '';
         const hmsForDisplay = translatedHms.join(', ');
         const eggGroupForDisplay = translatedEggGroups.join(', ');
-        const translatedMovesetForCopy = translatedMoves.join('\n');
+        const translatedMovesetForCopy = movesWithProperties.join('\n');
 
         return `
             <div class="mb-2">
@@ -682,16 +1148,19 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                                 <button class="btn btn-sm btn-outline-secondary copy-pokemon-btn mx-2" 
                                     data-pokemon-name="${formattedName}" 
+                                    data-raw-name="${name}"
+                                    data-raw-region="${region}"
+                                    data-raw-location="${location}"
                                     data-region="${translatedDataRegion || ''}"
                                     data-specific-location="${translatedSpecificLocation || ''}"
-                                    data-location-notes="${data["Location Notes"] || ''}"
+                                    data-location-notes="${translatedLocationNotes || ''}"
                                     data-map-link="${data["Map Link"] || ''}"
                                     data-hms="${hmsForDisplay}" 
                                     data-egg-group="${eggGroupForDisplay}" 
                                     data-male-ratio="${data["Male Ratio"]}" 
                                     data-ability="${translatedAbility}" 
                                     data-moveset="${translatedMovesetForCopy}" 
-                                    data-notes="${data.Notes || ''}">
+                                    data-notes="${translatedNotes || ''}">
                                     ${t('Copy')}
                                 </button>
                             </h2>
@@ -768,11 +1237,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (copyBtnEl) {
             const btn = copyBtnEl;
             const { 
-                pokemonName, region, specificLocation, locationNotes, mapLink, 
+                pokemonName, rawName, rawRegion, rawLocation,
+                region, specificLocation, locationNotes, mapLink, 
                 hms, eggGroup, maleRatio, ability, moveset, notes 
             } = btn.dataset;
 
-            let markdown = `**${pokemonName}**\n`;
+            const shareUrl = (() => {
+                try {
+                    const base = 'https://f-l-a.github.io/AlphaList/';
+                    const p = new URLSearchParams();
+                    if (rawName) p.set('pokemon', rawName);
+                    if (rawRegion) p.set('region', rawRegion);
+                    if (rawLocation) p.set('location', rawLocation);
+                    return `${base}?${p.toString()}`;
+                } catch (_) { return ''; }
+            })();
+
+            let markdown = shareUrl
+                ? `**[${pokemonName}](${shareUrl})**\n`
+                : `**${pokemonName}**\n`;
             
             // Build location string for markdown
             let locationString = `_${region}_`;
@@ -817,15 +1300,20 @@ document.addEventListener('DOMContentLoaded', () => {
             markdown += `\n-# [Alpha List - copy and send the next one!](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
-                const originalText = btn.textContent;
+                showToastAlert();
+                if (btn.__copyResetTimeoutId) {
+                    clearTimeout(btn.__copyResetTimeoutId);
+                    btn.__copyResetTimeoutId = null;
+                }
                 btn.textContent = t('Copied!');
                 btn.classList.remove('btn-outline-secondary');
                 btn.classList.add('btn-success');
 
-                setTimeout(() => {
-                    btn.textContent = originalText;
+                btn.__copyResetTimeoutId = setTimeout(() => {
+                    btn.textContent = t('Copy');
                     btn.classList.remove('btn-success');
                     btn.classList.add('btn-outline-secondary');
+                    btn.__copyResetTimeoutId = null;
                 }, 2000);
             }).catch(err => {
                 console.error('Copy error:', err);
