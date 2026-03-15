@@ -1229,7 +1229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const notesForDisplay = translatedNotesLines.length > 0
             ? `<p class="card-text notes">${translatedNotesLines.join('<br>')}</p>`
             : '';
-        const hmsForDisplay = translatedHms.length > 0 ? translatedHms.join(', ') : '-';
+        const hmsForDisplay = translatedHms.length > 0 ? translatedHms.join(', ') : t('None');
         const eggGroupForDisplay = translatedEggGroups.join(', ');
         const translatedMovesetForCopy = movesWithProperties.join('\n');
 
@@ -1269,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <div class="accordion-body">
                                     <p class="card-text"><strong>${t('Name')}:</strong> ${formattedName}</p>
                                     ${locationHtml}
-                                    <p class="card-text"><strong>${t('HMs')}:</strong> ${hmsForDisplay}</p>
+                                    <p class="card-text"><strong>${t('HMs Required')}:</strong> ${hmsForDisplay}</p>
                                     <p class="card-text"><strong>${t('Egg Group')}:</strong> <code>${eggGroupForDisplay}</code></p>
                                     <p class="card-text"><strong>${t('Male Ratio')}:</strong> <code>${maleRatioDisplay}</code></p>
                                     <p class="card-text"><strong>${t('Ability')}:</strong> <code>${translatedAbility}</code></p>
@@ -1370,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             markdown += `${locationString}\n`;
 
-            if (hms) markdown += `${t('HMs')}: _${hms}_\n`;
+            if (hms) markdown += `${t('HMs Required')}: _${hms}_\n`;
             
             markdown += `\n\`${t('Egg Group')}: ${eggGroup}\`\n`;
             markdown += `\`${t('Male Ratio')}: ${maleRatio}\`\n`;
