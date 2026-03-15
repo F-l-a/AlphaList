@@ -540,6 +540,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Prova a risolvere il valore corrente del filtro location in chiavi raw
+     * (`region`, `location`) usando la lingua attualmente attiva.
+     *
+     * Restituisce `null` se il valore non e' un match esatto (es. input parziale).
+     *
+     * @param {string} inputValue Valore corrente dell'input location.
+     * @param {string} selectedRegion Regione selezionata (`all` o nome regione raw).
+     * @returns {{region: string, location: string}|null}
+     */
+    function resolveExactLocationSelection(inputValue, selectedRegion) {
+        const normalizedInput = (inputValue || '').trim().toLowerCase();
+        if (!normalizedInput) return null;
+
+        if (selectedRegion && selectedRegion !== 'all') {
+            const regionLocations = db[selectedRegion] ? Object.keys(db[selectedRegion]) : [];
+            for (const rawLocation of regionLocations) {
+                const raw = rawLocation.toLowerCase();
+                const translated = t(rawLocation, 'location').toLowerCase();
+                if (normalizedInput === raw || normalizedInput === translated) {
+                    return { region: selectedRegion, location: rawLocation };
+                }
+            }
+            return null;
+        }
+
+        for (const rawRegion in db) {
+            if (!Object.prototype.hasOwnProperty.call(db, rawRegion)) continue;
+
+            for (const rawLocation of Object.keys(db[rawRegion])) {
+                const translatedRegion = t(rawRegion, 'region');
+                const translatedLocation = t(rawLocation, 'location');
+
+                const formattedRaw = `[${rawRegion.charAt(0).toUpperCase()}] ${rawLocation}`.toLowerCase();
+                const formattedTranslated = `[${translatedRegion.charAt(0).toUpperCase()}] ${translatedLocation}`.toLowerCase();
+
+                if (normalizedInput === formattedRaw || normalizedInput === formattedTranslated) {
+                    return { region: rawRegion, location: rawLocation };
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Applica il tema UI (`dark` o `light`), aggiorna l'icona toggle e,
      * opzionalmente, persiste la preferenza in localStorage.
      *
@@ -667,13 +712,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // poi re-renderizza l'interfaccia con i nuovi filtri/dati eventualmente localizzati.
     if (langSelect) {
         langSelect.addEventListener('change', async () => {
+            const previousRegion = regionSelect.value || 'all';
+            const previousLocationInput = locationSelect.value || '';
+            const resolvedLocationSelection = resolveExactLocationSelection(previousLocationInput, previousRegion);
+
             applyLanguage(langSelect.value, true);
             try {
                 await loadTranslationSetsForLanguage(langSelect.value);
                 applyUiTranslations();
                 applyDonationNameHighlight();
                 refreshFilterControls();
+
+                const deepLinkState = applyUrlParams();
+
+                // Se il filtro location era un match esatto, ricompone il valore
+                // nella nuova lingua (utile per prefissi tipo [U] -> [E]).
+                if (!deepLinkState.hasParams && resolvedLocationSelection) {
+                    if (previousRegion === 'all') {
+                        const translatedRegion = t(resolvedLocationSelection.region, 'region');
+                        const translatedLocation = t(resolvedLocationSelection.location, 'location');
+                        const newPrefix = translatedRegion.charAt(0).toUpperCase();
+                        locationSelect.value = `[${newPrefix}] ${translatedLocation}`;
+                    } else {
+                        locationSelect.value = t(resolvedLocationSelection.location, 'location');
+                    }
+                }
+
                 render();
+                if (deepLinkState.hasParams && deepLinkState.expandMode !== 'none') {
+                    expandFirstResult(deepLinkState.expandMode);
+                }
             } catch (err) {
                 console.error('Translation sets loading failed:', err);
             }
