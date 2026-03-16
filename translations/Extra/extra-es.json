@@ -65,7 +65,22 @@
         "From Lavender": "Desde Lavanda",
         "Rock Tunnel": "Túnel Roca",
         "From Blackthorn": "Desde Endrino",
+        "From Blackthorn | Left Path": "Desde Endrino | Camino izquierdo",
         "From Mahogany": "Desde Caoba",
+        "From Fuchsia": "Desde Fucsia",
+        "From Fallarbor": "Desde Pardal",
+        "From Rustboro": "Desde Férrica",
+        "From Slateport": "Desde Portual",
+        "From Mauville": "Desde Malvalona",
+        "From Sootopolis": "Desde Arrecípolis",
+        "From Celestic": "Desde Caelestis",
+        "From Oreburgh": "Desde Pirita",
+        "From Eterna": "Desde Vetusta",
+        "From Hearthome": "Desde Corazón",
+        "From Canalave": "Desde Canal",
+        "From Union Cave": "Desde Cueva Unión",
+        "From Cianwood": "Desde Orquídea",
+        "From Victory Road": "Desde Calle Victoria",
         "Post E4": "Después del Alto Mando",
         "Seen Sinnoh Dex required": "Requiere la Dex de Sinnoh en visto",
         "Bike required": "Requiere bici",
@@ -74,7 +89,9 @@
         "(2nd Stair)": "(2.ª escalera)",
         "Resort Area": "Zona Descanso",
         "Slide left from the top": "Deslízate hacia la izquierda desde arriba",
-        "Pass Substitute": "Ignora Sustituto"
+        "Pass Substitute": "Ignora Sustituto",
+        "South": "Sur",
+        "Southwest": "Suroeste"
       }
     },
     "reason": "Traducciones globales adicionales divididas por contexto: ui para interfaz, notes para notas de Pokémon"

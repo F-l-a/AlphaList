@@ -65,7 +65,22 @@
         "From Lavender": "Von Lavandia",
         "Rock Tunnel": "Felstunnel",
         "From Blackthorn": "Von Ebenholz",
+        "From Blackthorn | Left Path": "Von Ebenholz | Linker Pfad",
         "From Mahogany": "Von Mahagonia",
+        "From Fuchsia": "Von Fuchsania",
+        "From Fallarbor": "Von Launbechselfeld",
+        "From Rustboro": "Von Metarost",
+        "From Slateport": "Von Graphitport",
+        "From Mauville": "Von Malvenfroh",
+        "From Sootopolis": "Von Xeneroville",
+        "From Celestic": "Von Elyses",
+        "From Oreburgh": "Von Erzelingen",
+        "From Eterna": "Von Ewigenau",
+        "From Hearthome": "Von Herzhofen",
+        "From Canalave": "Von Fleetburg",
+        "From Union Cave": "Von Einheitstunnel",
+        "From Cianwood": "Von Anemonia",
+        "From Victory Road": "Von Siegesstraße",
         "Post E4": "Nach Top 4",
         "Seen Sinnoh Dex required": "Gesehener Sinnoh-Dex erforderlich",
         "Bike required": "Fahrrad erforderlich",
@@ -74,7 +89,9 @@
         "(2nd Stair)": "(2. Treppe)",
         "Resort Area": "Erholungsareal",
         "Slide left from the top": "Von oben nach links rutschen",
-        "Pass Substitute": "Durch Delegator"
+        "Pass Substitute": "Durch Delegator",
+        "South": "Sued",
+        "Southwest": "Südwesten"
       }
     },
     "reason": "Zusaetzliche globale Uebersetzungen nach Kontext getrennt: ui fuer die Benutzeroberflaeche, notes fuer Pokemon-Notizen"

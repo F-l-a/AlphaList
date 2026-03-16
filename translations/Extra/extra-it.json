@@ -65,7 +65,22 @@
         "From Lavender": "Da Lavandonia",
         "Rock Tunnel": "Tunnel Roccioso",
         "From Blackthorn": "Da Ebanopoli",
+        "From Blackthorn | Left Path": "Da Ebanopoli | Percorso sinistro",
         "From Mahogany": "Da Mogania",
+        "From Fuchsia": "Da Fucsiapoli",
+        "From Fallarbor": "Da Brunifoglia",
+        "From Rustboro": "Da Ferrugipoli",
+        "From Slateport": "Da Porto Selcepoli",
+        "From Mauville": "Da Ciclamipoli",
+        "From Sootopolis": "Da Ceneride",
+        "From Celestic": "Da Memoride",
+        "From Oreburgh": "Da Mineropoli",
+        "From Eterna": "Da Evopoli",
+        "From Hearthome": "Da Cuoripoli",
+        "From Canalave": "Da Canalipoli",
+        "From Union Cave": "Da Grotta di mezzo",
+        "From Cianwood": "Da Fiorlisopoli",
+        "From Victory Road": "Da Via Vittoria",
         "Post E4": "Dopo Superquattro",
         "Seen Sinnoh Dex required": "Dex di Sinnoh visto richiesto",
         "Bike required": "Bici richiesta",
@@ -74,7 +89,9 @@
         "(2nd Stair)": "(2ª Scala)",
         "Resort Area": "Area Resort",
         "Slide left from the top": "Scivola a sinistra dall'alto",
-        "Pass Substitute": "Attraversa Sostituto"
+        "Pass Substitute": "Attraversa Sostituto",
+        "South": "Sud",
+        "Southwest": "Sud-ovest"
       }
     },
     "reason": "Traduzioni globali aggiuntive divise per contesto: ui per interfaccia, notes per note Pokémon"
