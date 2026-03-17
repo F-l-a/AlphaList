@@ -370,7 +370,7 @@
           "HMs": ["Surf"],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -845,7 +845,7 @@
           "HMs": ["Cut"],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -1388,7 +1388,7 @@
           "HMs": ["Surf", "Waterfall"],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Transform",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -1631,7 +1631,7 @@
           "HMs": [],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
