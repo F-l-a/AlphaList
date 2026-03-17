@@ -464,7 +464,7 @@
           "HMs": [],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -2102,7 +2102,7 @@
           "HMs": [],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -2307,7 +2307,7 @@
           "HMs": ["Surf"],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": ["**If you can't enter the cave, speak to the Gym Leader in the middle of the town**"]
         }
@@ -4147,7 +4147,7 @@
           "HMs": [],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
@@ -4424,7 +4424,7 @@
           "HMs": ["Surf"],
           "Egg Group": ["Ditto"],
           "Male Ratio": "N/A",
-          "Ability": "Impostor",
+          "Ability": "Imposter",
           "Moveset": ["Transform"],
           "Notes": []
         }
