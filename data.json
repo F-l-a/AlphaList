@@ -3411,7 +3411,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "50",
           "Ability": "Unnerve",
-          "Moveset": ["Snarl ", "Flamethrower", "Hyper Voice", "Nasty Plot"],
+          "Moveset": ["Snarl", "Flamethrower", "Hyper Voice", "Nasty Plot"],
           "Notes": []
         }
       }
