@@ -383,7 +383,7 @@
           "Location Notes": "",
           "Map Link": "https://i.imgur.com/XIckOjf.png",
           "HMs": ["Surf"],
-          "Egg Group": ["Bug", "Grass"],
+          "Egg Group": ["Bug", "Plant"],
           "Male Ratio": "50",
           "Ability": "Damp",
           "Moveset": ["Leech Life", "Seed Bomb", "Brick Break", "Spore"],
@@ -3020,7 +3020,7 @@
         "data": {
           "Region": "Hoenn",
           "Specific Location": "Route 133",
-          "Location Notes": "",
+          "Location Notes": "From Pacifidlog",
           "Map Link": "https://i.imgur.com/lwX86zV.jpeg",
           "HMs": ["Surf"],
           "Egg Group": ["Field", "Water A"],
@@ -3405,13 +3405,13 @@
         "data": {
           "Region": "Sinnoh",
           "Specific Location": "Valor Lakefront",
-          "Location Notes": "",
+          "Location Notes": "From Sunyshore",
           "Map Link": "",
           "HMs": [],
           "Egg Group": ["Field"],
           "Male Ratio": "50",
           "Ability": "Unnerve",
-          "Moveset": ["Snarl ", "Flamethrower", "Hyper Voice", "Nasty Plot"],
+          "Moveset": ["Snarl", "Flamethrower", "Hyper Voice", "Nasty Plot"],
           "Notes": []
         }
       }
@@ -4131,7 +4131,7 @@
           "Egg Group": ["Monster"],
           "Male Ratio": "50",
           "Ability": "Cloud Nine",
-          "Moveset": ["Hyper Beam", "Power Whip", "Thunderbolt", "Heal Beal"],
+          "Moveset": ["Hyper Beam", "Power Whip", "Thunderbolt", "Heal Bell"],
           "Notes": []
         }
       }

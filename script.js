@@ -379,6 +379,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /**
+     * Ritorna la descrizione delle proprietà di un move con le etichette tradotte.
+     * @param {string} rawMoveName Nome originale del move da cercare nelle proprietà.
+     * @param {string} translatedMoveName Nome del move già tradotto (se presente).
+     * @returns {string} Stringa formattata con move e proprietà.
+     */
     function formatMoveWithProperties(rawMoveName, translatedMoveName) {
         const moveLabel = translatedMoveName || rawMoveName || '';
         if (!rawMoveName) return moveLabel;
@@ -390,6 +396,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const translatedPropertyLabels = propertyLabels.map(label => t(label, 'notes'));
         return `${moveLabel} - ${translatedPropertyLabels.join(', ')}`;
+    }
+
+    /**
+     * Ritorna il testo leggibile basato su timestamp UNIX (secondi) rispetto ad `now`.
+     * @param {number} unixTimestamp Timestamp UNIX in secondi.
+     * @returns {string} Stringa relativa (es. "in 1 ora", "5 minuti fa").
+     */
+    function getRelativeTimeString(unixTimestamp) {
+        const now = Date.now();
+        const diffSeconds = Math.floor(unixTimestamp - now / 1000);
+        const absDiff = Math.abs(diffSeconds);
+        const lang = document.documentElement.lang || 'en';
+        const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+        if (absDiff < 60) {
+            return rtf.format(diffSeconds, 'second');
+        } else if (absDiff < 3600) {
+            return rtf.format(Math.round(diffSeconds / 60), 'minute');
+        } else if (absDiff < 86400) {
+            return rtf.format(Math.round(diffSeconds / 3600), 'hour');
+        } else {
+            return rtf.format(Math.round(diffSeconds / 86400), 'day');
+        }
     }
 
 
@@ -775,8 +803,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    
 
     /**
      * Legge i parametri URL (`pokemon`, `region`, `location`) e pre-compila i filtri.
@@ -1238,6 +1264,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `${maleRatioRaw}%`
             : maleRatioRaw;
 
+        // Determina se mostrare il messaggio di despawn nella card
+        let despawnHtml = '';
+        const urlTimestamp = getUrlTimestampIfMatch(name, region, location);
+        if (urlTimestamp) {
+            despawnHtml = `<div class="alert alert-warning p-2 my-2 d-flex align-items-center justify-content-between">
+                <div><strong>${t('Despawns approximately')}</strong> <span id="despawn-timestamp">${getRelativeTimeString(urlTimestamp)}</span></div>
+                <div class="ms-2 d-flex gap-1">
+                    <button type="button" class="btn btn-sm btn-outline-primary refresh-timestamp-btn" data-despawn-id="despawn-timestamp" title="${t('Refresh')}"><i class="bi bi-arrow-clockwise"></i></button>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-timestamp-btn" title="${t('Remove timestamp')}"><i class="bi bi-x-lg"></i></button>
+                </div>
+            </div>`;
+        }
         return `
             <div class="mb-2">
                 <div class="card">
@@ -1278,6 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         ${movesetForDisplay}
                                     </ul>
                                     ${notesForDisplay}
+                                    ${despawnHtml}
                                 </div>
                             </div>
                         </div>
@@ -1290,6 +1329,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // Gestore evento click per delegazione: gestisce click su link mappa (modal preview immagine)
     // e bottone copia (formatta Markdown con dati Pokémon e copia in clipboard).
     contentDiv.addEventListener('click', (e) => {
+        // Pulsante refresh timestamp
+        const refreshBtn = e.target.closest && e.target.closest('.refresh-timestamp-btn');
+        if (refreshBtn) {
+            e.preventDefault();
+            const despawnId = refreshBtn.dataset.despawnId;
+            if (despawnId) {
+                const span = document.getElementById(despawnId);
+                if (span) {
+                    const ts = getUrlTimestampIfMatch(null, null, null, true);
+                    if (ts) {
+                        span.textContent = getRelativeTimeString(ts);
+                    }
+                }
+            }
+            return;
+        }
+
+        // Pulsante rimuovi timestamp
+        const removeBtn = e.target.closest && e.target.closest('.remove-timestamp-btn');
+        if (removeBtn) {
+            e.preventDefault();
+            const despawnDiv = removeBtn.closest('.alert.alert-warning');
+            if (despawnDiv) {
+                despawnDiv.classList.add('d-none');
+            }
+            const url = new URL(window.location.href);
+            url.searchParams.delete('timestamp');
+            window.history.replaceState({}, '', url);
+            return;
+        }
         const mapEl = e.target.closest && e.target.closest('.map-preview-link');
         if (mapEl) {
             const url = mapEl.dataset.mapLink;
@@ -1334,6 +1403,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const homeLink = document.getElementById('home-link');
+        if (homeLink && (e.target === homeLink || homeLink.contains(e.target))) {
+            e.preventDefault();
+            window.location.href = window.BASE_URL || '/';
+            return;
+        }
+
         const copyBtnEl = e.target.closest && e.target.closest('.copy-pokemon-btn');
         if (copyBtnEl) {
             const btn = copyBtnEl;
@@ -1350,6 +1426,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (rawName) p.set('pokemon', rawName);
                     if (rawRegion) p.set('region', rawRegion);
                     if (rawLocation) p.set('location', rawLocation);
+                    let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
+                    if (!timestampToUse) {
+                        const nowMs = Date.now();
+                        const despawnMs = nowMs + (75 * 60 * 1000); // 75 minuti
+                        timestampToUse = Math.floor(despawnMs / 1000);
+                    }
+                    p.set('timestamp', timestampToUse);
                     return `${base}?${p.toString()}`;
                 } catch (_) { return ''; }
             })();
@@ -1386,15 +1469,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 markdown += '\n' + notes;
             }
 
-            // Append a Discord relative timestamp for an event ~1h15m from now
-            try {
-                const nowMs = Date.now();
-                const despawnMs = nowMs + (75 * 60 * 1000); // 75 minutes
-                const despawnUnix = Math.floor(despawnMs / 1000);
-                // Localized relative time for the parenthetical will be handled elsewhere if needed
-                markdown += `\n## -=${t('Despawns approximately')} <t:${despawnUnix}:R>=-`;
-            } catch (e) {
-                console.error('Timestamp generation error:', e);
+            // Append a Discord relative timestamp for an event ~1h15m from now. Uses the timestamp from the url if the parameters match
+            let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
+            if (!timestampToUse) {
+                try {
+                    const nowMs = Date.now();
+                    const despawnMs = nowMs + (75 * 60 * 1000); // 75 minuti
+                    timestampToUse = Math.floor(despawnMs / 1000);
+                } catch (e) {
+                    console.error('Timestamp generation error:', e);
+                }
+            }
+            if (timestampToUse) {
+                markdown += `\n## -=${t('Despawns approximately')} <t:${timestampToUse}:R>=-`;
             }
 
             // Append message Footer
@@ -1423,3 +1510,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+/**
+ * Restituisce il timestamp dall'URL.
+ *
+ * Se override === true, restituisce il timestamp URL a prescindere dai parametri.
+ * Altrimenti, restituisce il timestamp solo se i parametri corrispondono.
+ *
+ * @param {string|null} [rawName=null]
+ * @param {string|null} [rawRegion=null]
+ * @param {string|null} [rawLocation=null]
+ * @param {boolean|null} [override=null]
+ * @returns {number|null}
+ */
+function getUrlTimestampIfMatch(rawName = null, rawRegion = null, rawLocation = null, override = null) {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const urlTimestamp = params.get('timestamp');
+        if (!urlTimestamp) return null;
+        const n = Number(urlTimestamp);
+        if (isNaN(n)) return null;
+        if (override === true) return n;
+
+        const urlPokemon = params.get('pokemon');
+        const urlRegion = params.get('region');
+        const urlLocation = params.get('location');
+        if (
+            (rawName === null || (urlPokemon && urlPokemon === rawName)) &&
+            (rawRegion === null || (urlRegion && urlRegion === rawRegion)) &&
+            (rawLocation === null || (urlLocation && urlLocation === rawLocation))
+        ) {
+            return n;
+        }
+    } catch (e) {}
+    return null;
+}
