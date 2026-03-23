@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const regionLocations = db[selectedRegion] ? Object.keys(db[selectedRegion]) : [];
             for (const rawLocation of regionLocations) {
                 const raw = rawLocation.toLowerCase();
-                const translated = t(rawLocation, 'location').toLowerCase();
+                const translated = t(rawLocation, 'locationPokeapi').toLowerCase();
                 if (normalizedInput === raw || normalizedInput === translated) {
                     return { region: selectedRegion, location: rawLocation };
                 }
@@ -625,7 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (const rawLocation of Object.keys(db[rawRegion])) {
                 const translatedRegion = t(rawRegion, 'region');
-                const translatedLocation = t(rawLocation, 'location');
+                const translatedLocation = t(rawLocation, 'locationPokeapi');
 
                 const formattedRaw = `[${rawRegion.charAt(0).toUpperCase()}] ${rawLocation}`.toLowerCase();
                 const formattedTranslated = `[${translatedRegion.charAt(0).toUpperCase()}] ${translatedLocation}`.toLowerCase();
@@ -847,7 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Keep region='all' so the datalist preserves the [K][J] prefix format.
                 // Format the location with the same prefix used in populateLocations('all').
                 const regionLetter = t(region, 'region').charAt(0).toUpperCase();
-                const formattedLocation = `[${regionLetter}] ${t(location, 'location')}`;
+                const formattedLocation = `[${regionLetter}] ${t(location, 'locationPokeapi')}`;
                 locationSelect.value = formattedLocation;
 
                 // With location in URL we want location grouping and accordion auto-open.
@@ -1026,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const locations = Object.keys(db[region]);
             locations.forEach(loc => {
                 const option = document.createElement('option');
-                option.value = t(loc, 'location');
+                option.value = t(loc, 'locationPokeapi');
                 datalistOptions.appendChild(option);
             });
         } else {
@@ -1038,7 +1038,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (db.hasOwnProperty(reg)) {
                     for (const loc of Object.keys(db[reg])) { 
                         const translatedRegion = t(reg, 'region');
-                        const translatedLocation = t(loc, 'location');
+                        const translatedLocation = t(loc, 'locationPokeapi');
                         const regionLetter = translatedRegion.charAt(0).toUpperCase();
                         allLocationsWithRegion.push({
                             region: reg,
@@ -1097,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const translatedName = t(p.name, 'pokemon-species').toLowerCase();
             const nameMatch = p.name.toLowerCase().includes(searchTerm) || translatedName.includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
-            const translatedLocation = t(p.location, 'location').toLowerCase();
+            const translatedLocation = t(p.location, 'locationPokeapi').toLowerCase();
             const translatedRegion = t(p.region, 'region');
             const formattedRawLocation = `[${p.region.charAt(0).toUpperCase()}] ${p.location}`.toLowerCase();
             const formattedTranslatedLocation = `[${translatedRegion.charAt(0).toUpperCase()}] ${translatedLocation}`.toLowerCase();
@@ -1215,9 +1215,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const translatedSpeciesName = t(name, 'pokemon-species');
         const translatedRegion = t(region, 'region');
-        const translatedLocation = t(location, 'location');
+        const translatedLocation = t(location, 'locationPokeapi');
         const translatedDataRegion = t(data["Region"], 'region');
-        const translatedSpecificLocation = t(data["Specific Location"], 'location');
+        const translatedSpecificLocation = t(data["Specific Location"], 'locationPokeapi');
         const translatedAbility = t(data.Ability, 'ability');
         const rawMoves = Array.isArray(data.Moveset)
             ? data.Moveset
