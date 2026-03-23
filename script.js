@@ -785,11 +785,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!deepLinkState.hasParams && resolvedLocationSelection) {
                     if (previousRegion === 'all') {
                         const translatedRegion = t(resolvedLocationSelection.region, 'region');
-                        const translatedLocation = t(resolvedLocationSelection.location, 'location');
+                        const translatedLocation = t(resolvedLocationSelection.location, 'locationPokeapi');
                         const newPrefix = translatedRegion.charAt(0).toUpperCase();
                         locationSelect.value = `[${newPrefix}] ${translatedLocation}`;
                     } else {
-                        locationSelect.value = t(resolvedLocationSelection.location, 'location');
+                        locationSelect.value = t(resolvedLocationSelection.location, 'locationPokeapi');
                     }
                 }
 
@@ -1138,7 +1138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Object.keys(groupedByLocation).forEach(location => {
                 const group = groupedByLocation[location];
                 const firstPokemon = group[0];
-                const translatedLocationTitle = `${t(firstPokemon.region, 'region')} - ${t(firstPokemon.location, 'location')}`;
+                const translatedLocationTitle = `${t(firstPokemon.region, 'region')} - ${t(firstPokemon.location, 'locationPokeapi')}`;
                 const card = createGroupCard(translatedLocationTitle, group);
                 contentDiv.appendChild(card);
             });
