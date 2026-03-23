@@ -1327,6 +1327,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Gestore evento click per delegazione: gestisce click su link mappa (modal preview immagine)
     // e bottone copia (formatta Markdown con dati Pokémon e copia in clipboard).
+    document.addEventListener('click', (e) => {
+        const homeLink = document.getElementById('home-link');
+        if (homeLink && (e.target === homeLink || homeLink.contains(e.target))) {
+            e.preventDefault();
+            const url = new URL(window.location.href);
+            url.pathname = window.BASE_URL || '/';
+            url.search = '';
+            url.hash = '';
+            window.location.href = url.toString();
+            return;
+        }
+    });
+    
     contentDiv.addEventListener('click', (e) => {
         // Pulsante refresh timestamp
         const refreshBtn = e.target.closest && e.target.closest('.refresh-timestamp-btn');
@@ -1399,13 +1412,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     img.src = url;
                 }
             }
-            return;
-        }
-
-        const homeLink = document.getElementById('home-link');
-        if (homeLink && (e.target === homeLink || homeLink.contains(e.target))) {
-            e.preventDefault();
-            window.location.href = window.BASE_URL || '/';
             return;
         }
 
