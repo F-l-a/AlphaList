@@ -1,3 +1,4 @@
 [submodule "translations/Poke-translator"]
 	path = translations/Poke-translator
 	url = https://github.com/F-l-a/Poke-translator.git
+	branch = main

@@ -15,7 +15,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
   "Kanto": {
     "One Island": [
       {
-        "name": "ARCANINE",
+        "name": "Arcanine",
         "data": {
           "Region": "Kanto",
           "Specific Location": "Mt. Ember",
@@ -26,7 +26,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
           "Male Ratio": "75",
           "Ability": "Justified",
           "Moveset": ["Fire Blast", "Bulldoze", "Dragon Pulse", "Safeguard"],
-          "Notes": "Some notes about this spawn."
+          "Notes": ["**⚠ ADS HAVE RECOIL ⚠**", "Another note"]
         }
       }
     ]
@@ -35,7 +35,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
 ```
 
 ## Field guide
-- `name` (string) — The Pokémon's name, in uppercase (e.g., "ARCANINE").
+- `name` (string) — The Pokémon's name, in title case (e.g., "Arcanine").
 - `data` (object) — Contains all the detailed information about the spawn.
   - `Region` (string) — The main region (e.g., "Kanto", "Johto").
   - `Specific Location` (string) — The specific map or area (e.g., "Mt. Ember", "Route 18").
@@ -46,7 +46,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
   - `Male Ratio` (string) — A number representing the percentage of males (e.g., `"75"`, `"50"`, `"0"`, `"N/A"`).
   - `Ability` (string) — The Pokémon's ability.
   - `Moveset` (array of strings) — A list of moves for the Pokémon.
-  - `Notes` (string, optional) — Free text, may contain Markdown for special formatting.
+  - `Notes` (array of strings, optional) — Free text, may contain Markdown for special formatting.
 
 Keep types consistent. Use arrays of strings for lists like `HMs`, `Egg Group`, and `Moveset`.
 

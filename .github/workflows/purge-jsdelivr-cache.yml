@@ -1,0 +1,31 @@
+name: Purge jsDelivr Cache on Dependency Update
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  purge-cache:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[skip ci]')
+    steps:
+      - name: Purge jsDelivr cache for all translation files in PokemmoClientDump (F-l-a/Poke-translator/translations/)
+        run: |
+          PATHS_JSON=$(curl -s "https://api.github.com/repos/F-l-a/Poke-translator/git/trees/main?recursive=1" \
+            | jq -r '[.tree[] | select(.path | startswith("translations/PokemmoClientDump/")) | select(.type=="blob") | "/gh/F-l-a/Poke-translator@main/\(.path)"] | @json')
+
+          if [ "$PATHS_JSON" == "[]" ]; then
+            echo "No files found to purge."
+            exit 0
+          fi
+          
+          JSON_PAYLOAD="{\"path\":${PATHS_JSON}}"
+
+          echo "Sending purge request with the following payload:"
+          echo $JSON_PAYLOAD | jq .
+
+          curl -X POST https://purge.jsdelivr.net/ \
+            -H "Content-Type: application/json" \
+            -d "$JSON_PAYLOAD"
+        shell: bash
