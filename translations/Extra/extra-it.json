@@ -51,7 +51,7 @@
         "**⚠ ADS HAVE SANDSTORM/FINAL GAMBIT ⚠**": "**⚠ ADS HANNO TERREMPESTA/AZZARDO ⚠**",
         "**⚠ METRONOME CAN RECOIL ⚠**": "**⚠ METRONOMO PUÒ CAUSARE CONTRACCOLPO ⚠**",
         "**If you can't enter the cave, speak to the Gym Leader in the middle of the town**": "**Se non riesci a entrare nella grotta, parla con il Capopalestra al centro della città**",
-        "**Swap bikes at the bike shop in Mauville (house to the right of the PC)**": "**Scambia bici al negozio di bici di Ciclamipoli (casa a destra del PC)**", 
+        "**Swap bikes at the bike shop in Mauville (house to the right of the PC)**": "**Scambia bici al negozio di bici di Ciclamipoli (casa a destra del PC)**",
         "**You can fly there directly after the first time you get there**": "**Dopo la prima volta che ci arrivi, puoi volarci direttamente**",
         "**Enter the cave, go all the way to the left and up**": "**Entra nella grotta, vai tutto a sinistra e poi in alto**",
         "**Fall in the first moving sand**": "**Lasciati cadere nella prima sabbia mobile**",
@@ -95,7 +95,9 @@
         "Slide left from the top": "Scivola a sinistra dall'alto",
         "Pass Substitute": "Attraversa Sostituto",
         "South": "Sud",
-        "Southwest": "Sud-ovest"
+        "Southwest": "Sud-ovest",
+        "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ ADS POSSONO UCCIDERSI DA SOLI ⚠**",
+        "Has Sitrus Berry": "Ha Baccacedro"
       }
     },
     "reason": "Traduzioni globali aggiuntive divise per contesto: ui per interfaccia, notes per note Pokémon"

@@ -95,7 +95,9 @@
         "Slide left from the top": "Deslízate hacia la izquierda desde arriba",
         "Pass Substitute": "Ignora Sustituto",
         "South": "Sur",
-        "Southwest": "Suroeste"
+        "Southwest": "Suroeste",
+        "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ MINIONS PUEDEN MATARSE A SÍ MISMOS ⚠**",
+        "Has Sitrus Berry": "Tiene Baya Zidra"
       }
     },
     "reason": "Traducciones globales adicionales divididas por contexto: ui para interfaz, notes para notas de Pokémon"

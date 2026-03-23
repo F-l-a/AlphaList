@@ -167,7 +167,7 @@
           "HMs": ["Surf", "Waterfall"],
           "Egg Group": ["Monster", "Water A"],
           "Male Ratio": "50",
-          "Ability": "Hydratation",
+          "Ability": "Hydration",
           "Moveset": ["Surf", "Ice Beam", "Thunder", "Rain Dance"],
           "Notes": ["**⚠ ADS HAVE PERISH SONG ⚠**"]
         }
@@ -208,7 +208,7 @@
         "name": "Tentacruel",
         "data": {
           "Region": "Kanto",
-          "Specific Location": "Waterfall Labirint",
+          "Specific Location": "Water Labyrinth",
           "Location Notes": "",
           "Map Link": "",
           "HMs": ["Surf"],
@@ -223,7 +223,7 @@
         "name": "Parasect",
         "data": {
           "Region": "Kanto",
-          "Specific Location": "Five Island Meadow",
+          "Specific Location": "Five Isle Meadow",
           "Location Notes": "",
           "Map Link": "",
           "HMs": [],
@@ -511,7 +511,7 @@
           "HMs": ["Surf"],
           "Egg Group": ["Fairy", "Field"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Thunderbolt", "Surf", "Body Slam", "Safeguard"],
           "Notes": []
         }
@@ -609,7 +609,7 @@
           "HMs": [],
           "Egg Group": ["Fairy", "Field"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Thunderbolt", "Grass Knot", "Brick Break", "Iron Tail"],
           "Notes": []
         }
@@ -641,7 +641,7 @@
           "HMs": [],
           "Egg Group": ["Fairy", "Field"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Thunderbolt", "Grass Knot", "Brick Break", "Iron Tail"],
           "Notes": []
         }
@@ -656,7 +656,7 @@
           "Location Notes": "",
           "Map Link": "",
           "HMs": [],
-          "Egg Group": ["Field", "Monter"],
+          "Egg Group": ["Field", "Monster"],
           "Male Ratio": "0",
           "Ability": "Hustle",
           "Moveset": ["Sludge Bomb", "Crunch", "Super Fang", "Thunderbolt"],
@@ -727,7 +727,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "75",
           "Ability": "Justified",
-          "Moveset": ["Flamethrower", "Extreme Speed", "Dragon Pulse", "Will-O-Wisp"],
+          "Moveset": ["Flamethrower", "ExtremeSpeed", "Dragon Pulse", "Will-O-Wisp"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -744,7 +744,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "75",
           "Ability": "Justified",
-          "Moveset": ["Flamethrower", "Extreme Speed", "Will-O-Wisp", "Close Combat"],
+          "Moveset": ["Flamethrower", "ExtremeSpeed", "Will-O-Wisp", "Close Combat"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -829,7 +829,7 @@
           "Egg Group": ["Flying"],
           "Male Ratio": "50",
           "Ability": "Big Pecks",
-          "Moveset": ["Fly", "Steel Wing", "Feather Dance", "Roost"],
+          "Moveset": ["Fly", "Steel Wing", "FeatherDance", "Roost"],
           "Notes": []
         }
       }
@@ -914,7 +914,7 @@
           "Egg Group": ["Monster"],
           "Male Ratio": "0",
           "Ability": "Inner Focus",
-          "Moveset": ["Body Slam", "Drain Punch", "Thunder Punch", "Aqual Tail"],
+          "Moveset": ["Body Slam", "Drain Punch", "ThunderPunch", "Aqua Tail"],
           "Notes": []
         }
       }
@@ -930,7 +930,7 @@
           "HMs": [],
           "Egg Group": ["Fairy", "Field"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Thunderbolt", "Surf", "Signal Beam", "Nasty Plot"],
           "Notes": []
         }
@@ -1065,7 +1065,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "50",
           "Ability": "Unnerve",
-          "Moveset": ["Flamethrower", "Dark Pulse", "Solar Beam", "Sunny Day"],
+          "Moveset": ["Flamethrower", "Dark Pulse", "SolarBeam", "Sunny Day"],
           "Notes": []
         }
       }
@@ -1133,7 +1133,7 @@
           "Egg Group": ["Dragon"],
           "Male Ratio": "50",
           "Ability": "Multiscale",
-          "Moveset": ["Dragon Claw", "Extreme Speed", "Low Kick", "Surf"],
+          "Moveset": ["Dragon Claw", "ExtremeSpeed", "Low Kick", "Surf"],
           "Notes": []
         }
       }
@@ -1261,7 +1261,7 @@
           "Egg Group": ["Flying"],
           "Male Ratio": "50",
           "Ability": "Big Pecks",
-          "Moveset": ["Hurricane", "Steel Wind", "Whirlwind", "Rain Dance"],
+          "Moveset": ["Hurricane", "Steel Wing", "Whirlwind", "Rain Dance"],
           "Notes": []
         }
       }
@@ -1310,7 +1310,7 @@
           "Egg Group": ["Bug"],
           "Male Ratio": "50",
           "Ability": "Iron Fist",
-          "Moveset": ["Bug Buzz", "Dynamic Punch", "Light Screen", "Reflect"],
+          "Moveset": ["Bug Buzz", "DynamicPunch", "Light Screen", "Reflect"],
           "Notes": []
         }
       },
@@ -1325,7 +1325,7 @@
           "Egg Group": ["Plant"],
           "Male Ratio": "50",
           "Ability": "Early Bird",
-          "Moveset": ["Solar Beam", "Earth Power", "Systensis", "Sunny Day"],
+          "Moveset": ["SolarBeam", "Earth Power", "Synthesis", "Sunny Day"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -1350,7 +1350,7 @@
         "name": "Xatu",
         "data": {
           "Region": "Johto",
-          "Specific Location": "Ruin of Alph",
+          "Specific Location": "Ruins of Alph",
           "Location Notes": "From Union Cave",
           "Map Link": "",
           "HMs": ["Surf"],
@@ -1534,7 +1534,7 @@
           "Egg Group": ["Flying"],
           "Male Ratio": "50",
           "Ability": "Tinted Lens",
-          "Moveset": ["Hyper Voice ", "Whirlwind", "Night Shade", "Roost"],
+          "Moveset": ["Hyper Voice", "Whirlwind", "Night Shade", "Roost"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -1551,7 +1551,7 @@
           "Egg Group": ["Bug"],
           "Male Ratio": "50",
           "Ability": "Iron Fist",
-          "Moveset": ["Focus Punch", "Thunder Punch", "Ice Punch", "Mach Punch"],
+          "Moveset": ["Focus Punch", "ThunderPunch", "Ice Punch", "Mach Punch"],
           "Notes": []
         }
       },
@@ -1743,7 +1743,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "25",
           "Ability": "Drought",
-          "Moveset": ["Fire Blast", "Solar Beam", "Psyshock", "Nasty Plot"],
+          "Moveset": ["Fire Blast", "SolarBeam", "Psyshock", "Nasty Plot"],
           "Notes": []
         }
       }
@@ -2034,8 +2034,8 @@
           "HMs": [],
           "Egg Group": ["Field", "Fairy"],
           "Male Ratio": "25",
-          "Ability": "Rattle",
-          "Moveset": ["Body Slam", "Ice Punch", "Fire Punch", "Thunder Punch"],
+          "Ability": "Rattled",
+          "Moveset": ["Body Slam", "Ice Punch", "Fire Punch", "ThunderPunch"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       },
@@ -2194,10 +2194,10 @@
           "Location Notes": "",
           "Map Link": "",
           "HMs": [],
-          "Egg Group": ["Field, Humanoid"],
+          "Egg Group": ["Field", "Humanoid"],
           "Male Ratio": "50",
           "Ability": "Contrary",
-          "Moveset": ["Hyper Voice ", "Psycho Cut", "Swagger", "Skill Swap"],
+          "Moveset": ["Hyper Voice", "Psycho Cut", "Swagger", "Skill Swap"],
           "Notes": []
         }
       }
@@ -2291,7 +2291,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "25",
           "Ability": "Drought",
-          "Moveset": ["Flamethrower", "Solar Beam", "Extrasensory", "Nasty Plot"],
+          "Moveset": ["Flamethrower", "SolarBeam", "Extrasensory", "Nasty Plot"],
           "Notes": []
         }
       }
@@ -2374,7 +2374,7 @@
           "Egg Group": ["Field", "Water A"],
           "Male Ratio": "50",
           "Ability": "Oblivious",
-          "Moveset": ["Icicle Speak", "Curse", "Sleep Talk", "Rest"],
+          "Moveset": ["Icicle Spear", "Curse", "Sleep Talk", "Rest"],
           "Notes": []
         }
       }
@@ -2584,7 +2584,7 @@
           "HMs": [],
           "Egg Group": ["Fairy"],
           "Male Ratio": "50",
-          "Ability": "Lightning Road",
+          "Ability": "Lightningrod",
           "Moveset": ["Thunderbolt", "Grass Knot", "Signal Beam", "Nasty Plot"],
           "Notes": []
         }
@@ -2685,7 +2685,7 @@
           "Egg Group": ["Fairy"],
           "Male Ratio": "25",
           "Ability": "Frisk",
-          "Moveset": ["Body Slam", "Flamethrower", "Thunder Punch", "Pain Split"],
+          "Moveset": ["Body Slam", "Flamethrower", "ThunderPunch", "Pain Split"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -2701,7 +2701,7 @@
           "HMs": [],
           "Egg Group": ["Fairy"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Fake Tears", "Seismic Toss", "Grass Knot", "Discharge"],
           "Notes": []
         }
@@ -2734,7 +2734,7 @@
           "Egg Group": ["Fairy", "Plant"],
           "Male Ratio": "50",
           "Ability": "Technician",
-          "Moveset": ["Energy Ball", "Poison Jab", "Nightmare", "Grass Whistle"],
+          "Moveset": ["Energy Ball", "Poison Jab", "Nightmare", "GrassWhistle"],
           "Notes": []
         }
       }
@@ -2765,9 +2765,9 @@
           "HMs": ["Surf"],
           "Egg Group": ["Monster", "Plant"],
           "Male Ratio": "50",
-          "Ability": "Harvest Has Sitrus Berry",
+          "Ability": "Harvest",
           "Moveset": ["Earthquake", "Air Slash", "Dragon Pulse", "Leaf Storm"],
-          "Notes": []
+          "Notes": ["Has Sitrus Berry"]
         }
       }
     ],
@@ -2783,7 +2783,7 @@
           "Egg Group": ["Fairy", "Plant"],
           "Male Ratio": "50",
           "Ability": "Technician",
-          "Moveset": ["Seed Bomb", "Mach Punch", "Thunder Punch", "Spore"],
+          "Moveset": ["Seed Bomb", "Mach Punch", "ThunderPunch", "Spore"],
           "Notes": []
         }
       },
@@ -2812,9 +2812,9 @@
           "HMs": ["Surf", "Waterfall"],
           "Egg Group": ["Monster", "Plant"],
           "Male Ratio": "50",
-          "Ability": "Harvest Has Sitrus Berry",
-          "Moveset": ["Solar Beam", "Air Slash", "Outrage", "Sunny Day"],
-          "Notes": []
+          "Ability": "Harvest",
+          "Moveset": ["SolarBeam", "Air Slash", "Outrage", "Sunny Day"],
+          "Notes": ["Has Sitrus Berry"]
         }
       }
     ],
@@ -2940,7 +2940,7 @@
           "HMs": ["Surf"],
           "Egg Group": ["Field", "Water A"],
           "Male Ratio": "50",
-          "Ability": "Oblivius",
+          "Ability": "Oblivious",
           "Moveset": ["Frost Breath", "Surf", "Earthquake", "Rest"],
           "Notes": []
         }
@@ -3096,7 +3096,7 @@
           "Egg Group": ["Humanoid"],
           "Male Ratio": "75",
           "Ability": "Vital Spirit",
-          "Moveset": ["Fire Punch", "Thunder Punch", "Psychic", "Counter"],
+          "Moveset": ["Fire Punch", "ThunderPunch", "Psychic", "Counter"],
           "Notes": []
         }
       }
@@ -3114,7 +3114,7 @@
           "Male Ratio": "N/A",
           "Ability": "Heavy Metal",
           "Moveset": ["Heavy Slam", "Earthquake", "Psychic", "Grass Knot"],
-          "Notes": ["Enter cave, go right. Go down elevator, go left. Go all the way till final room"]
+          "Notes": []
         }
       }
     ],
@@ -3338,7 +3338,7 @@
         "name": "Flareon",
         "data": {
           "Region": "Sinnoh",
-          "Specific Location": "Stark Moutain",
+          "Specific Location": "Stark Mountain",
           "Location Notes": "Resort Area",
           "Map Link": "",
           "HMs": ["Rock Climb", "Surf"],
@@ -3353,7 +3353,7 @@
         "name": "Magmortar",
         "data": {
           "Region": "Sinnoh",
-          "Specific Location": "Stark Moutain",
+          "Specific Location": "Stark Mountain",
           "Location Notes": "",
           "Map Link": "",
           "HMs": ["Strength", "Rock Climb", "Surf", "Rock Smash"],
@@ -3624,7 +3624,7 @@
           "Egg Group": ["Field"],
           "Male Ratio": "50",
           "Ability": "Flame Body",
-          "Moveset": ["Fire Blast", "Solar Beam", "Drill Run", "Sunny Day"],
+          "Moveset": ["Fire Blast", "SolarBeam", "Drill Run", "Sunny Day"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
       }
@@ -3780,7 +3780,7 @@
           "Specific Location": "Route 216",
           "Location Notes": "",
           "Map Link": "",
-          "HMs": ["Rock Climb Snowpoint\nRock Climb", "Strength Celestic"],
+          "HMs": ["Rock Climb", "Strength"],
           "Egg Group": ["Dragon", "Monster"],
           "Male Ratio": "50",
           "Ability": "Rough Skin",
@@ -3795,7 +3795,7 @@
           "Specific Location": "Route 216",
           "Location Notes": "",
           "Map Link": "",
-          "HMs": ["Rock Climb Snowpoint\nRock Climb", "Strength Celestic"],
+          "HMs": ["Rock Climb", "Strength"],
           "Egg Group": ["Field", "Humanoid"],
           "Male Ratio": "87.5",
           "Ability": "Justified",
@@ -4052,7 +4052,7 @@
           "Egg Group": ["Genderless"],
           "Male Ratio": "N/A",
           "Ability": "Heavy Metal",
-          "Moveset": ["Heavy Slam", "Solar Beam", "Weather Ball", "Sunny Day"],
+          "Moveset": ["Heavy Slam", "SolarBeam", "Weather Ball", "Sunny Day"],
           "Notes": ["**You can fly there directly after the first time you get there**"]
         }
       },
@@ -4067,7 +4067,7 @@
           "Egg Group": ["Flying"],
           "Male Ratio": "50",
           "Ability": "Moxie",
-          "Moveset": ["Night Slash", "Heat Weave", "Superpower", "Mud-Slap"],
+          "Moveset": ["Night Slash", "Heat Wave", "Superpower", "Mud-Slap"],
           "Notes": ["**You can fly there directly after the first time you get there**"]
         }
       }
@@ -4327,7 +4327,7 @@
           "Egg Group": ["Fairy", "Plant"],
           "Male Ratio": "50",
           "Ability": "Chlorophyll",
-          "Moveset": ["Solar Beam", "Secret Power", "Endeavor", "Sunny Day"],
+          "Moveset": ["SolarBeam", "Secret Power", "Endeavor", "Sunny Day"],
           "Notes": []
         }
       },
@@ -4525,7 +4525,7 @@
           "Egg Group": ["Field", "Water A"],
           "Male Ratio": "50",
           "Ability": "Swift Swim",
-          "Moveset": ["Surf", "Ice Beam", "Psychic", "Rain Danc"],
+          "Moveset": ["Surf", "Ice Beam", "Psychic", "Rain Dance"],
           "Notes": []
         }
       },
@@ -4686,7 +4686,7 @@
           "HMs": [],
           "Egg Group": ["Fairy"],
           "Male Ratio": "50",
-          "Ability": "Lightning Rod",
+          "Ability": "Lightningrod",
           "Moveset": ["Charge Beam", "Signal Beam", "Uproar", "Fake Tears"],
           "Notes": []
         }
@@ -5012,9 +5012,9 @@
           "HMs": ["Strength", "Surf"],
           "Egg Group": ["Monster", "Plant"],
           "Male Ratio": "50",
-          "Ability": "Harvest Has Sitrus Berry",
+          "Ability": "Harvest",
           "Moveset": ["Leaf Blade", "Body Slam", "Earthquake", "Swords Dance"],
-          "Notes": []
+          "Notes": ["Has Sitrus Berry"]
         }
       }
     ]

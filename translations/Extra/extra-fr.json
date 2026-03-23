@@ -95,7 +95,9 @@
         "Slide left from the top": "Glissez vers la gauche depuis le haut",
         "Pass Substitute": "Ignore Clonage",
         "South": "Sud",
-        "Southwest": "Sud-ouest"
+        "Southwest": "Sud-ouest",
+        "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ LES ADS PEUVENT SE TUER EUX-MÊMES ⚠**",
+        "Has Sitrus Berry": "A une Baie Sitrus"
       }
     },
     "reason": "Traductions globales supplémentaires divisées par contexte : ui pour l'interface, notes pour les notes Pokémon"

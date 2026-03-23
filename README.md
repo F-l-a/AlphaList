@@ -1,9 +1,7 @@
 # Pokémon Alpha List
+# [OPEN WEBSITE](https://f-l-a.github.io/AlphaList/)
 
-Repository template and data schema for the Pokémon Alpha List used by the site.
-
-## Purpose
-Keep `data.json` consistent. Data updates should be submitted as a Pull Request modifying `data.json`. When a PR is merged into `main`, a GitHub Actions workflow will automatically deploy the site to GitHub Pages.
+***
 
 ## JSON structure (base)
 Top-level structure: an object whose keys are region names. Each region contains locations (objects) with arrays of Pokémon entries.
@@ -48,7 +46,7 @@ Example minimal structure - see [data.json](data.json) itself for other examples
   - `Moveset` (array of strings) — A list of moves for the Pokémon.
   - `Notes` (array of strings, optional) — Free text, may contain Markdown for special formatting.
 
-Keep types consistent. Use arrays of strings for lists like `HMs`, `Egg Group`, and `Moveset`.
+Keep types consistent. Use arrays of strings for lists like `HMs`, `Egg Group`, and `Moveset`. Each element is translated separately using [translation files](translations).
 
 ## Local Testing
 To run the site locally for testing, start a simple HTTP server from the project root.
@@ -81,6 +79,22 @@ Notes:
 
 ## How To Contribute
 See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+### Pre-commit checklist
+
+Before committing, make sure to:
+
+1. Sync the [Poke-Translator](translations/Poke-translator/) folder (if needed)
+2. Bump the cache version in [service-worker.js](service-worker.js)
+3. Bump the version in [index.html](index.html)
+4. Validate [data.json](data.json) using:
+    ```bash
+    jq . data.json > /dev/null
+    ```
+5. Run validate_data.py for additional checks (results are in [validation_log.txt](validation_log.txt)):
+    ```bash
+    python validate_data.py
+    ```
 
 ## Credits
 - Original data by ZzPSYCHOzZ
