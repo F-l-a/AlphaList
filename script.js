@@ -1486,11 +1486,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             if (timestampToUse) {
-                markdown += `\n## -=${t('Despawns approximately')} <t:${timestampToUse}:R>=-`;
+                markdown += `\n## -= ${t('Despawns approximately')} <t:${timestampToUse}:R> =-`;
             }
 
             // Append message Footer
-            markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and send the next one!')}](https://f-l-a.github.io/AlphaList/)`;
+            markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and share the next! (Multilanguage!)')}](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
                 showToastAlert();
