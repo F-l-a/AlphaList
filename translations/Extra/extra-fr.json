@@ -100,8 +100,8 @@
         "Has Sitrus Berry": "A une Baie Sitrus",
         "Hits Ghost": "Touche les Types Spectre",
         "Reflect Status Moves": "Reflète les Capacités de Statut",
-        "Immune to Sleep": "Immunisé au Sommeil",
-        "Immune to Spore": "Immunisé à Spore"
+        "Immune to Sleep": "Immunisé au Statut Sommeil",
+        "Immune to Spore": "Immunisé à la Capacité Spore"
       }
     },
     "reason": "Traductions globales supplémentaires divisées par contexte : ui pour l'interface, notes pour les notes Pokémon"
