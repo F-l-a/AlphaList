@@ -97,7 +97,11 @@
         "South": "Sur",
         "Southwest": "Suroeste",
         "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ MINIONS PUEDEN MATARSE A SÍ MISMOS ⚠**",
-        "Has Sitrus Berry": "Tiene Baya Zidra"
+        "Has Sitrus Berry": "Tiene Baya Zidra",
+        "Hits Ghost": "Golpea a Fantasmas",
+        "Reflect Status Moves": "Refleja Movimientos de Estado",
+        "Immune to Sleep": "Inmune al Sueño",
+        "Immune to Spore": "Inmune a Espora"
       }
     },
     "reason": "Traducciones globales adicionales divididas por contexto: ui para interfaz, notes para notas de Pokémon"

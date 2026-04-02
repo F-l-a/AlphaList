@@ -97,7 +97,11 @@
         "South": "Sud",
         "Southwest": "Sud-ovest",
         "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ ADS POSSONO UCCIDERSI DA SOLI ⚠**",
-        "Has Sitrus Berry": "Ha Baccacedro"
+        "Has Sitrus Berry": "Ha Baccacedro",
+        "Hits Ghost": "Colpisce Spettro",
+        "Reflect Status Moves": "Riflette Mosse di Stato",
+        "Immune to Sleep": "Immune al Sonno",
+        "Immune to Spore": "Immune a Spora"
       }
     },
     "reason": "Traduzioni globali aggiuntive divise per contesto: ui per interfaccia, notes per note Pokémon"

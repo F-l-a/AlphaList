@@ -1,0 +1,20 @@
+{
+  "moves": {
+    "Pass Substitute": [
+      "Bug Buzz",
+      "Hyper Voice",
+      "Roar",
+      "Snarl",
+      "Taunt",
+      "Uproar",
+      "Whirlwind"
+    ]
+  },
+  "abilities": {
+    "Pass Substitute": ["Infiltrator"],
+    "Hits Ghost": ["Scrappy"],
+    "Immune to Spore": ["Sap Sipper", "Overcoat"],
+    "Immune to Sleep": ["Insomnia", "Vital Spirit"],
+    "Reflect Status Moves": ["Magic Bounce"]
+  }
+}

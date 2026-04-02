@@ -19,6 +19,68 @@ FILES = {
     'pokemon-species': 'pokemon-species-it.json',
 }
 
+def ensure_special_properties_in_extra_notes():
+    """
+    Inserisce tutte le chiavi di special-properties.json in Extra.notes se mancanti, con valore uguale alla chiave.
+    """
+    import glob
+    sp_path = os.path.join(BASE_PATH, 'special-properties.json')
+    extra_dir = os.path.join(BASE_PATH, 'translations', 'Extra')
+    if not os.path.exists(sp_path):
+        return []
+    with open(sp_path, encoding='utf-8') as f:
+        sp = json.load(f)
+    # Raccogli tutte le chiavi da moves e abilities
+    special_keys = set()
+    for prop in sp.get('moves', {}):
+        special_keys.add(prop)
+    for prop in sp.get('abilities', {}):
+        special_keys.add(prop)
+    # Per ogni extra-*.json, aggiungi le chiavi mancanti in notes
+    files = glob.glob(os.path.join(extra_dir, 'extra-*.json'))
+    added = []
+    for f in files:
+        with open(f, encoding='utf-8') as jf:
+            data = json.load(jf)
+        notes = data.get('add_translation', {}).get('translations', {}).get('notes', {})
+        updated = False
+        for k in special_keys:
+            if k not in notes:
+                notes[k] = k
+                added.append((os.path.basename(f), k))
+                updated = True
+        if updated:
+            data['add_translation']['translations']['notes'] = notes
+            with open(f, 'w', encoding='utf-8') as jf:
+                json.dump(data, jf, ensure_ascii=False, indent=2)
+    return added
+
+def validate_special_properties(extra_notes, ref_moves, ref_abilities, log_lines):
+    """
+    Controlla che tutte le proprietà e i valori di special-properties.json siano presenti nelle Extra.notes, Moves, Abilities.
+    """
+    import json
+    sp_path = os.path.join(BASE_PATH, 'special-properties.json')
+    if not os.path.exists(sp_path):
+        log_lines.append("special-properties.json non trovato!")
+        return
+    with open(sp_path, encoding='utf-8') as f:
+        sp = json.load(f)
+    # Moves
+    for prop, moves in sp.get('moves', {}).items():
+        if prop not in extra_notes:
+            log_lines.append(f"\t[SpecialProperties][moves] Proprietà '{prop}' non trovata in extra-it.json [notes]")
+        for move in moves:
+            if move not in ref_moves:
+                log_lines.append(f"\t[SpecialProperties][moves] Mossa '{move}' non trovata in move-it.json")
+    # Abilities
+    for prop, abilities in sp.get('abilities', {}).items():
+        if prop not in extra_notes:
+            log_lines.append(f"\t[SpecialProperties][abilities] Proprietà '{prop}' non trovata in extra-it.json [notes]")
+        for ability in abilities:
+            if ability not in ref_abilities:
+                log_lines.append(f"\t[SpecialProperties][abilities] Abilità '{ability}' non trovata in ability-it.json")
+
 def sync_extra_keys():
     """
     Controlla che tutti i file extra-*.json abbiano le stesse chiavi sia in notes che in ui.
@@ -242,6 +304,7 @@ def main():
     now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     log_lines.append(f"Log generated at: {now}\n")
 
+
     # CLEANUP
     log_lines.append("****************")
     log_lines.append("> CLEANUP")
@@ -250,6 +313,16 @@ def main():
         log_lines.append("\tFile Cleaned!")
     else:
         log_lines.append("\tFile was already clean!")
+
+    # Inserisci chiavi special-properties in Extra.notes prima della sync
+    log_lines.append("\n****************")
+    log_lines.append("> SYNC Special Properties with Extra-it.json [notes]")
+    added_special = ensure_special_properties_in_extra_notes()
+    if not added_special:
+        log_lines.append("\tall special properties keys already present in extra-it.json [notes]")
+    else:
+        for fname, key in added_special:
+            log_lines.append(f"\t\t[SYNC][special-properties][{os.path.basename(fname)}] ADDED KEY: {key}")
 
     # SYNC Extra translations
     log_lines.append("\n****************")
@@ -432,6 +505,16 @@ def main():
         log_lines.append(f"\tValid! ({total_data} total elements)")
     else:
         log_lines.extend(data_log)
+
+    # Sezione separata per validazione special-properties.json
+    log_lines.append("\n****************")
+    log_lines.append("> CHECK special-properties.json validity")
+    sp_log = []
+    validate_special_properties(extra_notes, ref['move'], ref['ability'], sp_log)
+    if not sp_log:
+        log_lines.append("\tValid!")
+    else:
+        log_lines.extend(sp_log)
 
     # RECAP finale
     recap_count = len(notes_not_translated) + len(ui_not_translated) + len(data_log)

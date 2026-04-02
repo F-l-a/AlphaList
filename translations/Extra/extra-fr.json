@@ -97,7 +97,11 @@
         "South": "Sud",
         "Southwest": "Sud-Ouest",
         "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ LES ADS PEUVENT SE TUER EUX-MÊMES ⚠**",
-        "Has Sitrus Berry": "A une Baie Sitrus"
+        "Has Sitrus Berry": "A une Baie Sitrus",
+        "Hits Ghost": "Touche les Fantômes",
+        "Reflect Status Moves": "Reflète les Attaques de Statut",
+        "Immune to Sleep": "Immunisé au Sommeil",
+        "Immune to Spore": "Immunisé à Spore"
       }
     },
     "reason": "Traductions globales supplémentaires divisées par contexte : ui pour l'interface, notes pour les notes Pokémon"

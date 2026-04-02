@@ -97,7 +97,11 @@
         "South": "Sued",
         "Southwest": "Südwesten",
         "**⚠ ADS CAN KILL THEMSELVES ⚠**": "**⚠ ADS KÖNNEN SICH SELBST BESIEGEN ⚠**",
-        "Has Sitrus Berry": "Hat Tsitrubeere"
+        "Has Sitrus Berry": "Hat Tsitrubeere",
+        "Hits Ghost": "Trifft Geist",
+        "Reflect Status Moves": "Reflektiert Status-Attacken",
+        "Immune to Sleep": "Immun gegen Schlaf",
+        "Immune to Spore": "Immun gegen Pilzspore"
       }
     },
     "reason": "Zusaetzliche globale Uebersetzungen nach Kontext getrennt: ui fuer die Benutzeroberflaeche, notes fuer Pokemon-Notizen"

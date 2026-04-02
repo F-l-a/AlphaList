@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'region'
     ];
     const translationSets = {};
-    const movePropertiesByMove = new Map();
     let translationLoadToken = 0;
     let uniqueIdCounter = 0;
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
@@ -354,48 +353,83 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Mappe per proprietà di mosse e abilità
+    const movePropertiesByMove = new Map();
+    const abilityPropertiesByAbility = new Map();
+
     function setMoveProperties(movePropertiesData) {
         movePropertiesByMove.clear();
+        abilityPropertiesByAbility.clear();
         if (!movePropertiesData || typeof movePropertiesData !== 'object' || Array.isArray(movePropertiesData)) {
             return;
         }
 
-        Object.entries(movePropertiesData).forEach(([propertyLabel, moves]) => {
-            if (!Array.isArray(moves)) return;
-
-            moves.forEach(moveName => {
-                if (typeof moveName !== 'string' || moveName.trim() === '') return;
-
-                if (!movePropertiesByMove.has(moveName)) {
-                    movePropertiesByMove.set(moveName, []);
-                }
-
-                const labels = movePropertiesByMove.get(moveName);
-                if (!labels.includes(propertyLabel)) {
-                    labels.push(propertyLabel);
-                }
+        // Sezione mosse: { moves: { "Prop": ["Move1", ...] } }
+        if (movePropertiesData.moves && typeof movePropertiesData.moves === 'object') {
+            Object.entries(movePropertiesData.moves).forEach(([propertyLabel, moves]) => {
+                if (!Array.isArray(moves)) return;
+                moves.forEach(moveName => {
+                    if (typeof moveName !== 'string' || moveName.trim() === '') return;
+                    if (!movePropertiesByMove.has(moveName)) {
+                        movePropertiesByMove.set(moveName, []);
+                    }
+                    const labels = movePropertiesByMove.get(moveName);
+                    if (!labels.includes(propertyLabel)) {
+                        labels.push(propertyLabel);
+                    }
+                });
             });
-        });
-    }
-
-    /**
-     * Ritorna la descrizione delle proprietà di un move con le etichette tradotte.
-     * @param {string} rawMoveName Nome originale del move da cercare nelle proprietà.
-     * @param {string} translatedMoveName Nome del move già tradotto (se presente).
-     * @returns {string} Stringa formattata con move e proprietà.
-     */
-    function formatMoveWithProperties(rawMoveName, translatedMoveName) {
-        const moveLabel = translatedMoveName || rawMoveName || '';
-        if (!rawMoveName) return moveLabel;
-
-        const propertyLabels = movePropertiesByMove.get(rawMoveName);
-        if (!propertyLabels || propertyLabels.length === 0) {
-            return moveLabel;
         }
 
-        const translatedPropertyLabels = propertyLabels.map(label => t(label, 'notes'));
-        return `${moveLabel} - ${translatedPropertyLabels.join(', ')}`;
+        // Sezione abilità: { abilities: { "Prop": ["Ability1", ...] } }
+        if (movePropertiesData.abilities && typeof movePropertiesData.abilities === 'object') {
+            Object.entries(movePropertiesData.abilities).forEach(([propertyLabel, abilities]) => {
+                if (!Array.isArray(abilities)) return;
+                abilities.forEach(abilityName => {
+                    if (typeof abilityName !== 'string' || abilityName.trim() === '') return;
+                    if (!abilityPropertiesByAbility.has(abilityName)) {
+                        abilityPropertiesByAbility.set(abilityName, []);
+                    }
+                    const labels = abilityPropertiesByAbility.get(abilityName);
+                    if (!labels.includes(propertyLabel)) {
+                        labels.push(propertyLabel);
+                    }
+                });
+            });
+        }
     }
+
+/**
+ * Ritorna la descrizione delle proprietà di una mossa o abilità con le etichette tradotte.
+ * @param {string} rawName Nome originale (move o ability) da cercare nelle proprietà.
+ * @param {string} translatedName Nome già tradotto (se presente).
+ * @param {"move"|"ability"} [type="move"] Tipo: "move" o "ability".
+ * @returns {string} Stringa formattata con nome e proprietà.
+ */
+function formatWithProperties(rawName, translatedName, type = "move") {
+    const label = translatedName || rawName || '';
+    if (!rawName) return label;
+
+    let propertyLabels = null;
+    if (type === "move") {
+        propertyLabels = movePropertiesByMove.get(rawName);
+    } else if (type === "ability") {
+        propertyLabels = abilityPropertiesByAbility.get(rawName);
+    }
+    if (!propertyLabels || propertyLabels.length === 0) {
+        return label;
+    }
+    const translatedPropertyLabels = propertyLabels.map(l => t(l, 'notes'));
+    return `${label} - ${translatedPropertyLabels.join(', ')}`;
+}
+
+function formatMoveWithProperties(rawMoveName, translatedMoveName) {
+    return formatWithProperties(rawMoveName, translatedMoveName, "move");
+}
+
+function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
+    return formatWithProperties(rawAbilityName, translatedAbilityName, "ability");
+}
 
     /**
      * Ritorna il testo leggibile basato su timestamp UNIX (secondi) rispetto ad `now`.
@@ -567,6 +601,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (key === null || key === undefined) return '';
 
         const normalizedKey = String(key);
+        // Case-insensitive match solo per locationPokeapi (non avendo una sorgente decente per la generazione della mappa, le mappe delle specifiche lingue hanno delle inconsistenze nel case delle chiavi)
+        // posso rimuovere questo if quando la mappa è consistente tra le varie lingue
+        if (mapName === 'locationPokeapi' && translationSets[mapName]) {
+            if (translationSets[mapName].has(normalizedKey)) {
+                return translationSets[mapName].get(normalizedKey);
+            }
+            // Cerca case-insensitive
+            const lowerKey = normalizedKey.toLowerCase();
+            for (const [k, v] of translationSets[mapName].entries()) {
+                if (typeof k === 'string' && k.toLowerCase() === lowerKey) {
+                    return v;
+                }
+            }
+            return normalizedKey;
+        }
         return translationSets[mapName]?.get(normalizedKey) ?? normalizedKey;
     }
 
@@ -928,7 +977,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     return response.json();
                 }),
-                fetch(`${window.BASE_URL}/move-properties.json`)
+                fetch(`${window.BASE_URL}/special-properties.json`)
                     .then(response => response.ok ? response.json() : null)
                     .catch(() => null)
             ]);
@@ -1219,6 +1268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const translatedDataRegion = t(data["Region"], 'region');
         const translatedSpecificLocation = t(data["Specific Location"], 'locationPokeapi');
         const translatedAbility = t(data.Ability, 'ability');
+        const abilityWithProperties = formatAbilityWithProperties(data.Ability, translatedAbility);
         const rawMoves = Array.isArray(data.Moveset)
             ? data.Moveset
             : (data.Moveset ? [data.Moveset] : []);
@@ -1296,7 +1346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     data-hms="${hmsForDisplay}" 
                                     data-egg-group="${eggGroupForDisplay}" 
                                     data-male-ratio="${maleRatioDisplay}"
-                                    data-ability="${translatedAbility}" 
+                                    data-ability="${abilityWithProperties}" 
                                     data-moveset="${translatedMovesetForCopy}" 
                                     data-notes="${translatedNotes || ''}">
                                     ${t('Copy')}
@@ -1309,7 +1359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <p class="card-text"><strong>${t('HMs Required')}:</strong> ${hmsForDisplay}</p>
                                     <p class="card-text"><strong>${t('Egg Group')}:</strong> <code>${eggGroupForDisplay}</code></p>
                                     <p class="card-text"><strong>${t('Male Ratio')}:</strong> <code>${maleRatioDisplay}</code></p>
-                                    <p class="card-text"><strong>${t('Ability')}:</strong> <code>${translatedAbility}</code></p>
+                                    <p class="card-text"><strong>${t('Ability')}:</strong> <code>${abilityWithProperties}</code></p>
                                     <p class="card-text"><strong>${t('Moveset')}:</strong></p>
                                     <ul>
                                         ${movesetForDisplay}
@@ -1462,7 +1512,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             markdown += `\n\`${t('Egg Group')}: ${eggGroup}\`\n`;
             markdown += `\`${t('Male Ratio')}: ${maleRatio}\`\n`;
-            markdown += `\`${t('Ability')}: ${ability}\`\n\n`;
+            markdown += `\`${t('Ability')}: ${formatAbilityWithProperties(ability, t(ability, 'ability'))}\`\n\n`;
             
             markdown += `**${t('Moveset')}**\n`;
             const movesetLines = moveset.split('\n').filter(line => line.trim() !== '');
