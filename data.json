@@ -3290,7 +3290,7 @@
         "data": {
           "Region": "Sinnoh",
           "Specific Location": "Sendoff Spring",
-          "Location Notes": "Post Distortion World Quest",
+          "Location Notes": "Post Distortion World quest",
           "Map Link": "",
           "HMs": ["Rock Climb"],
           "Egg Group": ["Flying"],
@@ -4355,7 +4355,7 @@
           "Specific Location": "Mistralton Cave",
           "Location Notes": "",
           "Map Link": "",
-          "HMs": [],
+          "HMs": ["Surf", "Flash", "Strength"],
           "Egg Group": ["Field"],
           "Male Ratio": "50",
           "Ability": "Hustle",
