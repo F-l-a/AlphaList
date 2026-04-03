@@ -3691,22 +3691,6 @@
           "Moveset": ["Poison Jab", "Crunch", "Earthquake", "Swords Dance"],
           "Notes": []
         }
-      },
-      {
-        "name": "Staraptor",
-        "data": {
-          "Region": "Sinnoh",
-          "Specific Location": "Sendoff Spring",
-          "Location Notes": "Post Distortion World Quest",
-          "Map Link": "",
-          "HMs": ["Rock Climb"],
-          "Egg Group": ["Flying"],
-          "Male Ratio": "50",
-          "Ability": "Reckless",
-          "Moveset": ["Fly", "Giga Impact", "Roost", "Close Combat"],
-          "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
-        }
-      }
     ],
     "Route 214": [
       {
