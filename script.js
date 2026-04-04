@@ -1070,31 +1070,50 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
     function populateLocations(region) {
         const datalistOptions = document.getElementById('location-datalist-options');
         datalistOptions.innerHTML = '';
+        const locationSet = new Set();
 
         if (region !== 'all') {
-            const locations = Object.keys(db[region]);
-            locations.forEach(loc => {
+            if (db[region]) {
+                Object.keys(db[region]).forEach(loc => {
+                    locationSet.add(t(loc, 'locationPokeapi'));
+                    db[region][loc].forEach(pokemon => {
+                        const specificLoc = pokemon.data["Specific Location"];
+                        if (specificLoc && specificLoc !== loc) {
+                            locationSet.add(t(specificLoc, 'locationPokeapi'));
+                        }
+                    });
+                });
+            }
+            Array.from(locationSet).sort().forEach(locationName => {
                 const option = document.createElement('option');
-                option.value = t(loc, 'locationPokeapi');
+                option.value = locationName;
                 datalistOptions.appendChild(option);
             });
         } else {
-            const regionOrder = Array.from(regionSelect.options).map(option => option.value).filter(val => val !== 'all');
-            const regionOrderMap = new Map(regionOrder.map((reg, index) => [reg, index]));
-
             const allLocationsWithRegion = [];
             for (const reg in db) {
                 if (db.hasOwnProperty(reg)) {
-                    for (const loc of Object.keys(db[reg])) { 
-                        const translatedRegion = t(reg, 'region');
+                    const regionLocations = new Set();
+                    for (const loc of Object.keys(db[reg])) {
+                        regionLocations.add(loc);
+                        db[reg][loc].forEach(pokemon => {
+                            const specificLoc = pokemon.data["Specific Location"];
+                            if (specificLoc && specificLoc !== loc) {
+                                regionLocations.add(specificLoc);
+                            }
+                        });
+                    }
+
+                    const translatedRegion = t(reg, 'region');
+                    const regionLetter = translatedRegion.charAt(0).toUpperCase();
+                    regionLocations.forEach(loc => {
                         const translatedLocation = t(loc, 'locationPokeapi');
-                        const regionLetter = translatedRegion.charAt(0).toUpperCase();
                         allLocationsWithRegion.push({
                             region: reg,
                             location: loc,
                             formatted: `[${regionLetter}] ${translatedLocation}`
                         });
-                    }
+                    });
                 }
             }
 
@@ -1147,14 +1166,25 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             const nameMatch = p.name.toLowerCase().includes(searchTerm) || translatedName.includes(searchTerm);
             const regionMatch = selectedRegion === 'all' || p.region === selectedRegion;
             const translatedLocation = t(p.location, 'locationPokeapi').toLowerCase();
+            const specificLocation = p.data["Specific Location"] ? p.data["Specific Location"].toLowerCase() : '';
+            const translatedSpecificLocation = p.data["Specific Location"] ? t(p.data["Specific Location"], 'locationPokeapi').toLowerCase() : '';
             const translatedRegion = t(p.region, 'region');
             const formattedRawLocation = `[${p.region.charAt(0).toUpperCase()}] ${p.location}`.toLowerCase();
             const formattedTranslatedLocation = `[${translatedRegion.charAt(0).toUpperCase()}] ${translatedLocation}`.toLowerCase();
-            const locationMatch = selectedLocation === '' || 
-                (selectedRegion === 'all' && 
-                 (formattedRawLocation.includes(selectedLocationLower) || formattedTranslatedLocation.includes(selectedLocationLower))) ||
-                (selectedRegion !== 'all' && 
-                 (p.location.toLowerCase().includes(selectedLocationLower) || translatedLocation.includes(selectedLocationLower)));
+            const formattedSpecificLocation = p.data["Specific Location"] ? `[${p.region.charAt(0).toUpperCase()}] ${p.data["Specific Location"]}`.toLowerCase() : '';
+            const formattedTranslatedSpecificLocation = p.data["Specific Location"] ? `[${translatedRegion.charAt(0).toUpperCase()}] ${t(p.data["Specific Location"], 'locationPokeapi')}`.toLowerCase() : '';
+
+            const locationMatch = selectedLocation === '' ||
+                (selectedRegion === 'all' &&
+                    (formattedRawLocation.includes(selectedLocationLower) ||
+                        formattedTranslatedLocation.includes(selectedLocationLower) ||
+                        (formattedSpecificLocation && formattedSpecificLocation.includes(selectedLocationLower)) ||
+                        (formattedTranslatedSpecificLocation && formattedTranslatedSpecificLocation.includes(selectedLocationLower)))) ||
+                (selectedRegion !== 'all' &&
+                    (p.location.toLowerCase().includes(selectedLocationLower) ||
+                        translatedLocation.includes(selectedLocationLower) ||
+                        specificLocation.includes(selectedLocationLower) ||
+                        translatedSpecificLocation.includes(selectedLocationLower)));
             return nameMatch && regionMatch && locationMatch;
         });
 
@@ -1334,7 +1364,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                                 <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#pokemonCollapse-${uid}" aria-expanded="false" aria-controls="pokemonCollapse-${uid}">
                                     <span class="card-title m-1">${displayTitle}</span>
                                 </button>
-                                <button class="btn btn-sm btn-outline-secondary copy-pokemon-btn mx-2" 
+                                <button class="btn btn-sm btn-secondary copy-pokemon-btn mx-2" 
                                     data-pokemon-name="${formattedName}" 
                                     data-raw-name="${name}"
                                     data-raw-region="${region}"
@@ -1549,13 +1579,13 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                     btn.__copyResetTimeoutId = null;
                 }
                 btn.textContent = t('Copied!');
-                btn.classList.remove('btn-outline-secondary');
+                btn.classList.remove('btn-secondary');
                 btn.classList.add('btn-success');
 
                 btn.__copyResetTimeoutId = setTimeout(() => {
                     btn.textContent = t('Copy');
                     btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-secondary');
+                    btn.classList.add('btn-secondary');
                     btn.__copyResetTimeoutId = null;
                 }, 2000);
             }).catch(err => {

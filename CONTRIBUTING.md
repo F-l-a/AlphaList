@@ -7,9 +7,17 @@ Thank you for helping keep the Alpha List up to date! This project accepts updat
 2. Clone your fork locally:
 
    ```bash
-   git clone https://github.com/<your-username>/AlphaList.git
+   git clone --recursive https://github.com/<your-username>/AlphaList.git
    cd AlphaList
    ```
+
+
+**If you cloned without --recursive:**
+To initialize and update the Poke-translator submodule, run:
+
+```bash
+git submodule update --init --remote --merge
+```
 
 3. Create a feature branch:
 
