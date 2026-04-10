@@ -85,6 +85,7 @@
         "From Victory Road": "Depuis Route Victoire",
         "From Pacifidlog": "Depuis Pacifiville",
         "From Sunyshore": "Depuis Rivamar",
+        "From Jubilife": "Depuis Féli-Cité",
         "Post E4": "Après le Conseil 4",
         "Post Distortion World quest": "Après le Monde Distorsion",
         "Seen Sinnoh Dex required": "Dex de Sinnoh vu requis",
@@ -102,7 +103,10 @@
         "Hits Ghost": "Touche les Types Spectre",
         "Reflect Status Moves": "Reflète les Capacités de Statut",
         "Immune to Sleep": "Immunisé au Statut Sommeil",
-        "Immune to Spore": "Immunisé à la Capacité Spore"
+        "Immune to Spore": "Immunisé à la Capacité Spore",
+        "Heals": "Guérit",
+        "Costs HP": "Coûte des PV",
+        "Confuses the user": "Rend confus l'utilisateur"
       }
     },
     "reason": "Traductions globales supplémentaires divisées par contexte : ui pour l'interface, notes pour les notes Pokémon"

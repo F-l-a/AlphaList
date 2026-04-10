@@ -8,6 +8,42 @@
       "Taunt",
       "Uproar",
       "Whirlwind"
+    ],
+    "Heals": [
+      "Heal Order",
+      "Recover",
+      "Roost",
+      "Slack Off",
+      "Wish",
+      "Milk Drink",
+      "Softboiled",
+      "Moonlight",
+      "Morning Sun",
+      "Synthesis",
+      "Rest",
+      "Aqua Ring",
+      "Ingrain",
+      "Leech Seed",
+      "Absorb",
+      "Mega Drain",
+      "Drain Punch",
+      "Giga Drain",
+      "Horn Leech",
+      "Leech Life",
+      "Dream Eater",
+      "Heal Pulse",
+      "Present",
+      "Pain Split"
+    ],
+    "Costs HP": [
+      "Substitute",
+      "Belly Drum",
+      "Curse"
+    ],
+    "Confuses the user": [
+      "Thrash",
+      "Petal Dance",
+      "Outrage"
     ]
   },
   "abilities": {

@@ -85,6 +85,7 @@
         "From Victory Road": "Da Via Vittoria",
         "From Pacifidlog": "Da Orocea",
         "From Sunyshore": "Da Arenipoli",
+        "From Jubilife": "Da Giubilopoli",
         "Post E4": "Dopo Superquattro",
         "Post Distortion World quest": "Dopo la quest del Mondo Distorto",
         "Seen Sinnoh Dex required": "Dex di Sinnoh visto richiesto",
@@ -102,7 +103,10 @@
         "Hits Ghost": "Colpisce Spettro",
         "Reflect Status Moves": "Riflette Mosse di Stato",
         "Immune to Sleep": "Immune al Sonno",
-        "Immune to Spore": "Immune a Spora"
+        "Immune to Spore": "Immune a Spora",
+        "Heals": "Cura",
+        "Costs HP": "Costa PS",
+        "Confuses the user": "Confonde l'utilizzatore"
       }
     },
     "reason": "Traduzioni globali aggiuntive divise per contesto: ui per interfaccia, notes per note Pokémon"

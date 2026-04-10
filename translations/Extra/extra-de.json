@@ -85,6 +85,7 @@
         "From Victory Road": "Von Siegesstraße",
         "From Pacifidlog": "Von Flossbrunn",
         "From Sunyshore": "Von Sonnewik",
+        "From Jubilife": "Von Jubelstadt",
         "Post E4": "Nach Top 4",
         "Post Distortion World quest": "Nach der Zerrwelt Quest",
         "Seen Sinnoh Dex required": "Gesehener Sinnoh-Dex erforderlich",
@@ -102,7 +103,10 @@
         "Hits Ghost": "Trifft Geist",
         "Reflect Status Moves": "Reflektiert Status-Attacken",
         "Immune to Sleep": "Immun gegen Schlaf",
-        "Immune to Spore": "Immun gegen Pilzspore"
+        "Immune to Spore": "Immun gegen Pilzspore",
+        "Heals": "Heilt",
+        "Costs HP": "Verbraucht KP",
+        "Confuses the user": "Verwirrt den Anwender"
       }
     },
     "reason": "Zusaetzliche globale Uebersetzungen nach Kontext getrennt: ui fuer die Benutzeroberflaeche, notes fuer Pokemon-Notizen"
