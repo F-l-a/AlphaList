@@ -67,10 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstVisitBottomHint = document.getElementById('firstVisitBottomHint');
     const firstVisitThemeButtons = Array.from(document.querySelectorAll('[data-theme-choice]'));
     const firstVisitLanguageButtons = Array.from(document.querySelectorAll('[data-lang-choice]'));
+    const publishSettingsBtn = document.getElementById('publish-settings-btn');
+    const publishSettingsPopup = document.getElementById('publishSettingsPopup');
+    const publishUrlInput = document.getElementById('publishUrlInput');
+    const publishUsernameInput = document.getElementById('publishUsernameInput');
+    const publishPasswordInput = document.getElementById('publishPasswordInput');
+    const publishSettingsSaveBtn = document.getElementById('publishSettingsSaveBtn');
+    const publishSettingsClearBtn = document.getElementById('publishSettingsClearBtn');
+    const publishSettingsCloseBtn = document.getElementById('publishSettingsCloseBtn');
+    const publishSettingsCancelBtn = document.getElementById('publishSettingsCancelBtn');
+    const publishConfirmPopup = document.getElementById('publishConfirmPopup');
+    const publishConfirmPokemonName = document.getElementById('publishConfirmPokemonName');
+    const publishConfirmAcceptBtn = document.getElementById('publishConfirmAcceptBtn');
     let toastAlertTimeoutId = null;
     let toastAlertCountdownIntervalId = null;
+    let pendingPublishPayload = null;
+    let publishConfirmModal = null;
 
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v1';
+    const PUBLISH_URL_KEY = 'alphalist:publish-url';
+    const PUBLISH_USERNAME_KEY = 'alphalist:publish-username';
+    const PUBLISH_PASSWORD_KEY = 'alphalist:publish-password';
     const FIRST_VISIT_SAVE_LABEL_KEY = 'Save preferences';
     const FIRST_VISIT_HINT_KEY = 'You can change preferences at the bottom of the page!';
     const DONATION_IGN = 'FlaProGmr';
@@ -249,6 +266,133 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!contributorsToast) return;
 
         contributorsToast.classList.add('is-visible');
+    }
+
+    function showPublishSettingsPopup() {
+        if (!publishSettingsPopup) return;
+        try {
+            publishUrlInput.value = localStorage.getItem(PUBLISH_URL_KEY) || '';
+            publishUsernameInput.value = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
+            publishPasswordInput.value = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
+        } catch (e) {}
+        publishSettingsPopup.classList.add('is-visible');
+    }
+
+    function hidePublishSettingsPopup() {
+        if (!publishSettingsPopup) return;
+        publishSettingsPopup.classList.remove('is-visible');
+    }
+
+    function showPublishConfirmPopup(pokemonName, payload) {
+        if (!publishConfirmPopup) return;
+        pendingPublishPayload = payload;
+        if (publishConfirmPokemonName) {
+            publishConfirmPokemonName.textContent = pokemonName || 'this Pokemon';
+        }
+        if (window.bootstrap) {
+            if (!publishConfirmModal) {
+                publishConfirmModal = new bootstrap.Modal(publishConfirmPopup);
+            }
+            publishConfirmModal.show();
+        }
+    }
+
+    function hidePublishConfirmPopup() {
+        if (!publishConfirmPopup) return;
+        if (window.bootstrap) {
+            if (!publishConfirmModal) {
+                publishConfirmModal = bootstrap.Modal.getOrCreateInstance(publishConfirmPopup);
+            }
+            publishConfirmModal.hide();
+        }
+    }
+
+    if (publishSettingsBtn) {
+        publishSettingsBtn.addEventListener('click', () => showPublishSettingsPopup());
+    }
+
+    if (publishSettingsSaveBtn) {
+        publishSettingsSaveBtn.addEventListener('click', () => {
+            try {
+                localStorage.setItem(PUBLISH_URL_KEY, publishUrlInput.value.trim());
+                localStorage.setItem(PUBLISH_USERNAME_KEY, publishUsernameInput.value);
+                localStorage.setItem(PUBLISH_PASSWORD_KEY, publishPasswordInput.value);
+            } catch (e) {}
+            hidePublishSettingsPopup();
+            window.location.reload();
+        });
+    }
+
+    if (publishSettingsClearBtn) {
+        publishSettingsClearBtn.addEventListener('click', () => {
+            publishUrlInput.value = '';
+            publishUsernameInput.value = '';
+            publishPasswordInput.value = '';
+            try {
+                localStorage.removeItem(PUBLISH_URL_KEY);
+                localStorage.removeItem(PUBLISH_USERNAME_KEY);
+                localStorage.removeItem(PUBLISH_PASSWORD_KEY);
+            } catch (e) {}
+        });
+    }
+
+    if (publishSettingsCloseBtn) {
+        publishSettingsCloseBtn.addEventListener('click', () => hidePublishSettingsPopup());
+    }
+
+    if (publishSettingsCancelBtn) {
+        publishSettingsCancelBtn.addEventListener('click', () => hidePublishSettingsPopup());
+    }
+
+    if (publishConfirmPopup) {
+        publishConfirmPopup.addEventListener('hidden.bs.modal', () => {
+            pendingPublishPayload = null;
+        });
+    }
+
+    if (publishConfirmAcceptBtn) {
+        publishConfirmAcceptBtn.addEventListener('click', () => {
+            if (!pendingPublishPayload) {
+                hidePublishConfirmPopup();
+                return;
+            }
+
+            const {
+                pokemonName, rawName, rawRegion, rawLocation,
+                region, specificLocation
+            } = pendingPublishPayload;
+
+            const publishMessage = generatePublishMessage(rawName, rawRegion, rawLocation, pokemonName, region, specificLocation);
+            publishNotification(pokemonName, publishMessage);
+            hidePublishConfirmPopup();
+        });
+    }
+
+    function publishNotification(pokemonName, publishData) {
+        let url, username, password;
+        try {
+            url = localStorage.getItem(PUBLISH_URL_KEY) || '';
+            username = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
+            password = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
+        } catch (e) {}
+        if (!url) {
+            console.warn('publishNotification: no URL configured.');
+            return;
+        }
+        const notificationTitle = publishData?.pokemonName || pokemonName;
+        const notificationBody = publishData?.body || '';
+        const headers = { 'Title': notificationTitle };
+        if (publishData?.shareUrl) {
+            headers['Actions'] = 'view, Open in AlphaList, ' + publishData.shareUrl;
+        }
+        if (username && password) {
+            headers['Authorization'] = 'Basic ' + btoa(`${username}:${password}`);
+        }
+        fetch(url, {
+            method: 'POST',
+            body: notificationBody,
+            headers
+        }).catch(err => console.error('publishNotification failed:', err));
     }
 
     function hideFirstVisitToast() {
@@ -1343,6 +1487,33 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             ? `${maleRatioRaw}%`
             : maleRatioRaw;
 
+        // Show publish button only when all 3 publish settings are configured
+        let publishBtnHtml = '';
+        let hasPublishButton = false;
+        try {
+            if (localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY)) {
+                hasPublishButton = true;
+                publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn ms-2"
+                                        data-pokemon-name="${formattedName}"
+                                        data-raw-name="${name}"
+                                        data-raw-region="${region}"
+                                        data-raw-location="${location}"
+                                        data-region="${translatedDataRegion || ''}"
+                                        data-specific-location="${translatedSpecificLocation || ''}"
+                                        data-location-notes="${translatedLocationNotes || ''}"
+                                        data-map-link="${data["Map Link"] || ''}"
+                                        data-hms="${hmsForDisplay}"
+                                        data-egg-group="${eggGroupForDisplay}"
+                                        data-male-ratio="${maleRatioDisplay}"
+                                        data-ability="${abilityWithProperties}"
+                                        data-moveset="${translatedMovesetForCopy}"
+                                        data-notes="${translatedNotes || ''}">
+                                        ${t('Publish')}
+                                    </button>`;
+            }
+        } catch (e) {}
+        const copyBtnClass = `btn btn-sm btn-secondary copy-pokemon-btn${hasPublishButton ? '' : ' ms-2'}`;
+
         // Determina se mostrare il messaggio di despawn nella card
         let despawnHtml = '';
         const urlTimestamp = getUrlTimestampIfMatch(name, region, location);
@@ -1364,23 +1535,26 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                                 <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#pokemonCollapse-${uid}" aria-expanded="false" aria-controls="pokemonCollapse-${uid}">
                                     <span class="card-title m-1">${displayTitle}</span>
                                 </button>
-                                <button class="btn btn-sm btn-secondary copy-pokemon-btn mx-2" 
-                                    data-pokemon-name="${formattedName}" 
-                                    data-raw-name="${name}"
-                                    data-raw-region="${region}"
-                                    data-raw-location="${location}"
-                                    data-region="${translatedDataRegion || ''}"
-                                    data-specific-location="${translatedSpecificLocation || ''}"
-                                    data-location-notes="${translatedLocationNotes || ''}"
-                                    data-map-link="${data["Map Link"] || ''}"
-                                    data-hms="${hmsForDisplay}" 
-                                    data-egg-group="${eggGroupForDisplay}" 
-                                    data-male-ratio="${maleRatioDisplay}"
-                                    data-ability="${abilityWithProperties}" 
-                                    data-moveset="${translatedMovesetForCopy}" 
-                                    data-notes="${translatedNotes || ''}">
-                                    ${t('Copy')}
-                                </button>
+                                <div class="d-flex align-items-center gap-1 me-2">
+                                    ${publishBtnHtml}
+                                    <button class="${copyBtnClass}"
+                                        data-pokemon-name="${formattedName}" 
+                                        data-raw-name="${name}"
+                                        data-raw-region="${region}"
+                                        data-raw-location="${location}"
+                                        data-region="${translatedDataRegion || ''}"
+                                        data-specific-location="${translatedSpecificLocation || ''}"
+                                        data-location-notes="${translatedLocationNotes || ''}"
+                                        data-map-link="${data["Map Link"] || ''}"
+                                        data-hms="${hmsForDisplay}" 
+                                        data-egg-group="${eggGroupForDisplay}" 
+                                        data-male-ratio="${maleRatioDisplay}"
+                                        data-ability="${abilityWithProperties}" 
+                                        data-moveset="${translatedMovesetForCopy}" 
+                                        data-notes="${translatedNotes || ''}">
+                                        ${t('Copy')}
+                                    </button>
+                                </div>
                             </h2>
                             <div id="pokemonCollapse-${uid}" class="accordion-collapse collapse" aria-labelledby="pokemonHeader-${uid}" data-bs-parent="#pokemonAccordion-${uid}">
                                 <div class="accordion-body">
@@ -1495,6 +1669,25 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             return;
         }
 
+        const publishBtnEl = e.target.closest && e.target.closest('.publish-pokemon-btn');
+        if (publishBtnEl) {
+            const btn = publishBtnEl;
+            const { 
+                pokemonName, rawName, rawRegion, rawLocation,
+                region, specificLocation
+            } = btn.dataset;
+
+            showPublishConfirmPopup(pokemonName, {
+                pokemonName,
+                rawName,
+                rawRegion,
+                rawLocation,
+                region,
+                specificLocation
+            });
+            return;
+        }
+
         const copyBtnEl = e.target.closest && e.target.closest('.copy-pokemon-btn');
         if (copyBtnEl) {
             const btn = copyBtnEl;
@@ -1504,71 +1697,8 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                 hms, eggGroup, maleRatio, ability, moveset, notes 
             } = btn.dataset;
 
-            const shareUrl = (() => {
-                try {
-                    const base = 'https://f-l-a.github.io/AlphaList/';
-                    const p = new URLSearchParams();
-                    if (rawName) p.set('pokemon', rawName);
-                    if (rawRegion) p.set('region', rawRegion);
-                    if (rawLocation) p.set('location', rawLocation);
-                    let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
-                    if (!timestampToUse) {
-                        const nowMs = Date.now();
-                        const despawnMs = nowMs + (75 * 60 * 1000); // 75 minuti
-                        timestampToUse = Math.floor(despawnMs / 1000);
-                    }
-                    p.set('timestamp', timestampToUse);
-                    return `${base}?${p.toString()}`;
-                } catch (_) { return ''; }
-            })();
-
-            let markdown = shareUrl
-                ? `**[${pokemonName}](${shareUrl})**\n`
-                : `**${pokemonName}**\n`;
+            let markdown = generateMarkdownForPokemon(rawName, rawRegion, rawLocation, pokemonName, region, mapLink, specificLocation, locationNotes, hms, t, eggGroup, maleRatio, formatAbilityWithProperties, ability, moveset, notes);
             
-            // Build location string for markdown
-            let locationString = `_${region}_`;
-            if (mapLink) {
-                locationString += ` - _[${specificLocation}](${mapLink})_`;
-            } else {
-                locationString += ` - _${specificLocation}_`;
-            }
-            if (locationNotes) {
-                locationString += ` - _${locationNotes}_`;
-            }
-            markdown += `${locationString}\n`;
-
-            if (hms) markdown += `${t('HMs Required')}: _${hms}_\n`;
-            
-            markdown += `\n\`${t('Egg Group')}: ${eggGroup}\`\n`;
-            markdown += `\`${t('Male Ratio')}: ${maleRatio}\`\n`;
-            markdown += `\`${t('Ability')}: ${formatAbilityWithProperties(ability, t(ability, 'ability'))}\`\n\n`;
-            
-            markdown += `**${t('Moveset')}**\n`;
-            const movesetLines = moveset.split('\n').filter(line => line.trim() !== '');
-            movesetLines.forEach(line => {
-                markdown += `- ${line.trim().replace(/^-/, '')}\n`;
-            });
-
-            if (notes) {
-                markdown += '\n' + notes;
-            }
-
-            // Append a Discord relative timestamp for an event ~1h15m from now. Uses the timestamp from the url if the parameters match
-            let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
-            if (!timestampToUse) {
-                try {
-                    const nowMs = Date.now();
-                    const despawnMs = nowMs + (75 * 60 * 1000); // 75 minuti
-                    timestampToUse = Math.floor(despawnMs / 1000);
-                } catch (e) {
-                    console.error('Timestamp generation error:', e);
-                }
-            }
-            if (timestampToUse) {
-                markdown += `\n## -= ${t('Despawns approximately')} <t:${timestampToUse}:R> =-`;
-            }
-
             // Append message Footer
             markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and share the next! (Multilanguage!)')}](https://f-l-a.github.io/AlphaList/)`;
 
@@ -1595,6 +1725,97 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
         }
     });
 });
+
+function generateMarkdownForPokemon(rawName, rawRegion, rawLocation, pokemonName, region, mapLink, specificLocation, locationNotes, hms, t, eggGroup, maleRatio, formatAbilityWithProperties, ability, moveset, notes) {
+    const shareUrl = buildShareUrl(rawName, rawRegion, rawLocation);
+
+    let markdown = shareUrl
+        ? `**[${pokemonName}](${shareUrl})**\n`
+        : `**${pokemonName}**\n`;
+
+    // Build location string for markdown
+    let locationString = `_${region}_`;
+    if (mapLink) {
+        locationString += ` - _[${specificLocation}](${mapLink})_`;
+    } else {
+        locationString += ` - _${specificLocation}_`;
+    }
+    if (locationNotes) {
+        locationString += ` - _${locationNotes}_`;
+    }
+    markdown += `${locationString}\n`;
+
+    if (hms) markdown += `${t('HMs Required')}: _${hms}_\n`;
+
+    markdown += `\n\`${t('Egg Group')}: ${eggGroup}\`\n`;
+    markdown += `\`${t('Male Ratio')}: ${maleRatio}\`\n`;
+    markdown += `\`${t('Ability')}: ${formatAbilityWithProperties(ability, t(ability, 'ability'))}\`\n\n`;
+
+    markdown += `**${t('Moveset')}**\n`;
+    const movesetLines = moveset.split('\n').filter(line => line.trim() !== '');
+    movesetLines.forEach(line => {
+        markdown += `- ${line.trim().replace(/^-/, '')}\n`;
+    });
+
+    if (notes) {
+        markdown += '\n' + notes;
+    }
+
+    // Append a Discord relative timestamp for an event ~1h15m from now. Uses the timestamp from the url if the parameters match
+    let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
+    if (!timestampToUse) {
+        try {
+            const nowMs = Date.now();
+            const despawnMs = nowMs + (75 * 60 * 1000); // 75 minuti
+            timestampToUse = Math.floor(despawnMs / 1000);
+        } catch (e) {
+            console.error('Timestamp generation error:', e);
+        }
+    }
+    if (timestampToUse) {
+        markdown += `\n## -= ${t('Despawns approximately')} <t:${timestampToUse}:R> =-`;
+    }
+
+    return markdown;
+}
+
+function generatePublishMessage(rawName, rawRegion, rawLocation, pokemonName, region, specificLocation) {
+    const shareUrl = buildShareUrl(rawName, rawRegion, rawLocation);
+
+    const locationForPublish = specificLocation || rawLocation || '';
+    const body = [region || '', locationForPublish].filter(Boolean).join('\n');
+    return {
+        pokemonName: pokemonName || '',
+        region: region || '',
+        location: locationForPublish,
+        shareUrl,
+        body
+    };
+}
+
+function getOrCreateTimestamp(rawName, rawRegion, rawLocation) {
+    let timestampToUse = getUrlTimestampIfMatch(rawName, rawRegion, rawLocation);
+    if (!timestampToUse) {
+        const nowMs = Date.now();
+        const despawnMs = nowMs + (75 * 60 * 1000);
+        timestampToUse = Math.floor(despawnMs / 1000);
+    }
+    return timestampToUse;
+}
+
+function buildShareUrl(rawName, rawRegion, rawLocation) {
+    try {
+        const base = 'https://f-l-a.github.io/AlphaList/';
+        const p = new URLSearchParams();
+        if (rawName) p.set('pokemon', rawName);
+        if (rawRegion) p.set('region', rawRegion);
+        if (rawLocation) p.set('location', rawLocation);
+        p.set('timestamp', getOrCreateTimestamp(rawName, rawRegion, rawLocation));
+        return `${base}?${p.toString()}`;
+    } catch (_) {
+        return '';
+    }
+}
 
 /**
  * Restituisce il timestamp dall'URL.
