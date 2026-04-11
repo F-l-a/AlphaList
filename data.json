@@ -3795,13 +3795,13 @@
         "data": {
           "Region": "Sinnoh",
           "Specific Location": "Route 217",
-          "Location Notes": "",
+          "Location Notes": "From Snowpoint",
           "Map Link": "",
           "HMs": [],
           "Egg Group": ["Field"],
           "Male Ratio": "87.5",
           "Ability": "Ice Body",
-          "Moveset": ["Blizzard", "Water Pulse", "Hyper Voice", "Snowscape"],
+          "Moveset": ["Blizzard", "Water Pulse", "Hyper Voice", "Calm Mind"],
           "Notes": []
         }
       },
