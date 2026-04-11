@@ -238,10 +238,60 @@
                 </select>
                 <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
                     <i class="bi bi-sun fs-5"></i>
-                </button>  
+                </button>
+                <button id="publish-settings-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0" title="Open publish settings to configure publishing options and credentials. Do not store credentials on shared or untrusted devices." aria-label="Open publish settings to configure publishing options and credentials. Do not store credentials on shared or untrusted devices." aria-describedby="publish-settings-button-help">
+                    <i class="bi bi-gear fs-5"></i>
+                </button>
+                <span id="publish-settings-button-help" class="visually-hidden">Open publish settings to configure where content is published and, if required, enter credentials. Stored credentials may be accessible to other users on this device.</span>
             </div>
         </div>
     </footer>
+
+    <div id="publishSettingsPopup" class="publish-settings-popup" role="dialog" aria-label="Publish settings" aria-describedby="publish-settings-help">
+        <div class="publish-settings-popup-content">
+            <div class="publish-settings-popup-header">
+                <strong>Publish Settings</strong>
+                <button id="publishSettingsCloseBtn" type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+            </div>
+            <div class="mb-2">
+                <label for="publishUrlInput" class="form-label small text-white-50 mb-1">URL</label>
+                <input type="url" id="publishUrlInput" class="form-control form-control-sm" placeholder="https://...">
+            </div>
+            <div class="mb-2">
+                <label for="publishUsernameInput" class="form-label small text-white-50 mb-1">Username</label>
+                <input type="text" id="publishUsernameInput" class="form-control form-control-sm" placeholder="Username" autocomplete="username">
+            </div>
+            <div class="mb-2">
+                <label for="publishPasswordInput" class="form-label small text-white-50 mb-1">Password</label>
+                <input type="password" id="publishPasswordInput" class="form-control form-control-sm" placeholder="Password" autocomplete="current-password">
+            </div>
+            <div class="d-flex gap-1 justify-content-between mt-1">
+                <button id="publishSettingsClearBtn" type="button" class="btn btn-sm btn-outline-danger">Clear</button>
+                <div class="d-flex gap-1">
+                    <button id="publishSettingsCancelBtn" type="button" class="btn btn-sm btn-outline-secondary">Close</button>
+                    <button id="publishSettingsSaveBtn" type="button" class="btn btn-sm btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="publishConfirmPopup" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Publish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to publish <strong id="publishConfirmPokemonName">this Pokemon</strong>?<br>This will notify people directly that a new Alpha spawned.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="publishConfirmAcceptBtn" type="button" class="btn btn-sm btn-danger">Publish</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Map preview modal -->
