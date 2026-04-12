@@ -56,9 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let uniqueIdCounter = 0;
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
-    const toastAlert = document.getElementById('toastAlert');
-    const toastAlertCountdownRing = toastAlert ? toastAlert.querySelector('.copy-countdown-ring') : null;
-    const toastAlertCountdown = document.getElementById('toastAlertCountdown');
     const firstVisitToast = document.getElementById('firstVisitToast');
     const contributorsToast = document.getElementById('contributorsToast');
     const contributorsToastCloseBtn = document.getElementById('contributorsToastCloseBtn');
@@ -77,17 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const publishSettingsSaveBtn = document.getElementById('publishSettingsSaveBtn');
     const publishSettingsClearBtn = document.getElementById('publishSettingsClearBtn');
     const publishSettingsCloseBtn = document.getElementById('publishSettingsCloseBtn');
-    const publishConfirmPopup = document.getElementById('publishConfirmPopup');
-    const publishConfirmPokemonName = document.getElementById('publishConfirmPokemonName');
-    const publishConfirmEndpointURL = document.getElementById('publishConfirmEndpointURL');
-    const publishConfirmAcceptBtn = document.getElementById('publishConfirmAcceptBtn');
-    let toastAlertTimeoutId = null;
-    let toastAlertCountdownIntervalId = null;
-    let pendingPublishPayload = null;
-    let publishConfirmModal = null;
-    let activePublishBtn = null;
+    let isPublishConfigurationValid = false; // Traccia se la configurazione di publish è validata
 
-    const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v2';
+    const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v3.1';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
     const PUBLISH_TOPIC_KEY = 'alphalist:publish-topic';
     const PUBLISH_USERNAME_KEY = 'alphalist:publish-username';
@@ -206,58 +195,76 @@ document.addEventListener('DOMContentLoaded', () => {
         updateFirstVisitQuickSetupTexts(firstVisitSelectedLanguage);
     }
 
-    function showToastAlert() {
-        if (!toastAlert) return;
 
-        if (toastAlertCountdownIntervalId) {
-            clearInterval(toastAlertCountdownIntervalId);
-            toastAlertCountdownIntervalId = null;
-        }
 
-        let secondsLeft = 5;
-        if (toastAlertCountdown) {
-            toastAlertCountdown.textContent = String(secondsLeft);
-        }
-        if (toastAlertCountdownRing) {
-            toastAlertCountdownRing.classList.remove('is-running');
-            void toastAlertCountdownRing.offsetWidth;
-            toastAlertCountdownRing.classList.add('is-running');
-        }
+    /**
+     * Crea e display un toast temporaneo con countdown.
+     * 
+     * @param {string} toastMessage Messaggio da mostrare nel toast
+     * @param {number} toastDuration Durata in secondi prima che il toast scompaia (default: 5)
+     * @returns {HTMLElement} Elemento del toast creato
+     */
+    function showCustomToast(toastMessage, toastDuration = 5) {
+        // Crea il toast dal template HTML
+        const toastHTML = `
+            <div class="toastAlert initial-loader" aria-live="polite" aria-label="${toastMessage}" style="--toast-duration: ${toastDuration}s">
+                <span class="toastAlert-countdown-ring" aria-hidden="true">
+                    <svg class="toastAlert-countdown-ring-svg" viewBox="0 0 20 20" focusable="false">
+                        <circle class="toastAlert-countdown-ring-track" cx="10" cy="10" r="8"></circle>
+                        <circle class="toastAlert-countdown-ring-progress" cx="10" cy="10" r="8"></circle>
+                    </svg>
+                    <span class="toastAlert-countdown-number">${toastDuration}</span>
+                </span>
+                <span class="initial-loader-text">${toastMessage}</span>
+            </div>
+        `;
 
-        toastAlert.classList.add('is-visible');
-        if (toastAlertTimeoutId) {
-            clearTimeout(toastAlertTimeoutId);
-        }
+        // Crea elemento dal template
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = toastHTML;
+        const toast = wrapper.firstElementChild;
 
-        toastAlertCountdownIntervalId = setInterval(() => {
+        // Aggiunge al container o al body come fallback
+        const toastContainer = document.getElementById('toastAlert-container') || document.body;
+        toastContainer.appendChild(toast);
+
+        // Trigger layout e aggiunge classe visible
+        void toast.offsetWidth;
+        toast.classList.add('is-visible');
+
+        // Avvia il countdown ring
+        const counterRing = toast.querySelector('.toastAlert-countdown-ring');
+        const countdownNumber = toast.querySelector('.toastAlert-countdown-number');
+        
+        counterRing.classList.remove('is-running');
+        void counterRing.offsetWidth;
+        counterRing.classList.add('is-running');
+
+        // Countdown del numero
+        let secondsLeft = toastDuration;
+        const countdownInterval = setInterval(() => {
             secondsLeft -= 1;
             if (secondsLeft > 0) {
-                if (toastAlertCountdown) {
-                    toastAlertCountdown.textContent = String(secondsLeft);
-                }
-                return;
-            }
-
-            if (toastAlertCountdownIntervalId) {
-                clearInterval(toastAlertCountdownIntervalId);
-                toastAlertCountdownIntervalId = null;
+                countdownNumber.textContent = String(secondsLeft);
+            } else {
+                clearInterval(countdownInterval);
             }
         }, 1000);
 
-        toastAlertTimeoutId = setTimeout(() => {
-            if (toastAlertCountdownIntervalId) {
-                clearInterval(toastAlertCountdownIntervalId);
-                toastAlertCountdownIntervalId = null;
-            }
-            toastAlert.classList.remove('is-visible');
-            if (toastAlertCountdownRing) {
-                toastAlertCountdownRing.classList.remove('is-running');
-            }
-            if (toastAlertCountdown) {
-                toastAlertCountdown.textContent = '5';
-            }
-            toastAlertTimeoutId = null;
-        }, 5000);
+        // Rimuove il toast dopo la durata
+        setTimeout(() => {
+            toast.classList.remove('is-visible');
+            counterRing.classList.remove('is-running');
+            
+            // Rimuove dal DOM dopo eventuale animazione di fade-out
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }, toastDuration * 1000);
+
+        return toast;
     }
 
     function hideContributorsToast() {
@@ -272,61 +279,123 @@ document.addEventListener('DOMContentLoaded', () => {
         contributorsToast.classList.add('is-visible');
     }
 
-    function showNotificationInfoAndSettingsPopup() {
+    function toggleNotificationInfoAndSettingsPopup(action = null) {
         if (!notificationInfoAndSettingsPopup) return;
-        try {
-            publishUrlInput.value = localStorage.getItem(PUBLISH_URL_KEY) || '';
-            publishTopicInput.value = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
-            publishUsernameInput.value = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
-            publishPasswordInput.value = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
-        } catch (e) {}
-        notificationInfoAndSettingsPopup.classList.add('is-visible');
-    }
-
-    function hideNotificationInfoAndSettingsPopup() {
-        if (!notificationInfoAndSettingsPopup) return;
-        notificationInfoAndSettingsPopup.classList.remove('is-visible');
+        
+        const isVisible = notificationInfoAndSettingsPopup.classList.contains('is-visible');
+        
+        // Determina se nascondere: 'hide' -> nascondi, 'show' -> mostra, null -> toggle
+        let shouldHide;
+        if (action === 'hide') {
+            shouldHide = true;
+        } else if (action === 'show') {
+            shouldHide = false;
+        } else {
+            // Toggle automatico
+            shouldHide = isVisible;
+        }
+        
+        if (shouldHide) {
+            notificationInfoAndSettingsPopup.classList.remove('is-visible');
+        } else {
+            try {
+                publishUrlInput.value = localStorage.getItem(PUBLISH_URL_KEY) || '';
+                publishTopicInput.value = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
+                publishUsernameInput.value = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
+                publishPasswordInput.value = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
+            } catch (e) {}
+            notificationInfoAndSettingsPopup.classList.add('is-visible');
+        }
     }
 
     function showPublishConfirmPopup(pokemonName, payload, buttonEl) {
-        if (!publishConfirmPopup) return;
-        pendingPublishPayload = payload;
-        activePublishBtn = buttonEl;
-        if (publishConfirmPokemonName) {
-            publishConfirmPokemonName.textContent = pokemonName || 'this Pokemon';
-        }
-        if (publishConfirmEndpointURL) {
-            const url = localStorage.getItem(PUBLISH_URL_KEY) || 'URL not configured';
-            publishConfirmEndpointURL.textContent = url;
-        }
-        if (window.bootstrap) {
-            if (!publishConfirmModal) {
-                publishConfirmModal = new bootstrap.Modal(publishConfirmPopup);
-            }
-            publishConfirmModal.show();
+        const url = localStorage.getItem(PUBLISH_URL_KEY) || 'URL not configured';
+        const topic = localStorage.getItem(PUBLISH_TOPIC_KEY) || 'Topic not configured';
+        const message = `${t('Publish')} ${pokemonName}?\n${t('This will notify a lot of people that a new Alpha spawned!')}\n\n${t('URL')}: ${url}\n${t('Topic')}: ${topic}`;
+        
+        if (confirm(message)) {
+            if (!payload) return;
+            
+            const { rawName, rawRegion, rawLocation } = payload;
+            const publishMessage = generatePublishMessage(rawName, rawRegion, rawLocation);
+            publishNotification(rawName, publishMessage, buttonEl);
         }
     }
 
-    function hidePublishConfirmPopup() {
-        if (!publishConfirmPopup) return;
-        if (window.bootstrap) {
-            if (!publishConfirmModal) {
-                publishConfirmModal = bootstrap.Modal.getOrCreateInstance(publishConfirmPopup);
+    /**
+     * Valida la configurazione di pubblicazione testando le credenziali
+     * e verificando che il topic sia consentito.
+     *
+     * @param {string} url URL endpoint di validazione
+     * @param {string} topic Topic da validare
+     * @param {string} username Username per autenticazione
+     * @param {string} password Password per autenticazione
+     * @returns {Promise<boolean>} true se valido, false altrimenti
+     */
+    async function validPublishConfiguration(url, topic, username, password, skipToasts = false) {
+        try {
+            if(!url || !topic){
+                console.warn('validPublishConfiguration: no URL or TOPIC configured.');
+                return false;
             }
-            publishConfirmModal.hide();
+
+            // Se l'URL non contiene pokemmotools.org, non eseguire validazione
+            let validationURL;
+            if (url !== 'https://alpha.pokemmotools.org/publish') {
+                console.log('Validation skipped for unofficial URL');
+                if (!skipToasts) showCustomToast(t('Validation skipped for unofficial URL.\nAssuming valid configuration.'), 5);
+                return true;
+            } else {
+                validationURL = 'https://alpha.pokemmotools.org/testConfig';
+            }
+
+            // Costruisci auth header solo se entrambi username e password sono presenti
+            let authHeader = null;
+            if (username && password) {
+                authHeader = "Basic " + btoa(username + ":" + password);
+            }
+
+            const response = await fetch(validationURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(authHeader && { "Authorization": authHeader }),
+                },
+                body: JSON.stringify({ topic: topic }),
+            });
+
+            if (response.ok) {
+                // 200 — credentials valid and topic allowed
+                if (!skipToasts) showCustomToast(t('Validation successful: credentials valid and topic allowed.'), 4);
+                return true;
+            } else {
+                // 400 — bad credentials or topic not allowed
+                try {
+                    const err = await response.json();
+                    console.error(err.detail);
+                    if (!skipToasts) showCustomToast(t('Validation failed with error') + ': ' + err.detail, 4);
+                } catch (parseErr) {
+                    console.error(`Validation failed with status ${response.status}`);
+                    if (!skipToasts) showCustomToast(t('Validation failed with status') + ` ${response.status}`, 4);
+                }
+                return false;
+            }
+        } catch (err) {
+            console.error('Validation error:', err);
+            return false;
         }
     }
 
     if (notificationInfoAndSettings) {
-        notificationInfoAndSettings.addEventListener('click', () => showNotificationInfoAndSettingsPopup());
+        notificationInfoAndSettings.addEventListener('click', () => toggleNotificationInfoAndSettingsPopup());
     }
 
     if (firstVisitNotificationHint) {
-        firstVisitNotificationHint.addEventListener('click', () => showNotificationInfoAndSettingsPopup());
+        firstVisitNotificationHint.addEventListener('click', () => toggleNotificationInfoAndSettingsPopup());
     }
 
     if (publishSettingsSaveBtn) {
-        publishSettingsSaveBtn.addEventListener('click', () => {
+        publishSettingsSaveBtn.addEventListener('click', async () => {
             const url = publishUrlInput.value.trim();
             const topic = publishTopicInput.value.trim();
             const username = publishUsernameInput.value.trim();
@@ -338,12 +407,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem(PUBLISH_USERNAME_KEY, username);
                 localStorage.setItem(PUBLISH_PASSWORD_KEY, password);
             } catch (e) {}
-            hideNotificationInfoAndSettingsPopup();
-            if(url){
+            toggleNotificationInfoAndSettingsPopup('hide');
+            
+            // Valida la configurazione
+            if(await validPublishConfiguration(url, topic, username, password)){
+                isPublishConfigurationValid = true;
                 document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
                     btn.classList.remove('d-none');
                 });
             }else{
+                isPublishConfigurationValid = false;
                 document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
                     btn.classList.add('d-none');
                 });
@@ -361,32 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (publishSettingsCloseBtn) {
-        publishSettingsCloseBtn.addEventListener('click', () => hideNotificationInfoAndSettingsPopup());
+        publishSettingsCloseBtn.addEventListener('click', () => toggleNotificationInfoAndSettingsPopup('hide'));
     }
 
-    if (publishConfirmPopup) {
-        publishConfirmPopup.addEventListener('hidden.bs.modal', () => {
-            pendingPublishPayload = null;
-            activePublishBtn = null;
-        });
-    }
 
-    if (publishConfirmAcceptBtn) {
-        publishConfirmAcceptBtn.addEventListener('click', () => {
-            if (!pendingPublishPayload) {
-                hidePublishConfirmPopup();
-                return;
-            }
-
-            const {
-                rawName, rawRegion, rawLocation
-            } = pendingPublishPayload;
-
-            const publishMessage = generatePublishMessage(rawName, rawRegion, rawLocation);
-            publishNotification(rawName, publishMessage, activePublishBtn);
-            hidePublishConfirmPopup();
-        });
-    }
 
     function publishNotification(rawName, publishData, buttonEl) {
         let url, topic, username, password;
@@ -429,12 +480,32 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearTimeout(buttonEl.__publishResetTimeoutId);
                 }
                 if (response.ok) {
-                    showToastAlert();
+                    showCustomToast(t('Published in topic') + ' ' + topic, 5);
                     buttonEl.textContent = t('Published');
                     buttonEl.classList.remove('btn-secondary', 'btn-danger');
                     buttonEl.classList.add('btn-success');
                 } else {
-                    buttonEl.textContent = `${t('Err')} ${response.status}`;
+                    let customErrorMessage = null;
+                    switch (response.status) {
+                        case 401:
+                        case 403:
+                            customErrorMessage = "Missing/Invalid credentials!";
+                            break;
+                        case 409:
+                            customErrorMessage = "Alredy called!";
+                            break;
+                        case 502:
+                            customErrorMessage = "ntfy is unreachable!";
+                            break;
+                        case 503:
+                            customErrorMessage = "Called outside of a spawn time window!";
+                            break;
+                        default:
+                            customErrorMessage = response.statusText;
+                            break;
+                    }
+                    showCustomToast(t('Error') +  ' ' + response.status + ': ' + customErrorMessage, 5);
+                    buttonEl.textContent = `${t('Error')} ${response.status}`;
                     buttonEl.classList.remove('btn-secondary', 'btn-success');
                     buttonEl.classList.add('btn-danger');
                 }
@@ -446,12 +517,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 3000);
             }
         }).catch(err => {
+            showCustomToast(t('Fetch Error') +  ' ' + err, 5);
             console.error('publishNotification failed:', err);
             if (buttonEl) {
                 if (buttonEl.__publishResetTimeoutId) {
                     clearTimeout(buttonEl.__publishResetTimeoutId);
                 }
-                buttonEl.textContent = t('Fetch Err');
+                buttonEl.textContent = t('Fetch Error');
                 buttonEl.classList.remove('btn-secondary', 'btn-success');
                 buttonEl.classList.add('btn-danger');
                 buttonEl.__publishResetTimeoutId = setTimeout(() => {
@@ -612,37 +684,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-/**
- * Ritorna la descrizione delle proprietà di una mossa o abilità con le etichette tradotte.
- * @param {string} rawName Nome originale (move o ability) da cercare nelle proprietà.
- * @param {string} translatedName Nome già tradotto (se presente).
- * @param {"move"|"ability"} [type="move"] Tipo: "move" o "ability".
- * @returns {string} Stringa formattata con nome e proprietà.
- */
-function formatWithProperties(rawName, translatedName, type = "move") {
-    const label = translatedName || rawName || '';
-    if (!rawName) return label;
+    /**
+     * Ritorna la descrizione delle proprietà di una mossa o abilità con le etichette tradotte.
+     * @param {string} rawName Nome originale (move o ability) da cercare nelle proprietà.
+     * @param {string} translatedName Nome già tradotto (se presente).
+     * @param {"move"|"ability"} [type="move"] Tipo: "move" o "ability".
+     * @returns {string} Stringa formattata con nome e proprietà.
+     */
+    function formatWithProperties(rawName, translatedName, type = "move") {
+        const label = translatedName || rawName || '';
+        if (!rawName) return label;
 
-    let propertyLabels = null;
-    if (type === "move") {
-        propertyLabels = movePropertiesByMove.get(rawName);
-    } else if (type === "ability") {
-        propertyLabels = abilityPropertiesByAbility.get(rawName);
+        let propertyLabels = null;
+        if (type === "move") {
+            propertyLabels = movePropertiesByMove.get(rawName);
+        } else if (type === "ability") {
+            propertyLabels = abilityPropertiesByAbility.get(rawName);
+        }
+        if (!propertyLabels || propertyLabels.length === 0) {
+            return label;
+        }
+        const translatedPropertyLabels = propertyLabels.map(l => t(l, 'notes'));
+        return `${label} - ${translatedPropertyLabels.join(', ')}`;
     }
-    if (!propertyLabels || propertyLabels.length === 0) {
-        return label;
+
+    function formatMoveWithProperties(rawMoveName, translatedMoveName) {
+        return formatWithProperties(rawMoveName, translatedMoveName, "move");
     }
-    const translatedPropertyLabels = propertyLabels.map(l => t(l, 'notes'));
-    return `${label} - ${translatedPropertyLabels.join(', ')}`;
-}
 
-function formatMoveWithProperties(rawMoveName, translatedMoveName) {
-    return formatWithProperties(rawMoveName, translatedMoveName, "move");
-}
-
-function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
-    return formatWithProperties(rawAbilityName, translatedAbilityName, "ability");
-}
+    function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
+        return formatWithProperties(rawAbilityName, translatedAbilityName, "ability");
+    }
 
     /**
      * Ritorna il testo leggibile basato su timestamp UNIX (secondi) rispetto ad `now`.
@@ -1216,6 +1288,39 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
     initializeApp();
 
     /**
+     * Valida la configurazione di publish al caricamento dell'app (se presente).
+     */
+    async function validatePublishConfigurationOnLoad() {
+        try {
+            const url = localStorage.getItem(PUBLISH_URL_KEY) || '';
+            const topic = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
+            const username = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
+            const password = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
+
+            // Se tutti i campi sono presenti, valida
+            if(await validPublishConfiguration(url, topic, username, password, true)){
+                isPublishConfigurationValid = true;
+                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
+                    btn.classList.remove('d-none');
+                });
+            }else{
+                isPublishConfigurationValid = false;
+                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
+                    btn.classList.add('d-none');
+                });
+            }
+        } catch (e) {
+            isPublishConfigurationValid = false;
+            document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
+                btn.classList.add('d-none');
+            });
+        }
+    }
+
+    // Valida la configurazione di publish al caricamento dell'app
+    validatePublishConfigurationOnLoad();
+
+    /**
      * Converte la struttura annidata del database (regione -> location -> array)
      * in una lista piatta di Pokémon, aggiungendo `region` e `location` ad ogni entry.
      *
@@ -1556,11 +1661,8 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             ? `${maleRatioRaw}%`
             : maleRatioRaw;
 
-        // Show publish button only when all 3 publish settings are configured
-        let hasPublishButton = false;
-        try {
-            hasPublishButton = !!(localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_TOPIC_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY));
-        } catch (e) {}
+        // Show publish button only when all publish settings are configured AND validated
+        const hasPublishButton = isPublishConfigurationValid;
         const publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn  min-width-10ch${hasPublishButton ? '' : ' d-none'}"
                                         data-pokemon-name="${formattedName}"
                                         data-raw-name="${name}"
@@ -1755,7 +1857,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and share the next! (With Notifications!)')}](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
-                showToastAlert();
+                showCustomToast(t('Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!'), 5);
                 if (btn.__copyResetTimeoutId) {
                     clearTimeout(btn.__copyResetTimeoutId);
                     btn.__copyResetTimeoutId = null;
@@ -1889,6 +1991,8 @@ function getUrlTimestampIfMatch(rawName = null, rawRegion = null, rawLocation = 
         const n = Number(urlTimestamp);
         if (isNaN(n)) return null;
         if (override === true) return n;
+
+        if(n * 1000 < Date.now()) return null; //n è il despawnTime passato con l'url. se è più piccolo di "Adesso", è già despawnato ed è inutile -> lo rigenero se necessario
 
         const urlPokemon = params.get('pokemon');
         const urlRegion = params.get('region');

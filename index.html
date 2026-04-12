@@ -129,19 +129,22 @@
         <div class="spinner-border initial-loader-spinner" role="status" aria-hidden="true"></div>
         <span class="initial-loader-text">Loading</span>
     </div>
-    <div id="toastAlert" class="initial-loader" aria-live="polite" aria-label="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!" data-i18n-aria-label="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">
-        <span class="copy-countdown-ring" aria-hidden="true">
-            <svg class="copy-countdown-ring-svg" viewBox="0 0 20 20" focusable="false">
-                <circle class="copy-countdown-ring-track" cx="10" cy="10" r="8"></circle>
-                <circle class="copy-countdown-ring-progress" cx="10" cy="10" r="8"></circle>
-            </svg>
-            <span id="toastAlertCountdown" class="copy-countdown-number">5</span>
-        </span>
-        <span class="initial-loader-text donation-message" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</span>
-    </div>
+    <div id="toastAlert-container">
+
+    </div>    
     <div id="firstVisitToast" class="first-visit-toast" role="status" aria-live="polite" aria-label="Set language and theme at the bottom of the page. | Imposta lingua e tema in fondo alla pagina. | Configura el idioma y el tema al final de la página. | Définissez la langue et le thème en bas de la page. | Sprache und Theme unten auf der Seite einstellen.">
         <div class="first-visit-toast-content">
-            <p class="first-visit-toast-title">Quick setup - First Visit</p>
+            <p class="first-visit-toast-title">Quick setup - First Visit - v3.1</p>
+
+            <div class="first-visit-pref-section" aria-label="Notifications">
+                <span class="first-visit-pref-label">Notifications</span>
+                <div class="first-visit-button-row" role="group" aria-label="Notification instructions">
+                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn d-flex align-items-center gap-2" id="firstVisitNotificationHint">
+                        <i class="bi bi-bell fs-6" aria-hidden="true"></i>
+                        <span>Open instructions</span>
+                    </button>
+                </div>
+            </div>
 
             <div class="first-visit-pref-section" aria-label="Theme preferences">
                 <span class="first-visit-pref-label">Theme</span>
@@ -166,16 +169,6 @@
                 </div>
             </div>
 
-            <div class="first-visit-pref-section" aria-label="Notifications">
-                <span class="first-visit-pref-label">Notifications</span>
-                <div class="first-visit-button-row" role="group" aria-label="Notification instructions">
-                    <button type="button" class="btn btn-sm btn-outline-light first-visit-choice-btn d-flex align-items-center gap-2" id="firstVisitNotificationHint">
-                        <i class="bi bi-bell fs-6" aria-hidden="true"></i>
-                        <span>Open instructions</span>
-                    </button>
-                </div>
-            </div>
-
             <small id="firstVisitBottomHint" class="first-visit-save-hint">You can change preferences at the bottom of the page!</small>
             <button id="firstVisitSaveBtn" type="button" class="btn btn-sm btn-primary first-visit-save-btn">Save preferences</button>
         </div>
@@ -190,13 +183,17 @@
                 <li><strong>Dusk</strong> - <span data-i18n="for the push notification system">for the push notification system</span></li>
                 <li><strong>BlueQuilava</strong> - <span data-i18n="for help with ES translations">for help with ES translations</span></li>
                 <li><strong>ShadoWine [TRØK]</strong> - <span data-i18n="for help with FR translations">for help with FR translations</span></li>
-                <li><strong>ZzPSYCHOzZ</strong> - <span data-i18n="for the original dataset">for the original dataset</span></li>
+                <li><strong>ZzPSYCHOzZ</strong> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" data-i18n="for the original dataset">for the original dataset</a></li>
             </ul>
             <div class="contributors-toast-donations mb-1">
                 <strong data-i18n="Donations leaderboard">Donations leaderboard</strong>
                 <div data-i18n="no donations yet :(">no donations yet :(</div>
             </div>
-            <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary contributors-toast-github-link" data-i18n="Open GitHub">Open GitHub</a>
+            <div class="d-flex gap-1 align-items-center flex-wrap">
+                <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary contributors-toast-github-link" data-i18n="Open GitHub">Open GitHub</a>
+                <span class="text-secondary">•</span>
+                <a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener" class="text-secondary contributors-toast-github-link">Cool Resource</a>
+            </div>
         </div>
     </div>
     <header class="bg-dark p-2 mb-1">
@@ -233,11 +230,12 @@
         </div>
     </main>
 
+    <small class="footer-donation-message donation-message my-1" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
+
     <footer class="footer mt-auto py-2">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div class="d-flex flex-column flex-grow-1 text-md-start">
-                <small class="mb-1"><span data-i18n="Alpha List by FlaProGmr">Alpha List by FlaProGmr</span> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" class="text-white-50" data-i18n="Original data by ZzPSYCHOzZ">Original data by ZzPSYCHOzZ</a> | v3.0 | <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute" data-action="open-contributors-toast">Contribute</a></small>
-                <small class="footer-donation-message donation-message" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
+                <small><span data-i18n="Alpha List by FlaProGmr">Alpha List by FlaProGmr</span> - v3.1 - <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute" data-action="open-contributors-toast">Contribute</a></small>
             </div>
             <div class="d-flex flex-row gap-1 align-items-center">
                 <select id="lang-select" class="form-select form-select-sm w-auto py-0 lang-select" aria-label="Select language">
@@ -283,22 +281,19 @@
                         <ol class="small text-secondary-emphasis ps-3 mb-3">
                             <li class="mb-1">Visit <a href="https://ntfy.pokemmotools.org/alphapings" target="_blank" rel="noopener" class="text-info">https://ntfy.pokemmotools.org/alphapings</a></li>
                             <li class="mb-1">Allow notifications when your browser prompts you (from the left menu)</li>
-                            <li class="mb-1">Disable battery saver for this site (optional, improves reliability)</li>
+                            <li class="mb-1">Keep the browser open in the background</li>
                         </ol>
 
-                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Mobile App (iOS/Android):</strong></p>
+                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Mobile App (iOS/Android) — More reliable:</strong></p>
                         <ol class="small text-secondary-emphasis ps-3 mb-3">
-                            <li class="mb-1">Download ntfy from <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener" class="text-info">App Store (iOS)</a> or <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener" class="text-info">Google Play (Android)</a></li>
-                            <li class="mb-1">Open the app and subscribe to topic: <code>alphapings</code></li>
-                            <li class="mb-1">Use server: <a href="https://ntfy.pokemmotools.org" target="_blank" rel="noopener" class="text-info">https://ntfy.pokemmotools.org</a></li>
+                            <li class="mb-1">Download ntfy from <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener" class="text-info">App Store</a> or <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener" class="text-info">Google Play</a></li>
+                            <li class="mb-1">Open the app and enable notifications (disable the battery optimization if prompted).</li>
+                            <li class="mb-1">Subscribe to topic: <code>alphapings</code> (all lowercase)</li>
+                            <li class="mb-1">Tap on "Use another server" and input: <code>https://ntfy.pokemmotools.org</code></li>
                         </ol>
 
-                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Android Quick Setup:</strong></p>
-                        <ol class="small text-secondary-emphasis ps-3 mb-3">
-                            <li class="mb-1">Tap <a href="ntfy://ntfy.pokemmotools.org/alphapings" class="text-info">here</a> to configure the app automatically. You must install the app first</li>
-                        </ol>
-
-                        <div class="alert alert-info alert-sm mt-2 py-1 mb-0 px-2" role="alert">You will get a notification from the Browser or the App when an Alpha is reported by a trusted player. Check your notification/battery saving settings if you don't receive it.<br>Check <a href="https://dontkillmyapp.com" target="_blank" rel="noopener" class="text-info">dontkillmyapp.com</a> if your Android is killing the ntfy app.</div>
+                        <div class="alert alert-blue alert-info alert-sm mt-2 py-1 mb-0 px-2" role="alert">You will get a notification from the Browser or the ntfy App when an Alpha is reported by a trusted player. Check your notification/battery saving settings if you don't receive it.<br>Check <a href="https://dontkillmyapp.com" target="_blank" rel="noopener" class="text-info">dontkillmyapp.com</a> if your Android is killing the ntfy app.</div>
+                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 mb-0 px-2" role="alert">To send notifications as a trusted player, DM <a href="https://discordapp.com/users/95486109852631040" target="_blank" rel="noopener" class="text-info">@lorddusk</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
                     </div>
                 </div>
 
@@ -310,7 +305,7 @@
                             <input type="url" id="publishUrlInput" class="form-control form-control-sm" placeholder="https://...">
                         </div>
                         <div class="mb-2">
-                            <label for="publishTopicInput" class="form-label small text-secondary mb-1">Topic</label>
+                            <label for="publishTopicInput" class="form-label small text-secondary mb-1">Topic (case sensitive)</label>
                             <input type="text" id="publishTopicInput" class="form-control form-control-sm" placeholder="Topic (e.g. alphapings)">
                         </div>
                         <div class="mb-2">
@@ -321,30 +316,13 @@
                             <label for="publishPasswordInput" class="form-label small text-secondary mb-1">Password</label>
                             <input type="password" id="publishPasswordInput" class="form-control form-control-sm" placeholder="Password" autocomplete="current-password">
                         </div>
-                        <div class="alert alert-info alert-sm mt-2 py-1 px-2" role="alert">If you're not sure what this is, you most likely don't need it. Configure the URL endpoint and credentials to send notifications via ntfy. These settings are saved locally in your browser and will be cleared if you delete your cookies.</div>
+                        <div class="alert alert-blue alert-info alert-sm mt-2 py-1 px-2 mb-0" role="alert">If you're not sure what this is, you most likely don't need it. Trusted players can configure the URL endpoint and credentials to send notifications via ntfy. These settings are saved locally in your browser and will be cleared if you delete your cookies.</div>
+                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 px-2 mb-1" role="alert">To send notifications as a trusted player, DM <a href="https://discordapp.com/users/95486109852631040" target="_blank" rel="noopener" class="text-info">@lorddusk</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
                     </div>
                     <div class="d-flex gap-1 justify-content-center">
                         <button id="publishSettingsClearBtn" type="button" class="btn btn-sm btn-outline-danger">Clear Fields</button>
                         <button id="publishSettingsSaveBtn" type="button" class="btn btn-sm btn-primary">Save Configuration</button>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="publishConfirmPopup" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Publish</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p class="mb-0">Are you sure you want to publish <strong id="publishConfirmPokemonName">this Pokemon</strong> on <strong id="publishConfirmEndpointURL">endpoint URL</strong>?<br>This will notify people directly that a new Alpha spawned.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button id="publishConfirmAcceptBtn" type="button" class="btn btn-sm btn-danger">Publish</button>
                 </div>
             </div>
         </div>

@@ -32,15 +32,14 @@ body {
     display: inline-flex;
 }
 
-.theme-loading #toastAlert {
-    display: none !important;
-}
+
 
 .initial-loader.is-visible {
     display: inline-flex;
 }
 
-#toastAlert {
+.toastAlert {
+    z-index: 9999999999;
     left: 50%;
     right: auto;
     transform: translateX(-50%);
@@ -55,7 +54,7 @@ body {
     animation: donation-gradient-shift 8s ease-in-out infinite;
 }
 
-#toastAlert .initial-loader-text {
+.toastAlert .initial-loader-text {
     text-align: center;
 }
 
@@ -322,8 +321,6 @@ body {
 .alert-sm {
     font-size: 0.75rem;
     border-width: 1px;
-    border-color: rgba(13, 110, 253, 0.25);
-    background-color: rgba(13, 110, 253, 0.08);
 }
 
 .initial-loader-spinner {
@@ -370,7 +367,7 @@ body {
     }
 }
 
-.copy-countdown-ring {
+.toastAlert-countdown-ring {
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -380,34 +377,34 @@ body {
     height: 1.35rem;
 }
 
-.copy-countdown-ring-svg {
+.toastAlert-countdown-ring-svg {
     width: 100%;
     height: 100%;
     transform: rotate(-90deg);
 }
 
-.copy-countdown-ring-track,
-.copy-countdown-ring-progress {
+.toastAlert-countdown-ring-track,
+.toastAlert-countdown-ring-progress {
     fill: none;
     stroke-width: 2;
 }
 
-.copy-countdown-ring-track {
+.toastAlert-countdown-ring-track {
     stroke: rgba(255, 255, 255, 0.28);
 }
 
-.copy-countdown-ring-progress {
+.toastAlert-countdown-ring-progress {
     stroke: #fff;
     stroke-linecap: round;
     stroke-dasharray: 50.3;
     stroke-dashoffset: 0;
 }
 
-.copy-countdown-ring.is-running .copy-countdown-ring-progress {
-    animation: copy-countdown-drain 5s linear forwards;
+.toastAlert-countdown-ring.is-running .toastAlert-countdown-ring-progress {
+    animation: toastAlert-countdown-drain var(--toast-duration, 5s) linear forwards;
 }
 
-@keyframes copy-countdown-drain {
+@keyframes toastAlert-countdown-drain {
     from {
         stroke-dashoffset: 0;
     }
@@ -416,7 +413,7 @@ body {
     }
 }
 
-.copy-countdown-number {
+.toastAlert-countdown-number {
     position: absolute;
     inset: 0;
     display: flex;
@@ -462,6 +459,7 @@ body {
 }
 
 .footer-donation-message {
+    text-align: center;
     text-wrap: pretty;
     overflow-wrap: break-word;
     color: #9ad0ff;
@@ -535,10 +533,15 @@ body {
     color: #31d5ff !important;
 }
 
-#notificationInfoAndSettingsPopup .alert {
+#notificationInfoAndSettingsPopup .alert-blue {
     background-color: rgba(13, 110, 253, 0.08) !important;
     border-color: rgba(13, 110, 253, 0.25) !important;
     color: rgba(255, 255, 255, 0.87) !important;
+}
+
+#notificationInfoAndSettingsPopup .alert-yellow {
+    background-color: rgba(255, 193, 7, 0.08) !important;
+    border-color: rgba(255, 193, 7, 0.25) !important;
 }
 
 #notificationInfoAndSettingsPopup .btn {
@@ -615,7 +618,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    #toastAlert {
+    .toastAlert {
         animation: none;
     }
 
@@ -707,6 +710,8 @@ body {
 
 .footer {
     /* flex-shrink: none; Remove if you need the footer to stretch on larger content */
+    z-index: 500; /* per restare sopra agli accordion */
     position: sticky;
-    top: 100vh; /* This makes it sticky to the bottom of the viewport */
+    bottom: 0;
+    background-color: var(--bs-body-bg);
 }
