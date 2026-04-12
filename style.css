@@ -226,17 +226,24 @@ body {
     bottom: 3.5rem;
     right: 1rem;
     z-index: 1995;
-    width: min(300px, calc(100vw - 2rem));
+    width: min(400px, calc(100vw - 2rem));
+    max-height: calc(100vh - 4.5rem);
     box-sizing: border-box;
     border-radius: 0.75rem;
     color: #fff;
-    background: rgba(22, 28, 36, 0.97);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
+    border: 1px solid transparent;
+    background:
+        linear-gradient(rgba(22, 28, 36, 0.94), rgba(22, 28, 36, 0.94)) padding-box,
+        linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: donation-gradient-shift 8s ease-in-out infinite;
+    box-shadow: 0 0.75rem 1.75rem rgba(0, 0, 0, 0.35);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition: opacity 0.22s ease, transform 0.22s ease;
     transform: translateY(8px);
+    display: flex;
+    flex-direction: column;
 }
 
 .publish-settings-popup.is-visible {
@@ -249,6 +256,8 @@ body {
     display: flex;
     flex-direction: column;
     padding: 0.8rem 0.95rem;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .publish-settings-popup-header {
@@ -257,6 +266,64 @@ body {
     justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
+    flex-shrink: 0;
+}
+
+/* Publish Settings Tabs */
+.publish-settings-tabs {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 0.75rem;
+    gap: 0;
+    flex-shrink: 0;
+}
+
+.publish-settings-tab-btn {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.6rem;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.publish-settings-tab-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.publish-settings-tab-btn.active {
+    color: #fff;
+    border-bottom-color: #22c55e;
+}
+
+.publish-settings-tab-content {
+    min-height: 100px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.publish-settings-instructions {
+    padding: 0.5rem 0;
+}
+
+.publish-settings-instructions ol {
+    margin-bottom: 0;
+    list-style-position: inside;
+}
+
+.publish-settings-instructions ol li {
+    line-height: 1.4;
+}
+
+.publish-settings-send {
+    padding: 0.25rem 0;
+}
+
+.alert-sm {
+    font-size: 0.75rem;
+    border-width: 1px;
+    border-color: rgba(13, 110, 253, 0.25);
+    background-color: rgba(13, 110, 253, 0.08);
 }
 
 .initial-loader-spinner {
@@ -280,6 +347,18 @@ body {
 
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
     .donation-name-highlight {
+        background-image: linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+        animation: donation-gradient-shift 8s ease-in-out infinite;
+    }
+
+    .gradient-triangle {
+        display: inline-block;
         background-image: linear-gradient(120deg, #22c55e, #84cc16, #f59e0b, #f97316, #ef4444, #22c55e);
         background-size: 300% 300%;
         -webkit-background-clip: text;
@@ -411,6 +490,130 @@ body {
     }
 }
 
+/* Force dark theme colors in notifications popup */
+#notificationInfoAndSettingsPopup {
+    color-scheme: dark;
+}
+
+#notificationInfoAndSettingsPopup,
+#notificationInfoAndSettingsPopup * {
+    color: rgba(255, 255, 255, 0.87) !important;
+}
+
+#notificationInfoAndSettingsPopup .form-control,
+#notificationInfoAndSettingsPopup .form-select,
+#notificationInfoAndSettingsPopup input,
+#notificationInfoAndSettingsPopup textarea,
+#notificationInfoAndSettingsPopup select {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.87) !important;
+}
+
+#notificationInfoAndSettingsPopup .form-control:focus,
+#notificationInfoAndSettingsPopup .form-select:focus,
+#notificationInfoAndSettingsPopup input:focus,
+#notificationInfoAndSettingsPopup textarea:focus,
+#notificationInfoAndSettingsPopup select:focus {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: rgba(255, 255, 255, 0.87) !important;
+}
+
+#notificationInfoAndSettingsPopup .text-secondary,
+#notificationInfoAndSettingsPopup .text-secondary-emphasis {
+    color: rgba(255, 255, 255, 0.68) !important;
+}
+
+#notificationInfoAndSettingsPopup .text-info,
+#notificationInfoAndSettingsPopup a {
+    color: #0dcaf0 !important;
+}
+
+#notificationInfoAndSettingsPopup .text-info:hover,
+#notificationInfoAndSettingsPopup a:hover {
+    color: #31d5ff !important;
+}
+
+#notificationInfoAndSettingsPopup .alert {
+    background-color: rgba(13, 110, 253, 0.08) !important;
+    border-color: rgba(13, 110, 253, 0.25) !important;
+    color: rgba(255, 255, 255, 0.87) !important;
+}
+
+#notificationInfoAndSettingsPopup .btn {
+    color: inherit !important;
+}
+
+#notificationInfoAndSettingsPopup .btn-primary {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: #fff !important;
+}
+
+#notificationInfoAndSettingsPopup .btn-primary:hover {
+    background-color: #0b5ed7 !important;
+    border-color: #0a58ca !important;
+}
+
+#notificationInfoAndSettingsPopup .btn-outline-danger {
+    color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+#notificationInfoAndSettingsPopup .btn-outline-danger:hover {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+#notificationInfoAndSettingsPopup .text-secondary-50 {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+
+#notificationInfoAndSettingsPopup code {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #ff6d8b !important;
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.2rem;
+}
+
+#notificationInfoAndSettingsPopup input::placeholder,
+#notificationInfoAndSettingsPopup textarea::placeholder,
+#notificationInfoAndSettingsPopup select::placeholder {
+    color: rgba(255, 255, 255, 0.5) !important;
+    opacity: 1 !important;
+}
+
+/* Force tab button styling in dark theme */
+#notificationInfoAndSettingsPopup .nav-link {
+    color: rgba(255, 255, 255, 0.6) !important;
+    background-color: transparent !important;
+}
+
+#notificationInfoAndSettingsPopup .nav-link:hover {
+    color: rgba(255, 255, 255, 0.8) !important;
+    background-color: transparent !important;
+}
+
+#notificationInfoAndSettingsPopup .nav-link.active {
+    color: #fff !important;
+    background-color: transparent !important;
+    border-bottom-color: transparent !important;
+}
+
+/* Publish Settings Popup responsive positioning */
+@media (max-width: 767.98px) {
+    .publish-settings-popup {
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%) translateY(8px);
+    }
+
+    .publish-settings-popup.is-visible {
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     #toastAlert {
         animation: none;
@@ -480,7 +683,7 @@ body {
     border-radius: 2px;
 }
 
-.copy-pokemon-btn {
+.min-width-10ch {
     min-width: 10ch;
 }
 

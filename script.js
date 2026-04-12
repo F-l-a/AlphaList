@@ -65,26 +65,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const contributorsToastTriggers = Array.from(document.querySelectorAll('[data-action="open-contributors-toast"]'));
     const firstVisitSaveBtn = document.getElementById('firstVisitSaveBtn');
     const firstVisitBottomHint = document.getElementById('firstVisitBottomHint');
+    const firstVisitNotificationHint = document.getElementById('firstVisitNotificationHint');
     const firstVisitThemeButtons = Array.from(document.querySelectorAll('[data-theme-choice]'));
     const firstVisitLanguageButtons = Array.from(document.querySelectorAll('[data-lang-choice]'));
-    const publishSettingsBtn = document.getElementById('publish-settings-btn');
-    const publishSettingsPopup = document.getElementById('publishSettingsPopup');
+    const notificationInfoAndSettings = document.getElementById('notifications-btn');
+    const notificationInfoAndSettingsPopup = document.getElementById('notificationInfoAndSettingsPopup');
     const publishUrlInput = document.getElementById('publishUrlInput');
     const publishUsernameInput = document.getElementById('publishUsernameInput');
     const publishPasswordInput = document.getElementById('publishPasswordInput');
     const publishSettingsSaveBtn = document.getElementById('publishSettingsSaveBtn');
     const publishSettingsClearBtn = document.getElementById('publishSettingsClearBtn');
     const publishSettingsCloseBtn = document.getElementById('publishSettingsCloseBtn');
-    const publishSettingsCancelBtn = document.getElementById('publishSettingsCancelBtn');
     const publishConfirmPopup = document.getElementById('publishConfirmPopup');
     const publishConfirmPokemonName = document.getElementById('publishConfirmPokemonName');
+    const publishConfirmEndpointURL = document.getElementById('publishConfirmEndpointURL');
     const publishConfirmAcceptBtn = document.getElementById('publishConfirmAcceptBtn');
     let toastAlertTimeoutId = null;
     let toastAlertCountdownIntervalId = null;
     let pendingPublishPayload = null;
     let publishConfirmModal = null;
+    let activePublishBtn = null;
 
-    const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v1';
+    const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v2';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
     const PUBLISH_USERNAME_KEY = 'alphalist:publish-username';
     const PUBLISH_PASSWORD_KEY = 'alphalist:publish-password';
@@ -268,26 +270,31 @@ document.addEventListener('DOMContentLoaded', () => {
         contributorsToast.classList.add('is-visible');
     }
 
-    function showPublishSettingsPopup() {
-        if (!publishSettingsPopup) return;
+    function showNotificationInfoAndSettingsPopup() {
+        if (!notificationInfoAndSettingsPopup) return;
         try {
             publishUrlInput.value = localStorage.getItem(PUBLISH_URL_KEY) || '';
             publishUsernameInput.value = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
             publishPasswordInput.value = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
         } catch (e) {}
-        publishSettingsPopup.classList.add('is-visible');
+        notificationInfoAndSettingsPopup.classList.add('is-visible');
     }
 
-    function hidePublishSettingsPopup() {
-        if (!publishSettingsPopup) return;
-        publishSettingsPopup.classList.remove('is-visible');
+    function hideNotificationInfoAndSettingsPopup() {
+        if (!notificationInfoAndSettingsPopup) return;
+        notificationInfoAndSettingsPopup.classList.remove('is-visible');
     }
 
-    function showPublishConfirmPopup(pokemonName, payload) {
+    function showPublishConfirmPopup(pokemonName, payload, buttonEl) {
         if (!publishConfirmPopup) return;
         pendingPublishPayload = payload;
+        activePublishBtn = buttonEl;
         if (publishConfirmPokemonName) {
             publishConfirmPokemonName.textContent = pokemonName || 'this Pokemon';
+        }
+        if (publishConfirmEndpointURL) {
+            const url = localStorage.getItem(PUBLISH_URL_KEY) || 'URL not configured';
+            publishConfirmEndpointURL.textContent = url;
         }
         if (window.bootstrap) {
             if (!publishConfirmModal) {
@@ -307,19 +314,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (publishSettingsBtn) {
-        publishSettingsBtn.addEventListener('click', () => showPublishSettingsPopup());
+    if (notificationInfoAndSettings) {
+        notificationInfoAndSettings.addEventListener('click', () => showNotificationInfoAndSettingsPopup());
+    }
+
+    if (firstVisitNotificationHint) {
+        firstVisitNotificationHint.addEventListener('click', () => showNotificationInfoAndSettingsPopup());
     }
 
     if (publishSettingsSaveBtn) {
         publishSettingsSaveBtn.addEventListener('click', () => {
+            const url = publishUrlInput.value.trim();
+            const username = publishUsernameInput.value.trim();
+            const password = publishPasswordInput.value.trim();
+
             try {
-                localStorage.setItem(PUBLISH_URL_KEY, publishUrlInput.value.trim());
-                localStorage.setItem(PUBLISH_USERNAME_KEY, publishUsernameInput.value);
-                localStorage.setItem(PUBLISH_PASSWORD_KEY, publishPasswordInput.value);
+                localStorage.setItem(PUBLISH_URL_KEY, url);
+                localStorage.setItem(PUBLISH_USERNAME_KEY, username);
+                localStorage.setItem(PUBLISH_PASSWORD_KEY, password);
             } catch (e) {}
-            hidePublishSettingsPopup();
-            window.location.reload();
+            hideNotificationInfoAndSettingsPopup();
+            if(url){
+                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
+                    btn.classList.remove('d-none');
+                });
+            }else{
+                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
+                    btn.classList.add('d-none');
+                });
+            }
+
         });
     }
 
@@ -328,25 +352,17 @@ document.addEventListener('DOMContentLoaded', () => {
             publishUrlInput.value = '';
             publishUsernameInput.value = '';
             publishPasswordInput.value = '';
-            try {
-                localStorage.removeItem(PUBLISH_URL_KEY);
-                localStorage.removeItem(PUBLISH_USERNAME_KEY);
-                localStorage.removeItem(PUBLISH_PASSWORD_KEY);
-            } catch (e) {}
         });
     }
 
     if (publishSettingsCloseBtn) {
-        publishSettingsCloseBtn.addEventListener('click', () => hidePublishSettingsPopup());
-    }
-
-    if (publishSettingsCancelBtn) {
-        publishSettingsCancelBtn.addEventListener('click', () => hidePublishSettingsPopup());
+        publishSettingsCloseBtn.addEventListener('click', () => hideNotificationInfoAndSettingsPopup());
     }
 
     if (publishConfirmPopup) {
         publishConfirmPopup.addEventListener('hidden.bs.modal', () => {
             pendingPublishPayload = null;
+            activePublishBtn = null;
         });
     }
 
@@ -358,17 +374,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const {
-                pokemonName, rawName, rawRegion, rawLocation,
-                region, specificLocation
+                rawName, rawRegion, rawLocation
             } = pendingPublishPayload;
 
-            const publishMessage = generatePublishMessage(rawName, rawRegion, rawLocation, pokemonName, region, specificLocation);
-            publishNotification(pokemonName, publishMessage);
+            const publishMessage = generatePublishMessage(rawName, rawRegion, rawLocation);
+            publishNotification(rawName, publishMessage, activePublishBtn);
             hidePublishConfirmPopup();
         });
     }
 
-    function publishNotification(pokemonName, publishData) {
+    function publishNotification(rawName, publishData, buttonEl) {
         let url, username, password;
         try {
             url = localStorage.getItem(PUBLISH_URL_KEY) || '';
@@ -379,11 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('publishNotification: no URL configured.');
             return;
         }
-        const notificationTitle = publishData?.pokemonName || pokemonName;
+        const notificationTitle = publishData?.rawName || rawName;
         const notificationBody = publishData?.body || '';
         const headers = { 'Title': notificationTitle };
         if (publishData?.shareUrl) {
-            headers['Actions'] = 'view, Open in AlphaList, ' + publishData.shareUrl;
+            headers['Actions'] = `view, Open in AlphaList, ${publishData.shareUrl}; view, Call made by ${username}, ${publishData.shareUrl}`;
         }
         if (username && password) {
             headers['Authorization'] = 'Basic ' + btoa(`${username}:${password}`);
@@ -392,7 +407,46 @@ document.addEventListener('DOMContentLoaded', () => {
             method: 'POST',
             body: notificationBody,
             headers
-        }).catch(err => console.error('publishNotification failed:', err));
+        }).then(response => {
+            console.log('publishNotification response:', response)
+            if (buttonEl) {
+                if (buttonEl.__publishResetTimeoutId) {
+                    clearTimeout(buttonEl.__publishResetTimeoutId);
+                }
+                if (response.ok) {
+                    showToastAlert();
+                    buttonEl.textContent = t('Published');
+                    buttonEl.classList.remove('btn-secondary', 'btn-danger');
+                    buttonEl.classList.add('btn-success');
+                } else {
+                    buttonEl.textContent = `${t('Err')} ${response.status}`;
+                    buttonEl.classList.remove('btn-secondary', 'btn-success');
+                    buttonEl.classList.add('btn-danger');
+                }
+                buttonEl.__publishResetTimeoutId = setTimeout(() => {
+                    buttonEl.textContent = t('Publish');
+                    buttonEl.classList.remove('btn-success', 'btn-danger');
+                    buttonEl.classList.add('btn-secondary');
+                    buttonEl.__publishResetTimeoutId = null;
+                }, 3000);
+            }
+        }).catch(err => {
+            console.error('publishNotification failed:', err);
+            if (buttonEl) {
+                if (buttonEl.__publishResetTimeoutId) {
+                    clearTimeout(buttonEl.__publishResetTimeoutId);
+                }
+                buttonEl.textContent = t('Fetch Err');
+                buttonEl.classList.remove('btn-secondary', 'btn-success');
+                buttonEl.classList.add('btn-danger');
+                buttonEl.__publishResetTimeoutId = setTimeout(() => {
+                    buttonEl.textContent = t('Publish');
+                    buttonEl.classList.remove('btn-success', 'btn-danger');
+                    buttonEl.classList.add('btn-secondary');
+                    buttonEl.__publishResetTimeoutId = null;
+                }, 3000);
+            }
+        });
     }
 
     function hideFirstVisitToast() {
@@ -1400,7 +1454,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                 </button>
             </h2>
             <div id="${uniqueId}" class="accordion-collapse collapse"><!-- data-bs-parent="#content"  per chiudere gli accordion precedenti all'apertura di quello nuovo-->
-                <div class="accordion-body">
+                <div class="accordion-body px-1 pb-1">
                     <div class="row g-2">
                         <div class="col-md-6 m-0">
                             ${column1Html}
@@ -1488,31 +1542,18 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             : maleRatioRaw;
 
         // Show publish button only when all 3 publish settings are configured
-        let publishBtnHtml = '';
         let hasPublishButton = false;
         try {
-            if (localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY)) {
-                hasPublishButton = true;
-                publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn ms-2"
+            hasPublishButton = !!(localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY));
+        } catch (e) {}
+        const publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn  min-width-10ch${hasPublishButton ? '' : ' d-none'}"
                                         data-pokemon-name="${formattedName}"
                                         data-raw-name="${name}"
                                         data-raw-region="${region}"
-                                        data-raw-location="${location}"
-                                        data-region="${translatedDataRegion || ''}"
-                                        data-specific-location="${translatedSpecificLocation || ''}"
-                                        data-location-notes="${translatedLocationNotes || ''}"
-                                        data-map-link="${data["Map Link"] || ''}"
-                                        data-hms="${hmsForDisplay}"
-                                        data-egg-group="${eggGroupForDisplay}"
-                                        data-male-ratio="${maleRatioDisplay}"
-                                        data-ability="${abilityWithProperties}"
-                                        data-moveset="${translatedMovesetForCopy}"
-                                        data-notes="${translatedNotes || ''}">
+                                        data-raw-location="${location}">
                                         ${t('Publish')}
                                     </button>`;
-            }
-        } catch (e) {}
-        const copyBtnClass = `btn btn-sm btn-secondary copy-pokemon-btn${hasPublishButton ? '' : ' ms-2'}`;
+        const copyBtnClass = `btn btn-sm btn-secondary copy-pokemon-btn min-width-10ch`;
 
         // Determina se mostrare il messaggio di despawn nella card
         let despawnHtml = '';
@@ -1535,7 +1576,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
                                 <button class="accordion-button collapsed p-2" type="button" data-bs-toggle="collapse" data-bs-target="#pokemonCollapse-${uid}" aria-expanded="false" aria-controls="pokemonCollapse-${uid}">
                                     <span class="card-title m-1">${displayTitle}</span>
                                 </button>
-                                <div class="d-flex align-items-center gap-1 me-2">
+                                <div class="d-flex align-items-center gap-1 mx-2">
                                     ${publishBtnHtml}
                                     <button class="${copyBtnClass}"
                                         data-pokemon-name="${formattedName}" 
@@ -1673,18 +1714,14 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
         if (publishBtnEl) {
             const btn = publishBtnEl;
             const { 
-                pokemonName, rawName, rawRegion, rawLocation,
-                region, specificLocation
+                pokemonName, rawName, rawRegion, rawLocation
             } = btn.dataset;
 
             showPublishConfirmPopup(pokemonName, {
-                pokemonName,
                 rawName,
                 rawRegion,
-                rawLocation,
-                region,
-                specificLocation
-            });
+                rawLocation
+            }, btn);
             return;
         }
 
@@ -1700,7 +1737,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
             let markdown = generateMarkdownForPokemon(rawName, rawRegion, rawLocation, pokemonName, region, mapLink, specificLocation, locationNotes, hms, t, eggGroup, maleRatio, formatAbilityWithProperties, ability, moveset, notes);
             
             // Append message Footer
-            markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and share the next! (Multilanguage!)')}](https://f-l-a.github.io/AlphaList/)`;
+            markdown += `\n-# [${t('Alpha List by FlaProGmr')} - ${t('copy and share the next! (With Notifications!)')}](https://f-l-a.github.io/AlphaList/)`;
 
             navigator.clipboard.writeText(markdown).then(() => {
                 showToastAlert();
@@ -1779,14 +1816,14 @@ function generateMarkdownForPokemon(rawName, rawRegion, rawLocation, pokemonName
     return markdown;
 }
 
-function generatePublishMessage(rawName, rawRegion, rawLocation, pokemonName, region, specificLocation) {
+function generatePublishMessage(rawName, rawRegion, rawLocation) {
     const shareUrl = buildShareUrl(rawName, rawRegion, rawLocation);
 
-    const locationForPublish = specificLocation || rawLocation || '';
-    const body = [region || '', locationForPublish].filter(Boolean).join('\n');
+    const locationForPublish = rawLocation || '';
+    const body = [rawRegion || '', locationForPublish].filter(Boolean).join('\n');
     return {
-        pokemonName: pokemonName || '',
-        region: region || '',
+        pokemonName: rawName || '',
+        region: rawRegion || '',
         location: locationForPublish,
         shareUrl,
         body

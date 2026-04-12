@@ -9,7 +9,7 @@ function getBaseUrl() {
 }
 
 const BASE_URL = getBaseUrl();
-const CACHE_NAME = 'alpha-list-cache-v2.9'; // Increment the version to invalidate old caches and force the update of the assets
+const CACHE_NAME = 'alpha-list-cache-v3.0'; // Increment the version to invalidate old caches and force the update of the assets
 const SUPPORTED_TRANSLATION_LANGS = ['de', 'es', 'fr', 'it'];
 const TRANSLATION_FILE_NAMES = ['ability', 'egg-group', 'locationPokeapi', 'move', 'pokemon-species', 'region'];
 const REMOTE_TRANSLATIONS_BASE = 'https://cdn.jsdelivr.net/gh/F-l-a/Poke-translator@main/translations/PokemmoClientDump';
