@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificationInfoAndSettings = document.getElementById('notifications-btn');
     const notificationInfoAndSettingsPopup = document.getElementById('notificationInfoAndSettingsPopup');
     const publishUrlInput = document.getElementById('publishUrlInput');
+    const publishTopicInput = document.getElementById('publishTopicInput');
     const publishUsernameInput = document.getElementById('publishUsernameInput');
     const publishPasswordInput = document.getElementById('publishPasswordInput');
     const publishSettingsSaveBtn = document.getElementById('publishSettingsSaveBtn');
@@ -88,6 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v2';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
+    const PUBLISH_TOPIC_KEY = 'alphalist:publish-topic';
     const PUBLISH_USERNAME_KEY = 'alphalist:publish-username';
     const PUBLISH_PASSWORD_KEY = 'alphalist:publish-password';
     const FIRST_VISIT_SAVE_LABEL_KEY = 'Save preferences';
@@ -274,6 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!notificationInfoAndSettingsPopup) return;
         try {
             publishUrlInput.value = localStorage.getItem(PUBLISH_URL_KEY) || '';
+            publishTopicInput.value = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
             publishUsernameInput.value = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
             publishPasswordInput.value = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
         } catch (e) {}
@@ -325,11 +328,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (publishSettingsSaveBtn) {
         publishSettingsSaveBtn.addEventListener('click', () => {
             const url = publishUrlInput.value.trim();
+            const topic = publishTopicInput.value.trim();
             const username = publishUsernameInput.value.trim();
             const password = publishPasswordInput.value.trim();
 
             try {
                 localStorage.setItem(PUBLISH_URL_KEY, url);
+                localStorage.setItem(PUBLISH_TOPIC_KEY, topic);
                 localStorage.setItem(PUBLISH_USERNAME_KEY, username);
                 localStorage.setItem(PUBLISH_PASSWORD_KEY, password);
             } catch (e) {}
@@ -384,9 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function publishNotification(rawName, publishData, buttonEl) {
-        let url, username, password;
+        let url, topic, username, password;
         try {
             url = localStorage.getItem(PUBLISH_URL_KEY) || '';
+            topic = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
             username = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
             password = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
         } catch (e) {}
@@ -403,10 +409,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (username && password) {
             headers['Authorization'] = 'Basic ' + btoa(`${username}:${password}`);
         }
+        const body = JSON.stringify({
+            topic: topic,
+            message: notificationBody,
+            title: notificationTitle,
+            actions: headers['Actions']
+        })
         fetch(url, {
             method: 'POST',
-            body: notificationBody,
-            headers
+            body: body,
+            headers: {
+                "Content-Type": "application/json",
+                ...headers
+            }
         }).then(response => {
             console.log('publishNotification response:', response)
             if (buttonEl) {
@@ -1544,7 +1559,7 @@ function formatAbilityWithProperties(rawAbilityName, translatedAbilityName) {
         // Show publish button only when all 3 publish settings are configured
         let hasPublishButton = false;
         try {
-            hasPublishButton = !!(localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY));
+            hasPublishButton = !!(localStorage.getItem(PUBLISH_URL_KEY) && localStorage.getItem(PUBLISH_TOPIC_KEY) && localStorage.getItem(PUBLISH_USERNAME_KEY) && localStorage.getItem(PUBLISH_PASSWORD_KEY));
         } catch (e) {}
         const publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn  min-width-10ch${hasPublishButton ? '' : ' d-none'}"
                                         data-pokemon-name="${formattedName}"
