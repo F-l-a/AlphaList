@@ -129,12 +129,12 @@
         <div class="spinner-border initial-loader-spinner" role="status" aria-hidden="true"></div>
         <span class="initial-loader-text">Loading</span>
     </div>
-    <div id="toastAlert-container">
+    <section id="toastAlert-container">
 
-    </div>    
+    </section>    
     <div id="firstVisitToast" class="first-visit-toast" role="status" aria-live="polite" aria-label="Set language and theme at the bottom of the page. | Imposta lingua e tema in fondo alla pagina. | Configura el idioma y el tema al final de la página. | Définissez la langue et le thème en bas de la page. | Sprache und Theme unten auf der Seite einstellen.">
         <div class="first-visit-toast-content">
-            <p class="first-visit-toast-title">Quick setup - First Visit - v3.1</p>
+            <p class="first-visit-toast-title">Quick setup - First Visit - v3.2</p>
 
             <div class="first-visit-pref-section" aria-label="Notifications">
                 <span class="first-visit-pref-label">Notifications</span>
@@ -173,34 +173,12 @@
             <button id="firstVisitSaveBtn" type="button" class="btn btn-sm btn-primary first-visit-save-btn">Save preferences</button>
         </div>
     </div>
-    <div id="contributorsToast" class="contributors-toast" role="status" aria-live="polite" aria-label="Contributors list">
-        <div class="contributors-toast-content">
-            <div class="contributors-toast-header">
-                <strong data-i18n="Contributors">Contributors</strong>
-                <button id="contributorsToastCloseBtn" type="button" class="btn-close btn-close-white" aria-label="Close" data-i18n-aria-label="Close"></button>
-            </div>
-            <ul class="contributors-toast-list mb-2">
-                <li><strong>Dusk</strong> - <span data-i18n="for the push notification system">for the push notification system</span></li>
-                <li><strong>BlueQuilava</strong> - <span data-i18n="for help with ES translations">for help with ES translations</span></li>
-                <li><strong>ShadoWine [TRØK]</strong> - <span data-i18n="for help with FR translations">for help with FR translations</span></li>
-                <li><strong>ZzPSYCHOzZ</strong> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" data-i18n="for the original dataset">for the original dataset</a></li>
-            </ul>
-            <div class="contributors-toast-donations mb-1">
-                <strong data-i18n="Donations leaderboard">Donations leaderboard</strong>
-                <div data-i18n="no donations yet :(">no donations yet :(</div>
-            </div>
-            <div class="d-flex gap-1 align-items-center flex-wrap">
-                <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary contributors-toast-github-link" data-i18n="Open GitHub">Open GitHub</a>
-                <span class="text-secondary">•</span>
-                <a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener" class="text-secondary contributors-toast-github-link">Cool Resource</a>
-            </div>
-        </div>
-    </div>
+
     <header class="bg-dark p-2 mb-1">
         <div class="container">
             <h1 class="h3" data-i18n="[PokéMMO] Pokémon Alpha List" id="home-link" style="cursor:pointer;">[PokéMMO] Pokémon Alpha List</h1>
-            <div class="row g-3 align-items-center">
-                <div class="col-md-4">
+            <form id="filters-form" class="row g-3 align-items-center">
+                <div class="col-12 col-md flex-grow-1">
                     <input type="text" id="search-pokemon" class="form-control" placeholder="Search Pokémon..." data-i18n-placeholder="Search Pokémon...">
                 </div>
                 <div class="col-sm-6 col-md-3">
@@ -214,30 +192,58 @@
 
                     </datalist>
                 </div>
-                <div class="col-md-2">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" role="switch" id="grouping-switch">
-                        <label class="form-check-label" for="grouping-switch" data-i18n="Group by Poke">Group by Poke</label>
+                <div class="col-12 col-md-auto d-flex flex-row flex-md-column flex-lg-row justify-content-between align-items-center gap-0">
+                    <div class="input-group form-check form-switch p-0 flex-nowrap">
+                        <span class="me-1" style="color: var(--bs-nav-link-color)" data-i18n="Location">Location</span>
+                        <input class="form-check-input rounded" type="checkbox" role="switch" id="grouping-switch">
+                        <span class="ms-1" style="color: var(--bs-nav-link-color)" data-i18n="Pokemon">Pokemon</span>
+                    </div>
+                    <span class="me-2 m-md-0 me-lg-2"></span>
+                    <div>
+                        <button type="reset" id="resetFilters-btn" class="btn btn-sm btn-outline-danger min-width-10ch p-0" data-i18n="CLEAR">CLEAR</button>  
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </header>
-   <hr class="mt-0 mb-2"> 
+    <hr class="my-0"> 
+    <section class="container mt-1 mb-2">
+        <div class="d-flex justify-content-between align-items-center p-2 bg-info-subtle border border-info rounded">
+            <div class="overflow-x-auto">
+                <span id="latestAlphaStatus">Alpha Status</span><span id="latestAlphaSeparator">: </span><span id="latestAlphaName">Loading...</span><span id="latestAlphaOptional"></span>
+            </div>
+            <div class="d-flex flex-nowrap">
+                <button type="button" id="latestAlphaInfo-btn" class="btn btn-sm btn-outline-secondary rounded me-1"><i class="bi bi-question-lg"></i></button>
+                <a href="https://alpha.pokemmotools.org/history" target="_blank" rel="noopener" class="btn btn-sm bg-primary-subtle border-primary-subtle min-width-10ch" data-i18n="Open History">Open History</a>
+            </div>
+        </div>
+
+    </section>
 
     <main class="container">
         <div id="content" class="accordion">
         </div>
     </main>
 
-    <small class="footer-donation-message donation-message my-1" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
+    <section class="text-center">
+        <small class="footer-donation-message donation-message my-1" data-i18n="Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!">Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!</small>
+    </section>
 
     <footer class="footer mt-auto py-2">
         <div class="container text-center d-flex flex-column flex-md-row justify-content-between align-items-center">
             <div class="d-flex flex-column flex-grow-1 text-md-start">
-                <small><span data-i18n="Alpha List by FlaProGmr">Alpha List by FlaProGmr</span> - v3.1 - <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-white-50" data-i18n="Contribute" data-action="open-contributors-toast">Contribute</a></small>
+                <small><span data-i18n="Alpha List by FlaProGmr">Alpha List by FlaProGmr</span> - v3.2 - <span class="text-white-50 contribute-link text-decoration-underline" role="button" tabindex="0" data-i18n="Contribute" style="cursor: pointer;">Contribute</span></small>
             </div>
             <div class="d-flex flex-row gap-1 align-items-center">
+                <button id="install-app-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0" style="display: none;" title="Install app" aria-label="Install app">
+                    <i class="bi bi-download fs-5"></i>
+                </button>
+                <button id="notifications-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
+                    <i class="bi bi-bell fs-5"></i>
+                </button>
+                <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
+                    <i class="bi bi-sun fs-5"></i>
+                </button>
                 <select id="lang-select" class="form-select form-select-sm w-auto py-0 lang-select" aria-label="Select language">
                     <option value="en" selected>🇬🇧 EN</option>
                     <option value="it">🇮🇹 IT</option>
@@ -245,12 +251,6 @@
                     <option value="fr">🇫🇷 FR</option>
                     <option value="de">🇩🇪 DE</option>
                 </select>
-                <button id="theme-toggle-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
-                    <i class="bi bi-sun fs-5"></i>
-                </button>
-                <button id="notifications-btn" class="btn btn-link text-white-50 d-flex align-items-center p-0">
-                    <i class="bi bi-bell fs-5"></i>
-                </button>
             </div>
         </div>
     </footer>
@@ -277,14 +277,14 @@
                 <!-- How to Receive tab -->
                 <div class="tab-pane fade show active" id="notifications-receive-panel" role="tabpanel" aria-labelledby="notifications-receive-tab">
                     <div class="publish-settings-instructions">
-                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Web Method:</strong></p>
+                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Web Method (PC):</strong></p>
                         <ol class="small text-secondary-emphasis ps-3 mb-3">
                             <li class="mb-1">Visit <a href="https://ntfy.pokemmotools.org/alphapings" target="_blank" rel="noopener" class="text-info">https://ntfy.pokemmotools.org/alphapings</a></li>
                             <li class="mb-1">Allow notifications when your browser prompts you (from the left menu)</li>
-                            <li class="mb-1">Keep the browser open in the background</li>
+                            <li class="mb-1">Keep the browser and the tab open in the background</li>
                         </ol>
 
-                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Mobile App (iOS/Android) — More reliable:</strong></p>
+                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Mobile App (iOS/Android):</strong></p>
                         <ol class="small text-secondary-emphasis ps-3 mb-3">
                             <li class="mb-1">Download ntfy from <a href="https://apps.apple.com/app/ntfy/id1625396347" target="_blank" rel="noopener" class="text-info">App Store</a> or <a href="https://play.google.com/store/apps/details?id=io.heckel.ntfy" target="_blank" rel="noopener" class="text-info">Google Play</a></li>
                             <li class="mb-1">Open the app and enable notifications (disable the battery optimization if prompted).</li>

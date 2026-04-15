@@ -6,6 +6,7 @@ body {
 /* Hide page during theme detection to avoid flash-of-unstyled content */
 .theme-loading header,
 .theme-loading main,
+.theme-loading section,
 .theme-loading footer,
 .theme-loading hr,
 .theme-loading .modal {
@@ -157,13 +158,14 @@ body {
     overflow-wrap: anywhere;
 }
 
-.contributors-toast {
+.persistent-toast-popup {
     position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, calc(-50% + 12px));
     z-index: 1995;
     width: min(520px, calc(100vw - 1.5rem));
+    max-height: calc(100vh - 4.5rem);
     box-sizing: border-box;
     border-radius: 0.75rem;
     color: #fff;
@@ -177,44 +179,59 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.22s ease, transform 0.22s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.contributors-toast.is-visible {
+.persistent-toast-popup.is-visible {
     opacity: 1;
     pointer-events: auto;
     transform: translate(-50%, -50%);
 }
 
-.contributors-toast-content {
+.persistent-toast-popup-content {
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
     padding: 0.8rem 0.95rem;
+    min-height: 0;
+    overflow: hidden;
 }
 
-.contributors-toast-header {
+.persistent-toast-popup-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
-.contributors-toast-list {
+.persistent-toast-popup-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.persistent-toast-popup-list {
     margin: 0;
     padding-left: 1.1rem;
 }
 
-.contributors-toast-list li {
+.persistent-toast-popup-list li {
     margin-bottom: 0.25rem;
 }
 
-.contributors-toast-donations {
+.persistent-toast-popup-donations {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
 }
 
-.contributors-toast-github-link {
+.persistent-toast-popup-github-link {
     align-self: flex-start;
     font-weight: 700;
     text-decoration: underline;
@@ -295,7 +312,6 @@ body {
 }
 
 .publish-settings-tab-content {
-    min-height: 100px;
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
@@ -631,7 +647,7 @@ body {
         animation: none;
     }
 
-    .contributors-toast {
+    .persistent-toast-popup {
         transition: none;
         animation: none;
     }
@@ -647,7 +663,7 @@ body {
         transform: translate(-50%, -50%);
     }
 
-    .contributors-toast {
+    .persistent-toast-popup {
         width: min(92vw, 520px);
     }
 
@@ -714,4 +730,54 @@ body {
     position: sticky;
     bottom: 0;
     background-color: var(--bs-body-bg);
+}
+
+/* Time Windows Cards */
+.alpha-help-windows-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.75rem;
+}
+
+.alpha-help-window-card {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.alpha-help-window-watermark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.alpha-help-window-content {
+    position: relative;
+    z-index: 1;
+}
+
+.alpha-help-window-label {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-bottom: 0.3rem;
+}
+
+.alpha-help-window-time {
+    font-weight: 600;
+    font-size: 0.9rem;
 }

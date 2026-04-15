@@ -17,6 +17,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isLocalHost = isLocalDevelopmentHost(window.location.hostname);
 
+    // PWA Install prompt handling
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('install-app-btn');
+
+    // Function to check if app is already installed
+    function isAppAlreadyInstalled() {
+        // Check display-mode: standalone
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            return true;
+        }
+        // Fallback for iOS
+        if (window.navigator.standalone === true) {
+            return true;
+        }
+        return false;
+    }
+
+    // Function to update button visibility
+    function updateInstallButtonVisibility() {
+        if (!installBtn) return;
+        
+        // Hide if app already installed
+        if (isAppAlreadyInstalled()) {
+            installBtn.style.display = 'none';
+            return;
+        }
+        
+        // Show only if we have a valid deferred prompt
+        if (deferredPrompt) {
+            installBtn.style.display = 'block';
+        } else {
+            installBtn.style.display = 'none';
+        }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        updateInstallButtonVisibility();
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            
+            try {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                
+                // Only clear deferredPrompt if user accepted (or if it was consumed)
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                }
+                // If 'dismissed', keep deferredPrompt for potential future attempts
+                
+                updateInstallButtonVisibility();
+            } catch (error) {
+                console.error('An error occurred during install prompt:', error);
+                deferredPrompt = null;
+                updateInstallButtonVisibility();
+            }
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        console.log('PWA was installed');
+        deferredPrompt = null;
+        updateInstallButtonVisibility();
+    });
+
+    // Check on load if app is already installed
+    updateInstallButtonVisibility();
+
+    // Monitor for changes in display-mode (e.g., app installed in background)
+    window.matchMedia('(display-mode: standalone)').addListener((e) => {
+        console.log('Display mode changed:', e.matches ? 'standalone' : 'browser');
+        updateInstallButtonVisibility();
+    });
+
     if ('serviceWorker' in navigator) {
         if (isLocalHost) {
             navigator.serviceWorker.getRegistrations()
@@ -57,9 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
     const firstVisitToast = document.getElementById('firstVisitToast');
-    const contributorsToast = document.getElementById('contributorsToast');
-    const contributorsToastCloseBtn = document.getElementById('contributorsToastCloseBtn');
-    const contributorsToastTriggers = Array.from(document.querySelectorAll('[data-action="open-contributors-toast"]'));
+    const contributeLink = document.querySelector('.contribute-link');
+    const latestAlphaInfoButton = document.getElementById('latestAlphaInfo-btn');
     const firstVisitSaveBtn = document.getElementById('firstVisitSaveBtn');
     const firstVisitBottomHint = document.getElementById('firstVisitBottomHint');
     const firstVisitNotificationHint = document.getElementById('firstVisitNotificationHint');
@@ -74,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const publishSettingsSaveBtn = document.getElementById('publishSettingsSaveBtn');
     const publishSettingsClearBtn = document.getElementById('publishSettingsClearBtn');
     const publishSettingsCloseBtn = document.getElementById('publishSettingsCloseBtn');
-    let isPublishConfigurationValid = false; // Traccia se la configurazione di publish è validata
 
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v3.1';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
@@ -267,16 +345,61 @@ document.addEventListener('DOMContentLoaded', () => {
         return toast;
     }
 
-    function hideContributorsToast() {
-        if (!contributorsToast) return;
+    /**
+     * Crea e mostra un popup persistente con header e body personalizzati.
+     * 
+     * @param {string} headerContent Contenuto HTML dell'header (tradotto con i18n)
+     * @param {string} bodyContent Contenuto HTML del body
+     * @param {Function} [onClose] Callback opzionale da eseguire quando il popup viene chiuso
+     * @returns {HTMLElement} Elemento del popup creato
+     */
+    function showPersistentToastPopup(headerContent, bodyContent, onClose) {
+        const popupHTML = `
+            <div class="persistent-toast-popup">
+                <div class="persistent-toast-popup-content">
+                    <div class="persistent-toast-popup-header">
+                        <strong>${headerContent}</strong>
+                        <button type="button" class="btn-close btn-close-white" aria-label="Close" data-i18n-aria-label="Close"></button>
+                    </div>
+                    <section class="persistent-toast-popup-body">
+                        ${bodyContent}
+                    </section>
+                </div>
+            </div>
+        `;
 
-        contributorsToast.classList.remove('is-visible');
-    }
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = popupHTML;
+        const popup = wrapper.firstElementChild;
 
-    function showContributorsToast() {
-        if (!contributorsToast) return;
+        document.body.appendChild(popup);
 
-        contributorsToast.classList.add('is-visible');
+        // Trigger layout e aggiunge classe visible
+        void popup.offsetWidth;
+        popup.classList.add('is-visible');
+
+        // Applica le traduzioni i18n al contenuto del popup
+        applyUiTranslations();
+
+        // Event listener per il pulsante di chiusura
+        const closeBtn = popup.querySelector('.persistent-toast-popup-header .btn-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('is-visible');
+                // Rimuove dal DOM dopo eventuale animazione di fade-out
+                setTimeout(() => {
+                    if (popup.parentElement) {
+                        popup.remove();
+                    }
+                    // Chiama il callback opzionale
+                    if (onClose) {
+                        onClose();
+                    }
+                }, 300);
+            });
+        }
+
+        return popup;
     }
 
     function toggleNotificationInfoAndSettingsPopup(action = null) {
@@ -411,12 +534,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Valida la configurazione
             if(await validPublishConfiguration(url, topic, username, password)){
-                isPublishConfigurationValid = true;
                 document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
                     btn.classList.remove('d-none');
                 });
             }else{
-                isPublishConfigurationValid = false;
                 document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
                     btn.classList.add('d-none');
                 });
@@ -625,16 +746,112 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    contributorsToastTriggers.forEach(trigger => {
-        trigger.addEventListener('click', (event) => {
-            event.preventDefault();
-            showContributorsToast();
+    if (contributeLink) {
+        const headerContent = `<span data-i18n="Contributors">Contributors</span>`;
+        const bodyContent = `
+            <ul class="persistent-toast-popup-list mb-2">
+                <li><strong>Dusk</strong> - <span data-i18n="for the push notification system">for the push notification system</span></li>
+                <li><strong>BlueQuilava</strong> - <span data-i18n="for help with ES translations">for help with ES translations</span></li>
+                <li><strong>ShadoWine [TRØK]</strong> - <span data-i18n="for help with FR translations">for help with FR translations</span></li>
+                <li><strong>ZzPSYCHOzZ</strong> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" data-i18n="for the original dataset">for the original dataset</a></li>
+            </ul>
+            <div class="persistent-toast-popup-donations mb-1">
+                <strong data-i18n="Donations leaderboard">Donations leaderboard</strong>
+                <div data-i18n="no donations yet :(">no donations yet :(</div>
+            </div>
+            <div class="d-flex gap-1 align-items-center flex-wrap">
+                <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link" data-i18n="Open GitHub">Open GitHub</a>
+                <span class="text-secondary">•</span>
+                <a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link">Dusk's Alpha Website</a>
+            </div>
+        `;
+        
+        let openContributePopup = null;
+        
+        const showContributePopup = () => {
+            if (openContributePopup) {
+                const closeBtn = openContributePopup.querySelector('.persistent-toast-popup-header .btn-close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+                openContributePopup = null;
+            } else {
+                openContributePopup = showPersistentToastPopup(headerContent, bodyContent, () => {
+                    openContributePopup = null;
+                });
+            }
+        };
+        
+        contributeLink.addEventListener('click', showContributePopup);
+        contributeLink.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                showContributePopup();
+            }
         });
-    });
+    }
 
-    if (contributorsToastCloseBtn) {
-        contributorsToastCloseBtn.addEventListener('click', () => {
-            hideContributorsToast();
+    if (latestAlphaInfoButton) {
+        let openLatestAlphaInfoPopup = null;
+        
+        latestAlphaInfoButton.addEventListener('click', () => {
+            if (openLatestAlphaInfoPopup) {
+                const closeBtn = openLatestAlphaInfoPopup.querySelector('.persistent-toast-popup-header .btn-close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+                openLatestAlphaInfoPopup = null;
+            } else {
+                // Calcola gli orari convertiti al timezone locale e normalizzati
+                const timeRange1 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("00:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("04:45")))}`;
+                const timeRange2 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("06:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("10:45")))}`;
+                const timeRange3 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("12:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("16:45")))}`;
+                const timeRange4 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("18:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("22:45")))}`;
+                
+                // Determina quale finestra temporale è attiva
+                const now = new Date();
+                const currentWindow = getTimeWindow(now.getUTCHours(), now.getUTCMinutes());
+                
+                const bodyContent = `
+                    <div class="mb-3 p-3 border rounded">
+                        <p class="mb-0">Alphas are a special type of Pokémon that have their hidden abillity, a red outline, a bigger follower sprite and have 2×31 + 2×15 IVs minimum. An alpha spawns every in-game day (time span of 6 hours) and lasts for 75 minutes.</p>
+                    </div>
+                    
+                    <div>
+                        <h6 class="mb-3"><strong>Spawn Time Windows</strong></h6>
+                        <div class="alpha-help-windows-grid">
+                            <div class="alpha-help-window-card${currentWindow === 0 ? ' border border-primary' : ''}">
+                                <div class="alpha-help-window-content">
+                                    <div class="alpha-help-window-label">Day 1${currentWindow === 0 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-time">${timeRange1}</div>
+                                </div>
+                            </div>
+                            <div class="alpha-help-window-card${currentWindow === 1 ? ' border border-primary' : ''}">
+                                <div class="alpha-help-window-content">
+                                    <div class="alpha-help-window-label">Day 2${currentWindow === 1 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-time">${timeRange2}</div>
+                                </div>
+                            </div>
+                            <div class="alpha-help-window-card${currentWindow === 2 ? ' border border-primary' : ''}">
+                                <div class="alpha-help-window-content">
+                                    <div class="alpha-help-window-label">Day 3${currentWindow === 2 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-time">${timeRange3}</div>
+                                </div>
+                            </div>
+                            <div class="alpha-help-window-card${currentWindow === 3 ? ' border border-primary' : ''}">
+                                <div class="alpha-help-window-content">
+                                    <div class="alpha-help-window-label">Day 4${currentWindow === 3 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-time">${timeRange4}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                openLatestAlphaInfoPopup = showPersistentToastPopup('Alpha Help', bodyContent, () => {
+                    openLatestAlphaInfoPopup = null;
+                });
+            }
         });
     }
 
@@ -1250,7 +1467,122 @@ document.addEventListener('DOMContentLoaded', () => {
         outerItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Bootstrap iniziale: carica in parallelo traduzioni e dataset, poi renderizza.
+    function handleAlphaNameClick() {
+        const latestAlphaNameSpan = document.getElementById('latestAlphaName');
+        const rawPokemon = latestAlphaNameSpan.getAttribute('data-raw-name');
+        const rawRegion = latestAlphaNameSpan.getAttribute('data-raw-region');
+        const rawLocation = latestAlphaNameSpan.getAttribute('data-raw-location');
+        const timestamp = latestAlphaNameSpan.getAttribute('data-timestamp');
+
+        if (!rawPokemon || !rawRegion || !rawLocation){
+            showCustomToast("Incomplete data.");
+            return;
+        }
+
+        // Crea URL con i parametri senza ricaricare la pagina
+        const url = new URL(window.location);
+        url.searchParams.set('pokemon', rawPokemon);
+        url.searchParams.set('region', rawRegion);
+        url.searchParams.set('location', rawLocation);
+        url.searchParams.set('timestamp', timestamp);
+        window.history.replaceState({}, '', url);
+
+        // Esegui le stesse funzioni come se avessi caricato da quel link
+        const deepLinkState = applyUrlParams();
+        render();
+        if (deepLinkState.hasParams && deepLinkState.expandMode !== 'none') {
+            expandFirstResult(deepLinkState.expandMode);
+        }
+    }
+
+    async function getLatestAlpha(){
+        try{
+            const response = await fetch('https://alpha.pokemmotools.org/latest');
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const data = await response.json();
+
+            const isAlphaActive = isTimestampStillValid(data.unix_timestamp);
+            let isNewSpawnWindowActive = false;
+            let nowWindow = -1;
+
+            if (!isAlphaActive) {
+                // Alpha è despawnato: controlla se le finestre temporali sono diverse
+                const spawnTimestamp = data.unix_timestamp - (75 * 60); // Sottrai 75 minuti per ottenere lo spawn time
+                const timestampDate = new Date(spawnTimestamp * 1000);
+                const timestampWindow = getTimeWindow(timestampDate.getUTCHours(), timestampDate.getUTCMinutes());
+                
+                const nowDate = new Date();
+                nowWindow = getTimeWindow(nowDate.getUTCHours(), nowDate.getUTCMinutes());
+
+                isNewSpawnWindowActive = timestampWindow !== nowWindow ? true : false; //despawnato il giorno precedente -> finestra corrente attiva, alpha deve ancora spawnare
+            }
+
+            const latestAlphaStatusSpan = document.getElementById('latestAlphaStatus');
+            if (latestAlphaStatusSpan){
+                if (isAlphaActive) {
+                    latestAlphaStatusSpan.textContent = t("Currently active");
+                    latestAlphaStatusSpan.setAttribute('data-i18n', "Currently active");
+                } else {
+                    if (isNewSpawnWindowActive) {
+                        latestAlphaStatusSpan.textContent = t("Not spawned yet");
+                        latestAlphaStatusSpan.setAttribute('data-i18n', "Not spawned yet");
+                        const latestAlphaSeparatorSpan = document.getElementById('latestAlphaSeparator');
+                        if (latestAlphaSeparatorSpan) {
+                            latestAlphaSeparatorSpan.textContent = '. ';
+                        }
+                    } else {
+                        latestAlphaStatusSpan.textContent = t("Last active");
+                        latestAlphaStatusSpan.setAttribute('data-i18n', "Last active");
+                    }
+                }
+            }
+            
+            const latestAlphaNameSpan = document.getElementById('latestAlphaName');
+            if (latestAlphaNameSpan){
+                if (isAlphaActive || !isNewSpawnWindowActive) {
+                    if (data.rawPokemon && data.rawRegion && data.rawLocation) {
+                        const translatedName = t(data.rawPokemon, 'pokemon-species');
+                        latestAlphaNameSpan.textContent = translatedName;
+                        latestAlphaNameSpan.classList.add('text-decoration-underline');
+                        latestAlphaNameSpan.style.cursor = 'pointer';
+                        latestAlphaNameSpan.addEventListener('click', handleAlphaNameClick);
+                        latestAlphaNameSpan.setAttribute('data-raw-name', data.rawPokemon);
+                        latestAlphaNameSpan.setAttribute('data-raw-region', data.rawRegion);
+                        latestAlphaNameSpan.setAttribute('data-raw-location', data.rawLocation);
+                        latestAlphaNameSpan.setAttribute('data-timestamp', data.unix_timestamp);
+                    } else {
+                        latestAlphaNameSpan.textContent = t("Malformed data");
+                        latestAlphaNameSpan.setAttribute('data-i18n', "Malformed data");
+                    }
+                } else {
+                    const nextWindowLabel = getWindowLabel(nowWindow);
+                    if (nextWindowLabel) {
+                        latestAlphaNameSpan.textContent = `${t("Current spawn window")}`;
+                        latestAlphaNameSpan.setAttribute('data-i18n', "Current spawn window");
+                        const latestAlphaOptionalSpan = document.getElementById('latestAlphaOptional');
+                        if (latestAlphaOptionalSpan) {
+                            latestAlphaOptionalSpan.textContent = `: ${nextWindowLabel}`;
+                        }
+                    } else {
+                        latestAlphaNameSpan.textContent = "";
+                    }
+                }
+                
+            }
+
+        } catch (err) {
+            console.error('Failed to fetch latest alpha:', err);
+            const latestAlphaNameSpan = document.getElementById('latestAlphaName');
+            if (latestAlphaNameSpan) {
+                latestAlphaNameSpan.textContent = t("Couldn't load");
+            }
+        }
+    }
+
+    // Bootstrap iniziale: carica in parallelo traduzioni e dataset, poi getLatestAlpha() in sequenza
+    // (ha bisogno che le traduzioni siano già caricate), poi renderizza.
     // In questo modo al refresh l'app parte già nella lingua salvata anche per i dati dinamici.
     async function initializeApp() {
         try {
@@ -1280,6 +1612,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 expandFirstResult(deepLinkState.expandMode);
             }
             maybeShowFirstVisitToast();
+
+            getLatestAlpha();
         } catch (err) {
             console.error('Initial app loading failed:', err);
         }
@@ -1287,38 +1621,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeApp();
 
-    /**
-     * Valida la configurazione di publish al caricamento dell'app (se presente).
-     */
-    async function validatePublishConfigurationOnLoad() {
-        try {
-            const url = localStorage.getItem(PUBLISH_URL_KEY) || '';
-            const topic = localStorage.getItem(PUBLISH_TOPIC_KEY) || '';
-            const username = localStorage.getItem(PUBLISH_USERNAME_KEY) || '';
-            const password = localStorage.getItem(PUBLISH_PASSWORD_KEY) || '';
 
-            // Se tutti i campi sono presenti, valida
-            if(await validPublishConfiguration(url, topic, username, password, true)){
-                isPublishConfigurationValid = true;
-                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
-                    btn.classList.remove('d-none');
-                });
-            }else{
-                isPublishConfigurationValid = false;
-                document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
-                    btn.classList.add('d-none');
-                });
-            }
-        } catch (e) {
-            isPublishConfigurationValid = false;
-            document.querySelectorAll('.publish-pokemon-btn').forEach(btn => {
-                btn.classList.add('d-none');
-            });
-        }
-    }
-
-    // Valida la configurazione di publish al caricamento dell'app
-    validatePublishConfigurationOnLoad();
 
     /**
      * Converte la struttura annidata del database (regione -> location -> array)
@@ -1467,6 +1770,25 @@ document.addEventListener('DOMContentLoaded', () => {
     locationSelect.addEventListener('input', render);
     searchInput.addEventListener('input', render);
     groupingSwitch.addEventListener('change', render);
+
+    // Event listener sul reset del form: resetta tutti i filtri e ricarica i risultati
+    const filtersForm = document.getElementById('filters-form');
+    if (filtersForm) {
+        filtersForm.addEventListener('reset', () => {
+            // Resetta manualmente i valori degli input
+            searchInput.value = '';
+            regionSelect.value = 'all';
+            locationSelect.value = '';
+            groupingSwitch.checked = false;
+            
+            // Removes query parameters from URL
+            window.history.replaceState({}, '', window.location.pathname);
+            
+            // Poi ricarica le locations e renderizza
+            populateLocations('all');
+            render();
+        });
+    }
 
     /**
      * Filtra i Pokémon in base ai controlli UI (search, regione, location) e
@@ -1661,8 +1983,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `${maleRatioRaw}%`
             : maleRatioRaw;
 
-        // Show publish button only when all publish settings are configured AND validated
-        const hasPublishButton = isPublishConfigurationValid;
+        // Show publish button only when URL + TOPIC publish settings are configured
+        const hasPublishButton = ((localStorage.getItem(PUBLISH_URL_KEY) || '') !== '') && ((localStorage.getItem(PUBLISH_TOPIC_KEY) || '') !== '');
         const publishBtnHtml = `<button class="btn btn-sm btn-secondary publish-pokemon-btn  min-width-10ch${hasPublishButton ? '' : ' d-none'}"
                                         data-pokemon-name="${formattedName}"
                                         data-raw-name="${name}"
@@ -1874,7 +2196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 2000);
             }).catch(err => {
                 console.error('Copy error:', err);
-                alert(t('Automatic copy failed.'));
+                showCustomToast(t('Automatic copy failed.'));
             });
         }
     });
@@ -1957,6 +2279,125 @@ function getOrCreateTimestamp(rawName, rawRegion, rawLocation) {
     return timestampToUse;
 }
 
+function isTimestampStillValid(timestamp) {
+    if(timestamp * 1000 < Date.now()) return false; //se timestamp è più piccolo di "Adesso", alpha è già despawnato ed è inutile
+    return true;
+}
+
+// Struttura centralizzata delle finestre temporali (in UTC)
+// Ogni finestra contiene: intervallo di controllo (6 ore) e tempi di spawn
+const TIME_WINDOWS_CONFIG = [
+    { start: 0, end: 5 * 60 + 59, spawnStart: 0, spawnEnd: 4 * 60 + 45 },           // 0:00-5:59 (finestra), 0:00-4:45 (spawn)
+    { start: 6 * 60, end: 11 * 60 + 59, spawnStart: 6 * 60, spawnEnd: 10 * 60 + 45 }, // 6:00-11:59 (finestra), 6:00-10:45 (spawn)
+    { start: 12 * 60, end: 17 * 60 + 59, spawnStart: 12 * 60, spawnEnd: 16 * 60 + 45 }, // 12:00-17:59 (finestra), 12:00-16:45 (spawn)
+    { start: 18 * 60, end: 23 * 60 + 59, spawnStart: 18 * 60, spawnEnd: 22 * 60 + 45 }  // 18:00-23:59 (finestra), 18:00-22:45 (spawn)
+];
+
+/**
+ * Converte minuti dall'inizio della giornata a formato HH:MM
+ * @param {number} totalMinutes Minuti dall'inizio della giornata (0-1439)
+ * @returns {string} Formato HH:MM
+ */
+function minutesToHHMM(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+}
+
+/**
+ * Converte una stringa di orario in formato HH:MM a minuti dall'inizio della giornata
+ * @param {string} timeString Orario in formato HH:MM (es. "13:45")
+ * @returns {number} Minuti dall'inizio della giornata (0-1439)
+ */
+function HHMMtominutes(timeString) {
+    const [hours, mins] = timeString.split(':').map(Number);
+    return hours * 60 + mins;
+}
+
+/**
+ * Rileva se il browser preferisce il formato 12h o 24h dalla locale
+ * @returns {boolean} true se 12h (AM/PM), false se 24h
+ */
+function isBrowser12HourFormat() {
+    try {
+        const formatter = new Intl.DateTimeFormat(navigator.language, { hour: 'numeric', minute: 'numeric' });
+        const parts = formatter.formatToParts(new Date(2000, 0, 1, 13, 0, 0)); // 13:00 = 1 PM
+        // Se contiene "PM" o "AM", è formato 12h
+        return parts.some(part => part.type === 'dayPeriod');
+    } catch (e) {
+        return false; // Default a 24h se errore
+    }
+}
+
+/**
+ * Converte minuti a formato HH:MM o format 12h (es. 1:00 PM) a seconda della preferenza del browser
+ * @param {number} totalMinutes Minuti dall'inizio della giornata (0-1439)
+ * @param {boolean} [use12Hour] Se specificato, forza questo formato. Altrimenti usa la preferenza del browser
+ * @returns {string} Orario formattato
+ */
+function formatTime(totalMinutes, use12Hour) {
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    
+    // Determina il formato da usare
+    const format12h = use12Hour !== undefined ? use12Hour : isBrowser12HourFormat();
+    
+    if (format12h) {
+        const displayHours = hours % 12 === 0 ? 12 : hours % 12;
+        const period = hours < 12 ? 'AM' : 'PM';
+        return `${displayHours}:${String(mins).padStart(2, '0')} ${period}`;
+    } else {
+        return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+    }
+}
+
+/**
+ * Converte minuti UTC a minuti locali normalizzati al fuso orario del browser
+ * @param {number} minutes Minuti UTC dall'inizio della giornata
+ * @returns {number} Minuti localizzati e normalizzati a 24 ore (0-1439)
+ */
+function convertUtcToLocalMinutes(minutes) {
+    const offset = -new Date().getTimezoneOffset();
+    const adjusted = minutes + offset;
+    return ((adjusted % 1440) + 1440) % 1440;
+}
+
+/**
+ * Genera il label della finestra temporale in formato breve (es. "0:00-4:45" o "12:00 AM-4:45 AM")
+ * @param {number} windowIndex Indice della finestra (0-3)
+ * @param {number} [timezoneOffsetMinutes] Offset del fuso orario in minuti. Se non passato, rileva automaticamente dal browser
+ * @returns {string} Label della finestra o stringa vuota se indice invalido
+ */
+function getWindowLabel(windowIndex, timezoneOffsetMinutes) {
+    if (windowIndex < 0 || windowIndex >= TIME_WINDOWS_CONFIG.length) {
+        return '';
+    }
+    
+    // Se non è passato un offset, rileva automaticamente dal browser
+    if (timezoneOffsetMinutes === undefined) {
+        timezoneOffsetMinutes = -new Date().getTimezoneOffset();
+    }
+    
+    const config = TIME_WINDOWS_CONFIG[windowIndex];
+    let startMin = convertUtcToLocalMinutes(config.spawnStart);
+    let endMin = convertUtcToLocalMinutes(config.spawnEnd);
+    
+    // Normalizzazione già inclusa in convertUtcToLocalMinutes
+    return `${formatTime(startMin)} - ${formatTime(endMin)}`;
+}
+
+function getTimeWindow(hours, minutes) {
+    const totalMinutes = hours * 60 + minutes;
+    
+    for (let i = 0; i < TIME_WINDOWS_CONFIG.length; i++) {
+        const window = TIME_WINDOWS_CONFIG[i];
+        if (totalMinutes >= window.start && totalMinutes <= window.end) {
+            return i;
+        }
+    }
+    return -1; // Non in una finestra (impossibile)
+}
+
 function buildShareUrl(rawName, rawRegion, rawLocation) {
     try {
         const base = 'https://f-l-a.github.io/AlphaList/';
@@ -1992,7 +2433,7 @@ function getUrlTimestampIfMatch(rawName = null, rawRegion = null, rawLocation = 
         if (isNaN(n)) return null;
         if (override === true) return n;
 
-        if(n * 1000 < Date.now()) return null; //n è il despawnTime passato con l'url. se è più piccolo di "Adesso", è già despawnato ed è inutile -> lo rigenero se necessario
+        if(!isTimestampStillValid(n)) return null;
 
         const urlPokemon = params.get('pokemon');
         const urlRegion = params.get('region');

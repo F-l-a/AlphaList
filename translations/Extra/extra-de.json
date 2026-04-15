@@ -39,7 +39,16 @@
         "no donations yet :(": "noch keine Spenden :(",
         "Open GitHub": "GitHub oeffnen",
         "Alpha List by FlaProGmr": "Alpha-Liste von FlaProGmr",
-        "Original data by ZzPSYCHOzZ": "Originaldaten von ZzPSYCHOzZ"
+        "Original data by ZzPSYCHOzZ": "Originaldaten von ZzPSYCHOzZ",
+        "Current spawn window": "Aktuelles Spawn-Fenster",
+        "CLEAR": "LÖSCHEN",
+        "Couldn't load": "Konnte nicht geladen werden",
+        "Not spawned yet": "Noch nicht erschienen",
+        "Last active": "Zuletzt aktiv",
+        "Malformed data": "Fehlerhafte Daten",
+        "Open History": "Verlauf öffnen",
+        "Currently active": "Aktuell aktiv",
+        "Alpha Status": "Alpha-Status"
       },
       "notes": {
         "**⚠ ADS HAVE RECOIL ⚠**": "**⚠ ADS HABEN RUECKSTOSS ⚠**",

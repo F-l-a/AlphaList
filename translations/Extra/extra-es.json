@@ -39,7 +39,16 @@
         "no donations yet :(": "aún no hay donaciones :(",
         "Open GitHub": "Abrir GitHub",
         "Alpha List by FlaProGmr": "Lista Alfa por FlaProGmr",
-        "Original data by ZzPSYCHOzZ": "Datos originales por ZzPSYCHOzZ"
+        "Original data by ZzPSYCHOzZ": "Datos originales por ZzPSYCHOzZ",
+        "Current spawn window": "Ventana de aparición actual",
+        "CLEAR": "LIMPIAR",
+        "Couldn't load": "No se pudo cargar",
+        "Not spawned yet": "Aún no ha aparecido",
+        "Last active": "Último activo",
+        "Malformed data": "Datos malformados",
+        "Open History": "Abrir Historial",
+        "Currently active": "Actualmente activo",
+        "Alpha Status": "Estado del Alfa"
       },
       "notes": {
         "**⚠ ADS HAVE RECOIL ⚠**": "**⚠ MINIONS TIENEN RETROCESO ⚠**",

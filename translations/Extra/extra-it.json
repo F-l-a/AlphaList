@@ -13,7 +13,7 @@
         "Copied!": "Copiato!",
         "Automatic copy failed.": "Copia automatica fallita.",
         "Name": "Nome",
-        "Location": "Posizione",
+        "Location": "Luogo",
         "Egg Group": "Gruppo Uova",
         "HMs Required": "MN richieste",
         "None": "Nessuna",
@@ -39,7 +39,16 @@
         "no donations yet :(": "nessuna donazione ancora :(",
         "Open GitHub": "Apri GitHub",
         "Alpha List by FlaProGmr": "Lista Alfa di FlaProGmr",
-        "Original data by ZzPSYCHOzZ": "Dati originali di ZzPSYCHOzZ"
+        "Original data by ZzPSYCHOzZ": "Dati originali di ZzPSYCHOzZ",
+        "CLEAR": "PULISCI",
+        "Currently active": "Attivo ora",
+        "Not spawned yet": "Non ancora apparso",
+        "Last active": "Ultimo attivo",
+        "Malformed data": "Dati malformati",
+        "Current spawn window": "Finestra corrente",
+        "Couldn't load": "Impossibile caricare",
+        "Alpha Status": "Stato Alpha",
+        "Open History": "Apri Storico"
       },
       "notes": {
         "**⚠ ADS HAVE RECOIL ⚠**": "**⚠ ADS HANNO CONTRACCOLPO ⚠**",
