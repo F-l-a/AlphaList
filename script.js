@@ -154,6 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const publishSettingsClearBtn = document.getElementById('publishSettingsClearBtn');
     const publishSettingsCloseBtn = document.getElementById('publishSettingsCloseBtn');
 
+    // Variabili globali per tracciare lo stato dell'Alpha Latest
+    let isAlphaActive = false;
+    let currentWindow = -1;
+    let alphaWindowTimestamp = -1; // Finestra temporale dello spawn dell'Alpha
+
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v3.1';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
     const PUBLISH_TOPIC_KEY = 'alphalist:publish-topic';
@@ -791,6 +796,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /**
+     * Determina il messaggio di stato per una finestra temporale specifica.
+     * @param {number} windowIndex Indice della finestra (0-3)
+     * @returns {string} Messaggio di stato: "Active", "Despawned", "Current", "Next", o vuoto
+     */
+    function getAlphaWindowStatusMessage(windowIndex) {
+        // Verifica se è la finestra successiva a quella attuale
+        const nextWindow = (currentWindow + 1) % 4;
+        if (nextWindow === windowIndex) {
+            return ' • Next';
+        }
+        
+        // Se non è la finestra temporale attuale, non mostrare messaggio
+        if (currentWindow !== windowIndex) {
+            return '';
+        }
+        
+        // È la finestra attuale
+        if (isAlphaActive) {
+            return ' • Active';
+        } else {
+            // Alpha è despawnato
+            if (alphaWindowTimestamp === windowIndex) {
+                return ' • Despawned';
+            } else {
+                return ' • Current';
+            }
+        }
+    }
+
     if (latestAlphaInfoButton) {
         let openLatestAlphaInfoPopup = null;
         
@@ -808,10 +843,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const timeRange3 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("12:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("16:45")))}`;
                 const timeRange4 = `${formatTime(convertUtcToLocalMinutes(HHMMtominutes("18:00")))} - ${formatTime(convertUtcToLocalMinutes(HHMMtominutes("22:45")))}`;
                 
-                // Determina quale finestra temporale è attiva
-                const now = new Date();
-                const currentWindow = getTimeWindow(now.getUTCHours(), now.getUTCMinutes());
-                
                 const bodyContent = `
                     <div class="mb-3 p-3 border rounded">
                         <p class="mb-0">Alphas are a special type of Pokémon that have their hidden abillity, a red outline, a bigger follower sprite and have 2×31 + 2×15 IVs minimum. An alpha spawns every in-game day (time span of 6 hours) and lasts for 75 minutes.</p>
@@ -822,25 +853,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="alpha-help-windows-grid">
                             <div class="alpha-help-window-card${currentWindow === 0 ? ' border border-primary' : ''}">
                                 <div class="alpha-help-window-content">
-                                    <div class="alpha-help-window-label">Day 1${currentWindow === 0 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-label">Day 1${getAlphaWindowStatusMessage(0)}</div>
                                     <div class="alpha-help-window-time">${timeRange1}</div>
                                 </div>
                             </div>
                             <div class="alpha-help-window-card${currentWindow === 1 ? ' border border-primary' : ''}">
                                 <div class="alpha-help-window-content">
-                                    <div class="alpha-help-window-label">Day 2${currentWindow === 1 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-label">Day 2${getAlphaWindowStatusMessage(1)}</div>
                                     <div class="alpha-help-window-time">${timeRange2}</div>
                                 </div>
                             </div>
                             <div class="alpha-help-window-card${currentWindow === 2 ? ' border border-primary' : ''}">
                                 <div class="alpha-help-window-content">
-                                    <div class="alpha-help-window-label">Day 3${currentWindow === 2 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-label">Day 3${getAlphaWindowStatusMessage(2)}</div>
                                     <div class="alpha-help-window-time">${timeRange3}</div>
                                 </div>
                             </div>
                             <div class="alpha-help-window-card${currentWindow === 3 ? ' border border-primary' : ''}">
                                 <div class="alpha-help-window-content">
-                                    <div class="alpha-help-window-label">Day 4${currentWindow === 3 ? ' • Current' : ''}</div>
+                                    <div class="alpha-help-window-label">Day 4${getAlphaWindowStatusMessage(3)}</div>
                                     <div class="alpha-help-window-time">${timeRange4}</div>
                                 </div>
                             </div>
@@ -1503,20 +1534,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
 
-            const isAlphaActive = isTimestampStillValid(data.unix_timestamp);
+            // Aggiorna variabili globali per lo stato dell'Alpha
+            isAlphaActive = isTimestampStillValid(data.unix_timestamp);
             let isNewSpawnWindowActive = false;
-            let nowWindow = -1;
 
             if (!isAlphaActive) {
                 // Alpha è despawnato: controlla se le finestre temporali sono diverse
                 const spawnTimestamp = data.unix_timestamp - (75 * 60); // Sottrai 75 minuti per ottenere lo spawn time
                 const timestampDate = new Date(spawnTimestamp * 1000);
-                const timestampWindow = getTimeWindow(timestampDate.getUTCHours(), timestampDate.getUTCMinutes());
+                alphaWindowTimestamp = getTimeWindow(timestampDate.getUTCHours(), timestampDate.getUTCMinutes());
                 
                 const nowDate = new Date();
-                nowWindow = getTimeWindow(nowDate.getUTCHours(), nowDate.getUTCMinutes());
+                currentWindow = getTimeWindow(nowDate.getUTCHours(), nowDate.getUTCMinutes());
 
-                isNewSpawnWindowActive = timestampWindow !== nowWindow ? true : false; //despawnato il giorno precedente -> finestra corrente attiva, alpha deve ancora spawnare
+                isNewSpawnWindowActive = alphaWindowTimestamp !== currentWindow ? true : false;
+            } else {
+                // Se Alpha è attivo, aggiorna currentWindow
+                const nowDate = new Date();
+                currentWindow = getTimeWindow(nowDate.getUTCHours(), nowDate.getUTCMinutes());
             }
 
             const latestAlphaStatusSpan = document.getElementById('latestAlphaStatus');
@@ -1557,7 +1592,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         latestAlphaNameSpan.setAttribute('data-i18n', "Malformed data");
                     }
                 } else {
-                    const nextWindowLabel = getWindowLabel(nowWindow);
+                    const nextWindowLabel = getWindowLabel(currentWindow);
                     if (nextWindowLabel) {
                         latestAlphaNameSpan.textContent = `${t("Current spawn window")}`;
                         latestAlphaNameSpan.setAttribute('data-i18n', "Current spawn window");
