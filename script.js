@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             customErrorMessage = "Missing/Invalid credentials!";
                             break;
                         case 409:
-                            customErrorMessage = "Alredy called!";
+                            customErrorMessage = "Already called!";
                             break;
                         case 502:
                             customErrorMessage = "ntfy is unreachable!";
