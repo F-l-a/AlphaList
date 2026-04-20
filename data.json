@@ -45,6 +45,21 @@
           "Moveset": ["Bonemerang", "Stone Edge", "Substitute", "Swords Dance"],
           "Notes": ["**⚠ ADS HAVE RECOIL ⚠**"]
         }
+      },
+      {
+        "name": "Fearow",
+        "data": {
+          "Region": "Kanto",
+          "Specific Location": "Treasure Beach",
+          "Location Notes": "",
+          "Map Link": "",
+          "HMs": ["Surf"],
+          "Egg Group": ["Flying"],
+          "Male Ratio": "50",
+          "Ability": "Sniper",
+          "Moveset": ["Giga Impact", "Drill Peck", "Drill Run", "Focus Energy"],
+          "Notes": []
+        }
       }
     ],
     "Two Island": [
