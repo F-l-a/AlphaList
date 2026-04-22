@@ -159,6 +159,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentWindow = -1;
     let alphaWindowTimestamp = -1; // Finestra temporale dello spawn dell'Alpha
 
+    const useAfdSprites = (new Date().getMonth() === 3 && new Date().getDate() === 1) || Math.floor(Math.random() * 365) === 0;
+    const useShinySprites = Math.floor(Math.random() * 30000) === 0;
+
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v3.1';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
     const PUBLISH_TOPIC_KEY = 'alphalist:publish-topic';
@@ -1554,6 +1557,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentWindow = getTimeWindow(nowDate.getUTCHours(), nowDate.getUTCMinutes());
             }
 
+            const latestAlphaStatusIcon = document.getElementById('latestAlphaStatusIcon');
+            if (latestAlphaStatusIcon) {
+                latestAlphaStatusIcon.classList.toggle('d-none', !isAlphaActive);
+                latestAlphaStatusIcon.classList.toggle('latest-alpha-status-icon--active', isAlphaActive);
+            }
+
             const latestAlphaStatusSpan = document.getElementById('latestAlphaStatus');
             if (latestAlphaStatusSpan){
                 if (isAlphaActive) {
@@ -1609,6 +1618,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Failed to fetch latest alpha:', err);
+            const latestAlphaStatusIcon = document.getElementById('latestAlphaStatusIcon');
+            if (latestAlphaStatusIcon) {
+                latestAlphaStatusIcon.classList.add('d-none');
+                latestAlphaStatusIcon.classList.remove('latest-alpha-status-icon--active');
+            }
             const latestAlphaNameSpan = document.getElementById('latestAlphaName');
             if (latestAlphaNameSpan) {
                 latestAlphaNameSpan.textContent = t("Couldn't load");
@@ -1990,8 +2004,15 @@ document.addEventListener('DOMContentLoaded', () => {
             : [t(data["Egg Group"], 'egg-group')];
 
         const formattedName = `${t('Alpha')} ${translatedSpeciesName}`;
-
         const displayTitle = isGroupedByName ? `${translatedRegion} - ${translatedLocation}` : formattedName;
+
+        // Sprites - const imageurl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonID}.png`;
+        const lowercaseName = name.toLowerCase();
+        const gen5SpriteFolder = useShinySprites ? 'gen5ani-shiny' : 'gen5ani';
+        const afdSpriteFolder = useAfdSprites ? 'afd-shiny' : 'afd';
+        const imageurl = useAfdSprites
+            ? `https://play.pokemonshowdown.com/sprites/${afdSpriteFolder}/${lowercaseName}.png`
+            : `https://play.pokemonshowdown.com/sprites/${gen5SpriteFolder}/${lowercaseName}.gif`;
         
         // Build Location display string
         let locationParts = [translatedDataRegion];
@@ -2073,6 +2094,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </h2>
                             <div id="pokemonCollapse-${uid}" class="accordion-collapse collapse" aria-labelledby="pokemonHeader-${uid}" data-bs-parent="#pokemonAccordion-${uid}">
                                 <div class="accordion-body">
+                                    <span class="pokemon-detail-sprite"><img src="${imageurl}"></span>
                                     <p class="card-text"><strong>${t('Name')}:</strong> ${formattedName}</p>
                                     ${locationHtml}
                                     <p class="card-text"><strong>${t('HMs Required')}:</strong> ${hmsForDisplay}</p>

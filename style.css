@@ -442,6 +442,36 @@ body {
     z-index: 1;
 }
 
+#latestAlphaStatusIcon.latest-alpha-status-icon--active {
+    display: inline-block;
+    width: 0.55rem;
+    height: 0.55rem;
+    min-width: 0.55rem;
+    min-height: 0.55rem;
+    margin-left: 0;
+    margin-right: 0.45rem;
+    border-radius: 50%;
+    background-color: #dc3545;
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.8);
+    vertical-align: middle;
+    animation: latest-alpha-status-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes latest-alpha-status-pulse {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.8);
+    }
+    70% {
+        opacity: 0.65;
+        box-shadow: 0 0 0 0.225rem rgba(220, 53, 69, 0);
+    }
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
+}
+
 /* When in light theme, make header/footer match body colors instead of dark */
 html[data-bs-theme="light"] .bg-dark {
     background-color: var(--bs-body-bg) !important;
@@ -618,6 +648,18 @@ body {
     color: #fff !important;
     background-color: transparent !important;
     border-bottom-color: transparent !important;
+}
+
+.pokemon-detail-sprite {
+    float: right;
+    width: 25%;
+    z-index: 1;
+}
+
+.pokemon-detail-sprite img {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 /* Publish Settings Popup responsive positioning */
