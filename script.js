@@ -762,10 +762,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <li><strong>BlueQuilava</strong> - <span data-i18n="for help with ES translations">for help with ES translations</span></li>
                 <li><strong>ShadoWine [TRØK]</strong> - <span data-i18n="for help with FR translations">for help with FR translations</span></li>
                 <li><strong>ZzPSYCHOzZ</strong> - <a href="https://docs.google.com/spreadsheets/d/11MT793njqK8dSIFob-k_T1tCeoUQnGO8ELPDAGbOmAw/" target="_blank" rel="noopener" data-i18n="for the original dataset">for the original dataset</a></li>
-            </ul>
+                <li><strong>PokemonShowdown</strong> - <a href="https://play.pokemonshowdown.com/sprites/" target="_blank" rel="noopener" data-i18n="for the pokemon sprites">for the pokemon sprites</a></li>
+                </ul>
             <div class="persistent-toast-popup-donations mb-1">
                 <strong data-i18n="Donations leaderboard">Donations leaderboard</strong>
-                <div data-i18n="no donations yet :(">no donations yet :(</div>
+                <ol class="persistent-toast-popup-list mb-2">
+                    <li><strong>RaKeT WesT</strong> - <span data-i18n="2000 RPs">2000 RPs</span></li>
+                </ol>
             </div>
             <div class="d-flex gap-1 align-items-center flex-wrap">
                 <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link" data-i18n="Open GitHub">Open GitHub</a>

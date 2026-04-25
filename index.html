@@ -280,11 +280,13 @@
                 <!-- How to Receive tab -->
                 <div class="tab-pane fade show active" id="notifications-receive-panel" role="tabpanel" aria-labelledby="notifications-receive-tab">
                     <div class="publish-settings-instructions">
-                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Web Method (PC):</strong></p>
+                        <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Web Method (PC/Mobile Web App):</strong></p>
                         <ol class="small text-secondary-emphasis ps-3 mb-3">
                             <li class="mb-1">Visit <a href="https://ntfy.pokemmotools.org/alphapings" target="_blank" rel="noopener" class="text-info">https://ntfy.pokemmotools.org/alphapings</a></li>
                             <li class="mb-1">Allow notifications when your browser prompts you (from the left menu)</li>
-                            <li class="mb-1">Keep the browser and the tab open in the background</li>
+                            <li class="mb-1">Keep the browser and the tab open in the background.
+                                <div class="ps-3">Mobile only: install the webapp to receive notifications even when the website is closed</div>
+                            </li>
                         </ol>
 
                         <p class="small text-secondary-emphasis mb-2"><strong><span class="gradient-triangle">▸</span> Mobile App (iOS/Android):</strong></p>
@@ -296,7 +298,7 @@
                         </ol>
 
                         <div class="alert alert-blue alert-info alert-sm mt-2 py-1 mb-0 px-2" role="alert">You will get a notification from the Browser or the ntfy App when an Alpha is reported by a trusted player. Check your notification/battery saving settings if you don't receive it.<br>Check <a href="https://dontkillmyapp.com" target="_blank" rel="noopener" class="text-info">dontkillmyapp.com</a> if your Android is killing the ntfy app.</div>
-                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 mb-0 px-2" role="alert">To send notifications as a trusted player, DM <a href="https://discordapp.com/users/95486109852631040" target="_blank" rel="noopener" class="text-info">@lorddusk</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
+                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 mb-0 px-2" role="alert">To send notifications as a trusted player, <a href="https://alpha.pokemmotools.org/publisher-signup" target="_blank" rel="noopener" class="text-info">apply here</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
                     </div>
                 </div>
 
@@ -319,8 +321,8 @@
                             <label for="publishPasswordInput" class="form-label small text-secondary mb-1">Password</label>
                             <input type="password" id="publishPasswordInput" class="form-control form-control-sm" placeholder="Password" autocomplete="current-password">
                         </div>
-                        <div class="alert alert-blue alert-info alert-sm mt-2 py-1 px-2 mb-0" role="alert">If you're not sure what this is, you most likely don't need it. Trusted players can configure the URL endpoint and credentials to send notifications via ntfy. These settings are saved locally in your browser and will be cleared if you delete your cookies.</div>
-                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 px-2 mb-1" role="alert">To send notifications as a trusted player, DM <a href="https://discordapp.com/users/95486109852631040" target="_blank" rel="noopener" class="text-info">@lorddusk</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
+                        <div class="alert alert-blue alert-info alert-sm mt-2 py-1 px-2 mb-0" role="alert">If you're not sure what this is, you most likely don't need it. Trusted players can <a href="https://alpha.pokemmotools.org/help" target="_blank" rel="noopener" class="text-info">configure the URL endpoint and credentials</a> to send notifications via ntfy. These settings are saved locally in your browser and will be cleared if you delete your cookies.</div>
+                        <div class="alert alert-yellow alert-warning alert-sm mt-2 py-1 px-2 mb-1" role="alert">To send notifications as a trusted player, <a href="https://alpha.pokemmotools.org/publisher-signup" target="_blank" rel="noopener" class="text-info">apply here</a> to get your credentials. <strong>You don't need credentials to receive the notifications</strong>.</div>
                     </div>
                     <div class="d-flex gap-1 justify-content-center">
                         <button id="publishSettingsClearBtn" type="button" class="btn btn-sm btn-outline-danger">Clear Fields</button>

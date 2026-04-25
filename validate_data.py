@@ -179,7 +179,18 @@ EXTRA_TRANSLATION_EXCEPTIONS = {
         'ui': {
             'Alpha': 'Alpha',
         },
-    },
+    }
+}
+
+# Eccezioni per la validazione della location
+LOCATION_EXCEPTIONS = {
+    "One Island": ["Mt. Ember", "Kindle Road", "Treasure Beach"],
+    "Two Island": ["Cape Brink"],
+    "Three Island": ["Three Isle Port", "Berry Forest", "Bond Bridge"],
+    "Four Island": ["Icefall Cave"],
+    "Five Island": ["Lost Cave", "Memorial Pillar", "Water Labyrinth", "Five Isle Meadow"],
+    "Six Island": ["Pattern Bush", "Outcast Island", "Ruin Valley", "Water Path"],
+    "Seven Island": ["Sevault Canyon", "Canyon Entrance"]
 }
 
 def check_extra_translations():
@@ -251,37 +262,64 @@ def validate():
                     log_issue(logfile, f"{region}/{location}", 'Specific Location (root)', location, 'key in locationPokeapi-it.json')
                 for poke in pokes:
                     name = poke.get('name')
-                    # Verifica la chiave di specie (es: "Arcaninex")
+                    # Verifica la chiave di specie (es: "Arcanine")
                     if name and name not in ref['pokemon-species']:
                         log_issue(logfile, f"{region}/{location}/{name}", 'name', name, 'key in pokemon-species-it.json')
                     d = poke.get('data', {})
                     # Region
                     reg = d.get('Region')
-                    if reg and reg not in ref['region']:
+                    if not reg:
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Region', 'MISSING/EMPTY', 'value')
+                    elif reg not in ref['region']:
                         log_issue(logfile, f"{region}/{location}/{name}", 'Region', reg, 'key in region-it.json')
+
                     # Specific Location
                     spec_loc = d.get('Specific Location')
-                    if spec_loc and spec_loc not in ref['locationPokeapi']:
+                    if not spec_loc:
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Specific Location', 'MISSING/EMPTY', 'value')
+                    elif spec_loc not in ref['locationPokeapi']:
                         log_issue(logfile, f"{region}/{location}/{name}", 'Specific Location', spec_loc, 'key in locationPokeapi-it.json')
+                    
+                    if spec_loc and spec_loc != location:
+                        # Controlla se l'eccezione è valida
+                        if location not in LOCATION_EXCEPTIONS or spec_loc not in LOCATION_EXCEPTIONS[location]:
+                            log_issue(logfile, f"{region}/{location}/{name}", 'Specific Location', spec_loc, f'value in data.json: it doesn\'t match parent location key: {location}')
+
+                    # Male Ratio
+                    male_ratio = d.get('Male Ratio')
+                    if male_ratio is None: # Can be 0
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Male Ratio', 'MISSING', 'value')
+
                     # Ability
                     ability = d.get('Ability')
-                    if ability and ability not in ref['ability']:
+                    if not ability:
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Ability', 'MISSING/EMPTY', 'value')
+                    elif ability not in ref['ability']:
                         log_issue(logfile, f"{region}/{location}/{name}", 'Ability', ability, 'key in ability-it.json')
+                    
                     # Moveset
-                    moveset = d.get('Moveset', [])
-                    for move in moveset:
-                        if move and move not in ref['move']:
-                            log_issue(logfile, f"{region}/{location}/{name}", 'Moveset', move, 'key in move-it.json')
+                    moveset = d.get('Moveset')
+                    if not moveset:
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Moveset', 'MISSING/EMPTY', 'value')
+                    else:
+                        for move in moveset:
+                            if move and move not in ref['move']:
+                                log_issue(logfile, f"{region}/{location}/{name}", 'Moveset', move, 'key in move-it.json')
+                    
                     # HMs
                     hms = d.get('HMs', [])
                     for hm in hms:
                         if hm and hm not in ref['move']:
                             log_issue(logfile, f"{region}/{location}/{name}", 'HMs', hm, 'key in move-it.json')
+                    
                     # Egg Group
-                    egg_groups = d.get('Egg Group', [])
-                    for eg in egg_groups:
-                        if eg and eg not in ref['egg-group']:
-                            log_issue(logfile, f"{region}/{location}/{name}", 'Egg Group', eg, 'key in egg-group-it.json')
+                    egg_groups = d.get('Egg Group')
+                    if not egg_groups:
+                        log_issue(logfile, f"{region}/{location}/{name}", 'Egg Group', 'MISSING/EMPTY', 'value')
+                    else:
+                        for eg in egg_groups:
+                            if eg and eg not in ref['egg-group']:
+                                log_issue(logfile, f"{region}/{location}/{name}", 'Egg Group', eg, 'key in egg-group-it.json')
                     # Map Link
                     map_link = d.get('Map Link', '')
                     if map_link and not re.match(r'^https?://i\.imgur\.com/.+\.(jpg|jpeg|png|gif|webp)$', map_link):
@@ -448,68 +486,29 @@ def main():
     # CHECK data.json validity
     log_lines.append("\n****************")
     log_lines.append("> CHECK data.json validity")
-    # Carica chiavi di riferimento
-    ref = {k: load_keys(v) for k, v in FILES.items()}
-    extra_notes = load_extra_notes()
-    with open(DATA_PATH, encoding='utf-8') as f:
-        data = json.load(f)
-    data_log = []
-    for region, locations in data.items():
-        if region not in ref['region']:
-            data_log.append(f"\t\t[{region}] - [Region (root)] : '{region}' is not a valid key in region-it.json")
-        for location, pokes in locations.items():
-            if location not in ref['locationPokeapi']:
-                data_log.append(f"\t\t[{region}/{location}] - [Specific Location (root)] : '{location}' is not a valid key in locationPokeapi-it.json")
-            for poke in pokes:
-                name = poke.get('name')
-                if name and name not in ref['pokemon-species']:
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [name] : '{name}' is not a valid key in pokemon-species-it.json")
-                d = poke.get('data', {})
-                reg = d.get('Region')
-                if reg and reg not in ref['region']:
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [Region] : '{reg}' is not a valid key in region-it.json")
-                spec_loc = d.get('Specific Location')
-                if spec_loc and spec_loc not in ref['locationPokeapi']:
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [Specific Location] : '{spec_loc}' is not a valid key in locationPokeapi-it.json")
-                ability = d.get('Ability')
-                if ability and ability not in ref['ability']:
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [Ability] : '{ability}' is not a valid key in ability-it.json")
-                moveset = d.get('Moveset', [])
-                for move in moveset:
-                    if move and move not in ref['move']:
-                        data_log.append(f"\t\t[{region}/{location}/{name}] - [Moveset] : '{move}' is not a valid key in move-it.json")
-                hms = d.get('HMs', [])
-                for hm in hms:
-                    if hm and hm not in ref['move']:
-                        data_log.append(f"\t\t[{region}/{location}/{name}] - [HMs] : '{hm}' is not a valid key in move-it.json")
-                egg_groups = d.get('Egg Group', [])
-                for eg in egg_groups:
-                    if eg and eg not in ref['egg-group']:
-                        data_log.append(f"\t\t[{region}/{location}/{name}] - [Egg Group] : '{eg}' is not a valid key in egg-group-it.json")
-                map_link = d.get('Map Link', '')
-                if map_link and not re.match(r'^https?://i\.imgur\.com/.+\.(jpg|jpeg|png|gif|webp)$', map_link):
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [Map Link] : '{map_link}' is not a valid value: use the i.imgur.com endpoint with a valid image extension")
-                loc_note = d.get('Location Notes', '')
-                if loc_note and loc_note not in extra_notes:
-                    data_log.append(f"\t\t[{region}/{location}/{name}] - [Location Notes] : '{loc_note}' is not a valid key in extra-it.json [notes]")
-                notes_list = d.get('Notes', [])
-                for note in notes_list:
-                    if note and note not in extra_notes:
-                        data_log.append(f"\t\t[{region}/{location}/{name}] - [Notes] : '{note}' is not a valid key in extra-it.json [notes]")
-    total_data = 0
-    for region, locations in data.items():
-        for location, pokes in locations.items():
-            for poke in pokes:
-                total_data += 1
-    if not data_log:
-        log_lines.append(f"\tValid! ({total_data} total elements)")
-    else:
-        log_lines.extend(data_log)
+    
+    # Scrivi il log prima della validazione per non perdere i messaggi di sync
+    with open(LOG_PATH, 'w', encoding='utf-8') as logfile:
+        logfile.write("\n".join(log_lines) + "\n")
+    
+    # Esegui la validazione (che ora appende al log)
+    validate()
+
+    # Rileggi il log per il recap finale
+    with open(LOG_PATH, 'r', encoding='utf-8') as logfile:
+        final_log_content = logfile.read()
+    
+    data_log_errors = [line for line in final_log_content.split('\n') if any(keyword in line for keyword in ['is not a valid', 'MISSING', 'doesn\'t match'])]
+
+    if not data_log_errors:
+        log_lines.append("\tValid!")
 
     # Sezione separata per validazione special-properties.json
     log_lines.append("\n****************")
     log_lines.append("> CHECK special-properties.json validity")
     sp_log = []
+    ref = {k: load_keys(v) for k, v in FILES.items()} # ricarica ref
+    extra_notes = load_extra_notes() # ricarica extra_notes
     validate_special_properties(extra_notes, ref['move'], ref['ability'], sp_log)
     if not sp_log:
         log_lines.append("\tValid!")
@@ -517,14 +516,17 @@ def main():
         log_lines.extend(sp_log)
 
     # RECAP finale
-    recap_count = len(notes_not_translated) + len(ui_not_translated) + len(data_log)
+    recap_count = len(notes_not_translated) + len(ui_not_translated) + len(data_log_errors) + len(sp_log)
     log_lines.append("\n****************")
     log_lines.append("> RECAP")
     log_lines.append(f"\t{recap_count} element{'s' if recap_count != 1 else ''} need{'s' if recap_count == 1 else ''} to be fixed!")
 
-    # Scrivi il log
+    # Scrivi il log finale completo
     with open(LOG_PATH, 'w', encoding='utf-8') as logfile:
         logfile.write("\n".join(log_lines) + "\n")
+        if data_log_errors:
+            logfile.write("\n> data.json validity ISSUES:\n")
+            logfile.write("\n".join(data_log_errors) + "\n")
     
     print(f"Written validation log to {LOG_PATH}")
 

@@ -31,10 +31,11 @@
         "Hi! Please consider a small donation to support my work. In-Game Name (IGN): FlaProGmr. Thank you!": "Hallo! Bitte erwäge eine kleine Spende, um meine Arbeit zu unterstuetzen. In-Game-Name (IGN): FlaProGmr. Danke!",
         "copy and share the next! (With Notifications!)": "kopiere und teile die naechste! (Mit Benachrichtigungen!)",
         "Contributors": "Mitwirkende",
-        "for the push notification system": "fuer das Push-Benachrichtigungssystem",
-        "for help with FR translations": "fuer die Hilfe bei FR-Uebersetzungen",
-        "for help with ES translations": "fuer die Hilfe bei ES-Uebersetzungen",
-        "for the original dataset": "fuer das Original-Dataset",
+        "for the push notification system": "für das Push-Benachrichtigungssystem",
+        "for help with FR translations": "für die Hilfe bei FR-Uebersetzungen",
+        "for help with ES translations": "für die Hilfe bei ES-Uebersetzungen",
+        "for the original dataset": "für das Original-Dataset",
+        "for the pokemon sprites": "für die Pokémon-Sprites",
         "Donations leaderboard": "Spendenrangliste",
         "no donations yet :(": "noch keine Spenden :(",
         "Open GitHub": "GitHub oeffnen",
@@ -120,6 +121,6 @@
         "Confuses the user": "Verwirrt den Anwender"
       }
     },
-    "reason": "Zusaetzliche globale Uebersetzungen nach Kontext getrennt: ui fuer die Benutzeroberflaeche, notes fuer Pokemon-Notizen"
+    "reason": "Zusaetzliche globale Uebersetzungen nach Kontext getrennt: ui für die Benutzeroberflaeche, notes für Pokemon-Notizen"
   }
 }
