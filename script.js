@@ -163,6 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const useShinySprites = Math.floor(Math.random() * 30000) === 0;
 
     const FIRST_VISIT_NOTICE_KEY = 'alphalist:first-visit-notice-seen:v3.1';
+    const ALPHAPEDIA_NOTICE_KEY = 'alphalist:alphapedia-notice-dismissed-date';
     const PUBLISH_URL_KEY = 'alphalist:publish-url';
     const PUBLISH_TOPIC_KEY = 'alphalist:publish-topic';
     const PUBLISH_USERNAME_KEY = 'alphalist:publish-username';
@@ -705,6 +706,58 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hasSeenNotice) return;
 
         showFirstVisitToast();
+    }
+
+    function maybeShowAlphapediaNotice() {
+        const now = new Date();
+        const today = now.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+        
+        let dismissedDate = null;
+        try {
+            dismissedDate = localStorage.getItem(ALPHAPEDIA_NOTICE_KEY);
+        } catch (e) {
+            dismissedDate = null;
+        }
+        
+        if (dismissedDate) {
+            const dismissedDateObj = new Date(dismissedDate);
+            const currentDateObj = new Date(today);
+            const daysDiff = Math.floor((currentDateObj - dismissedDateObj) / (1000 * 60 * 60 * 24));
+            
+            if (daysDiff < 3) {
+                // Less than 3 days have passed, don't show
+                return;
+            }
+        }
+        
+        // Show the notice
+        const headerContent = `<span data-i18n="Introducing Alphapedia!">Introducing Alphapedia!</span>`;
+        const bodyContent = `
+            <p><strong>Lorddusk</strong> and I (<strong>FlaProGmr</strong>) have decided to collaborate even more closely. We've integrated this Alpha List into the Alpha Status tool, so you no longer need to switch between two websites! The resulting website is <strong><a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener">Alphapedia</a></strong>!</p>
+            <p>If you came here for the list, please consider visiting <a href="https://alpha.pokemmotools.org/alpha-list" target="_blank" rel="noopener">https://alpha.pokemmotools.org/alpha-list</a></p>
+            <p>This website will still receive bug fixes and updates, but no further feature development is planned.</p>
+            <div class="mt-3 d-flex justify-content-center">
+                <button type="button" class="btn btn-sm btn-primary" id="alphapedia-notice-dismiss">Don't show for 3 days</button>
+            </div>
+        `;
+        
+        const popup = showPersistentToastPopup(headerContent, bodyContent);
+        
+        const dismissBtn = popup.querySelector('#alphapedia-notice-dismiss');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', () => {
+                try {
+                    const today = new Date().toISOString().split('T')[0];
+                    localStorage.setItem(ALPHAPEDIA_NOTICE_KEY, today);
+                } catch (e) {}
+                
+                // Close the popup
+                const closeBtn = popup.querySelector('.persistent-toast-popup-header .btn-close');
+                if (closeBtn) {
+                    closeBtn.click();
+                }
+            });
+        }
     }
 
     firstVisitThemeButtons.forEach(button => {
@@ -1664,6 +1717,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 expandFirstResult(deepLinkState.expandMode);
             }
             maybeShowFirstVisitToast();
+            maybeShowAlphapediaNotice();
 
             getLatestAlpha();
         } catch (err) {
