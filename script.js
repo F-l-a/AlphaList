@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="d-flex gap-1 align-items-center flex-wrap">
                 <a href="https://github.com/F-l-a/AlphaList" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link" data-i18n="Open GitHub">Open GitHub</a>
                 <span class="text-secondary">•</span>
-                <a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link">Dusk's Alpha Website</a>
+                <a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener" class="text-secondary persistent-toast-popup-github-link">Alphapedia</a>
             </div>
         `;
         
@@ -2265,6 +2265,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const publishBtnEl = e.target.closest && e.target.closest('.publish-pokemon-btn');
         if (publishBtnEl) {
+            /* DEACTIVATING THE FEATURE - start */
+            // Show the notice
+            const headerContent = `<span data-i18n="Introducing Alphapedia!">Introducing Alphapedia!</span>`;
+            const bodyContent = `
+                <p><strong>Lorddusk</strong> and I (<strong>FlaProGmr</strong>) have decided to collaborate even more closely. We've integrated this Alpha List into the Alpha Status tool, so you no longer need to switch between two websites! The resulting website is <strong><a href="https://alpha.pokemmotools.org/" target="_blank" rel="noopener">Alphapedia</a></strong>!</p>
+                <p>If you came here for the list, please consider visiting <a href="https://alpha.pokemmotools.org/alpha-list" target="_blank" rel="noopener">https://alpha.pokemmotools.org/alpha-list</a></p>
+                <p>This website will still receive bug fixes and updates, but no further feature development is planned. The publish feature is also disabled until further notice.</p>
+                <div class="mt-3 d-flex justify-content-center">
+                    <a type="button" class="btn btn-sm btn-primary" href="https://alpha.pokemmotools.org/alpha-list" rel="noopener">Publish on Alphapedia</a>
+                </div>
+            `;
+            const abcdpopup = showPersistentToastPopup(headerContent, bodyContent);
+            return;
+            /* DEACTIVATING THE FEATURE - end */
+
+
             const btn = publishBtnEl;
             const { 
                 pokemonName, rawName, rawRegion, rawLocation
